@@ -65,7 +65,7 @@ const Navbar = () => {
       <ul style={styles.navList}>
         <li style={styles.navItem}><a href="#products" style={{ color: "inherit", textDecoration: "none" }}>Products</a></li>
         <li style={styles.filterItem}><a href="#filter" style={{ color: "inherit", textDecoration: "none" }}>Filter</a></li>
-        <li style={styles.navItem}><a href="#trends" style={{ color: "inherit", textDecoration: "none" }}>Trends</a></li>
+        <li style={styles.navItem}><a href="#home" style={{ color: "inherit", textDecoration: "none" }}>Home</a></li>
       </ul>
       <div style={styles.searchContainer}>
         <input
