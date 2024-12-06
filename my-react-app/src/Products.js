@@ -38,6 +38,8 @@ const Products = () => {
 
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredButton, setHoveredButton] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(4); 
+
 
   const styles = {
     header: {
@@ -148,6 +150,12 @@ const Products = () => {
     },
   };
 
+
+  const handleVisibleCountChange = (event) => {
+    setVisibleCount(Number(event.target.value));
+  };
+
+
   const handleCardHover = (id) => {
     setHoveredCard(id);
   };
@@ -183,10 +191,31 @@ const Products = () => {
             Latest
           </button>
         </div>
+  
+        <div style={{ marginRight: "20px" }}>
+          <label htmlFor="visibleCount" style={styles.sortLabel}>
+            Show:
+          </label>
+          <select
+            id="visibleCount"
+            value={visibleCount}
+            onChange={handleVisibleCountChange}
+            style={{
+              padding: "5px",
+              fontSize: "16px",
+              borderRadius: "5px",
+              marginLeft: "10px",
+            }}
+          >
+            <option value="2">2 Products</option>
+            <option value="4">4 Products</option>
+            <option value={products.length}>All Products</option>
+          </select>
+        </div>
       </div>
-
+  
       <div style={styles.grid}>
-        {products.map((product) => (
+        {products.slice(0, visibleCount).map((product) => (
           <div
             key={product.id}
             style={{
@@ -203,10 +232,10 @@ const Products = () => {
               style={styles.image}
             />
             <div style={styles.info}>
-                <div style={styles.namePriceContainer}>
-                    <h3 style={styles.name}>{product.name}</h3>
-                    <p style={styles.price}>{product.price}</p>
-                </div>
+              <div style={styles.namePriceContainer}>
+                <h3 style={styles.name}>{product.name}</h3>
+                <p style={styles.price}>{product.price}</p>
+              </div>
               <a
                 href={`https://${product.link}`}
                 target="_blank"
@@ -233,6 +262,7 @@ const Products = () => {
       </div>
     </section>
   );
+  
 };
 
 export default Products;
