@@ -26,7 +26,7 @@ const Footer = () => {
   return (
     <footer style={footerStyles.footer}>
       <div>
-        <p>© 2024 DealSeeker. All rights reserved.</p>
+        <p>©2024  DealSeeker. All rights reserved.</p>
         <div>
           <a
             href="#home"
