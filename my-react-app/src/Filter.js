@@ -43,7 +43,7 @@ const Filter = () => {
       backgroundColor: "#e0e0e0",
     },
     itemActive: {
-      border: "2px solid black",
+      border: "2px solid #6ca390",
     },
     colorBox: {
       width: "50px",
@@ -54,7 +54,7 @@ const Filter = () => {
       transition: "all 0.3s ease",
     },
     colorBoxActive: {
-      border: "2px solid black",
+      border: "2px solid #6ca390",
     },
     priceRange: {
       display: "flex",
