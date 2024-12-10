@@ -9,6 +9,8 @@ const Products = () => {
       sizes: ["S", "M", "L"],
       link: "zara.com",
       image: "https://via.placeholder.com/200x200",
+      description: "A stylish blouse made with high-quality materials."
+
     },
     {
       id: 2,
@@ -17,6 +19,8 @@ const Products = () => {
       sizes: ["XS", "M", "L"],
       link: "zara.com",
       image: "https://via.placeholder.com/200x200",
+      description: "A stylish blouse made with high-quality materials."
+
     },
     {
       id: 3,
@@ -25,6 +29,8 @@ const Products = () => {
       sizes: ["S", "M", "L"],
       link: "zara.com",
       image: "https://via.placeholder.com/200x200",
+      description: "A stylish blouse made with high-quality materials."
+
     },
     {
       id: 4,
@@ -33,12 +39,16 @@ const Products = () => {
       sizes: ["S", "M", "L"],
       link: "zara.com",
       image: "https://via.placeholder.com/200x200",
+      description: "A stylish blouse made with high-quality materials."
+
     },
   ];
 
   const [hoveredCard, setHoveredCard] = useState(null);
   const [hoveredButton, setHoveredButton] = useState(null);
   const [visibleCount, setVisibleCount] = useState(4); 
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
 
 
   const styles = {
@@ -148,6 +158,35 @@ const Products = () => {
       backgroundColor: "#6CA390",
       color: "white",
     },
+    modal: {
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "white",
+      padding: "20px",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+      borderRadius: "10px",
+      zIndex: 1000,
+    },
+    overlay: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      zIndex: 999,
+    },
+    closeButton: {
+      position: "absolute",
+      top: "10px",
+      right: "10px",
+      background: "transparent",
+      border: "none",
+      fontSize: "20px",
+      cursor: "pointer",
+    },
   };
 
 
@@ -160,11 +199,18 @@ const Products = () => {
     setHoveredCard(id);
   };
 
-  const handleButtonHover = (id) => {
-    setHoveredButton(id);
+  
+
+  const openModal = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
   };
 
   return (
+    <>
     <section>
       <div style={styles.header}>
         <h1 style={styles.title}>Products</h1>
@@ -175,7 +221,7 @@ const Products = () => {
               ...styles.sortButton,
               ...(hoveredButton === "price" && styles.sortButtonHover),
             }}
-            onMouseEnter={() => handleButtonHover("price")}
+            onMouseEnter={() => setHoveredButton("price")}
             onMouseLeave={() => setHoveredButton(null)}
           >
             Price
@@ -185,8 +231,8 @@ const Products = () => {
               ...styles.sortButton,
               ...(hoveredButton === "latest" && styles.sortButtonHover),
             }}
-            onMouseEnter={() => handleButtonHover("latest")}
-            onMouseLeave={() => setHoveredButton(null)}
+            onMouseEnter={() => setHoveredButton("latest")}
+            onMouseLeave={() => setHoveredCard(null)}
           >
             Latest
           </button>
@@ -224,7 +270,7 @@ const Products = () => {
             }}
             onMouseEnter={() => handleCardHover(product.id)}
             onMouseLeave={() => setHoveredCard(null)}
-            onClick={() => alert(`You clicked on ${product.name}`)}
+            onClick={() => openModal(product)}
           >
             <img
               src={product.image}
@@ -246,13 +292,11 @@ const Products = () => {
               </a>
               <p style={styles.text}>{product.sizes.join(" | ")}</p>
               <button
-                style={{
-                  ...styles.detailsButton,
-                  ...(hoveredButton === `details-${product.id}` &&
-                    styles.detailsButtonHover),
-                }}
-                onMouseEnter={() => handleButtonHover(`details-${product.id}`)}
-                onMouseLeave={() => setHoveredButton(null)}
+                style={styles.detailsButton}
+                onClick={() => openModal(product)}
+                onMouseEnter={(e) => e.target.style.backgroundColor = "#AFCBC4"}
+                onMouseLeave={(e) => e.target.style.backgroundColor = "#000"}
+
               >
                 Product Details
               </button>
@@ -261,8 +305,125 @@ const Products = () => {
         ))}
       </div>
     </section>
-  );
+    {selectedProduct && (
+    <>
+        <div style={styles.overlay} onClick={closeModal}></div>
+        <div style={{
+                ...styles.modal,
+                width: "60%", 
+                textAlign: "center", 
+                backgroundColor: "#FFF",
+        }}>
+        <button style={styles.closeButton} onClick={closeModal}>
+            &times;
+        </button>
+        <div style={{
+                display: "flex", 
+                flexDirection: "row", 
+                alignItems: "center",
+                justifyContent: "space-between", 
+                gap: "20px" 
+        }}>
+            <img 
+            src={selectedProduct.image} 
+            alt={selectedProduct.name} 
+            style={{
+                width: "40%",
+                borderRadius: "10px",
+                objectFit: "cover",
+            }} 
+            />
+            <div style={{
+                    display: "flex",
+                    flexDirection: "column", 
+                    alignItems: "flex-start",
+                    justifyContent: "center",
+                    textAlign: "left",
+                    gap: "10px", 
+                    width: "55%",
+            }}>
+            <h2 style={{
+                    fontSize: "32px",
+                    color: "#000",
+                    marginBottom: "10px"
+            }}>{selectedProduct.name}</h2>
+            <p style={{
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    color: "#000",
+                    marginBottom: "10px"
+            }}>{selectedProduct.price}</p>
+            <p style={{
+                    fontSize: "16px",
+                    color: "#000",
+                    marginBottom: "20px"
+            }}>{selectedProduct.description}</p>
+            <a 
+                href={`https://${selectedProduct.link}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{
+                ...styles.detailsButton,
+                textAlign: "center",
+                transition: "background-color 0.2s",
+                textDecoration: "none",
+                width: "80%",
+                justifyContent: "center",
+            }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = "#AFCBC4"}
+                onMouseLeave={(e) => e.target.style.backgroundColor = "#000"}
+            >
+                Go to the store
+            </a>
+            </div>
+        </div>
+
+        <h2
+            style={{
+                fontSize: "24px",
+                fontWeight: "bold",
+                color: "#000",
+                marginTop: "20px",
+            }}>Deals
+        </h2>
+        <div
+        key={selectedProduct.id}
+        style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "#AFCBC4",
+            padding: "10px 15px",
+            fontSize: "18px",
+            fontWeight: "bold",
+        }}
+        >
+        <span style={{ color: "#fff" }}>{selectedProduct.name}</span>
+        <span style={{ color: "#fff" }}>{selectedProduct.price}</span>
+        <a
+            href={`https://${selectedProduct.link}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+                backgroundColor: "#000",
+                color: "#fff",
+                padding: "10px 15px",
+                borderRadius: "8px",
+                textDecoration: "none",
+                fontWeight: "bold",
+                transition: "background-color 0.2s",
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = "#6CA390"}
+            onMouseLeave={(e) => e.target.style.backgroundColor = "#000"}
+        >
+            {selectedProduct.link}
+        </a>
+        </div>
   
-};
+    </div>
+    </>
+    )}
+  </>
+)};
 
 export default Products;
