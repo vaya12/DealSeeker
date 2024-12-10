@@ -73,17 +73,7 @@ const Navbar = () => {
           placeholder="Search..."
           style={styles.searchInput}
         />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="white"
-          width="24px"
-          height="24px"
-          color="white"
-          style={styles.searchIcon}
-        >
-          <path d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm9.707 12.707-3.177-3.177a9 9 0 1 0-1.414 1.414l3.177 3.177a1 1 0 0 0 1.414-1.414Z" />
-        </svg>      
+         
       </div>
     </nav>
   );
