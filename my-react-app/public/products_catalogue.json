@@ -27,7 +27,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A comfortable and stylish pullover for everyday wear.",
-        "color": "Gray"
+        "color": "Gray",
+        "category": "clothes"
     },
     {
         "id": 2,
@@ -61,7 +62,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "High-performance running shoes with excellent support.",
-        "color": "Black"
+        "color": "Black",
+        "category": "shoes"
     },
     {
         "id": 3,
@@ -96,7 +98,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A warm and durable hoodie perfect for cold weather.",
-        "color": "Navy Blue"
+        "color": "Navy Blue",
+        "category": "clothes"
     },
     {
         "id": 4,
@@ -127,7 +130,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Classic aviator sunglasses with UV protection.",
-        "color": "Gold"
+        "color": "Gold",
+        "category": "accessories"
     },
     {
         "id": 5,
@@ -161,7 +165,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Comfortable joggers for sports and casual wear.",
-        "color": "Black"
+        "color": "Black",
+        "category": "clothes"
     },
     {
         "id": 6,
@@ -195,7 +200,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A premium cotton T-shirt with the iconic Tommy logo.",
-        "color": "White"
+        "color": "White",
+        "category": "clothes"
     },
     {
         "id": 7,
@@ -229,7 +235,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A sleek blazer suitable for both formal and casual events.",
-        "color": "Black"
+        "color": "Black",
+        "category": "clothes"
     },
     {
         "id": 8,
@@ -263,11 +270,12 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Classic denim jeans with a comfortable fit.",
-        "color": "Blue"
+        "color": "Blue",
+        "category": "clothes"
     },
     {
         "id": 9,
-        "name": "Calvin Klein Underwear",
+        "name": "Calvin Klein shirt",
         "brand": "Calvin Klein",
         "price": [
             {
@@ -296,8 +304,9 @@
             }
         ],
         "image": "https://via.placeholder.com/200x200",
-        "description": "Soft and breathable underwear for everyday comfort.",
-        "color": "White"
+        "description": "Soft and breathable shirt for everyday comfort.",
+        "color": "White",
+        "category": "clothes"
     },
     {
         "id": 10,
@@ -328,7 +337,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A stylish handbag with ample storage space.",
-        "color": "Beige"
+        "color": "Beige",
+        "category": "bags"
     },
     {
         "id": 11,
@@ -362,7 +372,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Comfortable joggers for sports and casual wear.",
-        "color": "Black"
+        "color": "Black",
+        "category": "clothes"
     },
     {
         "id": 12,
@@ -396,7 +407,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A premium cotton T-shirt with the iconic Tommy logo.",
-        "color": "White"
+        "color": "White",
+        "category": "clothes"
     },
     {
         "id": 13,
@@ -430,7 +442,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A sleek blazer suitable for both formal and casual events.",
-        "color": "Black"
+        "color": "Black",
+        "category": "clothes"
     },
     {
         "id": 14,
@@ -464,7 +477,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Classic denim jeans with a comfortable fit.",
-        "color": "Blue"
+        "color": "Blue",
+        "category": "clothes"
     },
     {
         "id": 15,
@@ -498,7 +512,8 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Soft and breathable underwear for everyday comfort.",
-        "color": "White"
+        "color": "White",
+        "category": "clothes"
     },
     {
         "id": 16,
@@ -529,6 +544,7 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A stylish handbag with ample storage space.",
-        "color": "Beige"
+        "color": "Beige",
+        "category": "bags"
     }
 ]

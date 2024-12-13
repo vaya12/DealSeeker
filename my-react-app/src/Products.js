@@ -6,6 +6,7 @@ const Products = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("all"); 
     const itemsPerPage = 10;
 
     useEffect(() => {
@@ -20,7 +21,28 @@ const Products = () => {
             .catch((error) => console.error("Error loading JSON:", error));
     }, []);
 
-    const sortedProducts = [...products].sort((a, b) => {
+    const categories = [
+        { label: "Sort by category:", value: "all" },
+        { label: "Clothes", value: "clothes" },
+        { label: "Bags", value: "bags" },
+        { label: "Shoes", value: "shoes" },
+        { label: "Accessories", value: "accessories" },
+    ];
+
+    const handleSortChange = (event) => {
+        setSortOption(event.target.value); 
+    };
+
+    const handleCategoryChange = (event) => {
+        setSelectedCategory(event.target.value);
+        setCurrentPage(1); 
+    };
+
+    const filteredProducts = products.filter((product) => {
+        return selectedCategory === "all" || product.category === selectedCategory;
+    });
+
+    const sortedProducts = filteredProducts.sort((a, b) => {
         if (sortOption === "lowToHigh") {
             return a.price[0]?.price - b.price[0]?.price;
         } else if (sortOption === "highToLow") {
@@ -40,10 +62,6 @@ const Products = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const productsToShow = sortedProducts.slice(startIndex, endIndex);
-
-    const handleSortChange = (event) => {
-        setSortOption(event.target.value); 
-    };
 
 
     const styles = {
@@ -272,12 +290,24 @@ const Products = () => {
         <>
             <header style={styles.header}>
                 <h1 style={styles.title}>Products</h1>
+                <select
+                    style={styles.dropdown}
+                    value={selectedCategory}
+                    onChange={handleCategoryChange}
+                >
+                    {categories.map((category) => (
+                        <option key={category.value} value={category.value}>
+                            {category.label}
+                        </option>
+                    ))}
+                </select>
                 <select style={styles.dropdown} value={sortOption} onChange={handleSortChange}>
                     <option value="">Sort by</option>
                     <option value="lowToHigh">Price: Low to High</option>
                     <option value="highToLow">Price: High to Low</option>
                 </select>
             </header>
+
             <div style={styles.grid}>
                 {productsToShow.map((product) => (
                 <div
