@@ -1,11 +1,12 @@
 [
     {
+        "id": 1,
         "name": "H&M Pullover",
         "brand": "H&M",
         "price": [
             {
                 "store": "H&M Online",
-                "price": "39.99 BGN"
+                "price": "39.99"
             }
         ],
         "size": [
@@ -26,19 +27,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A comfortable and stylish pullover for everyday wear.",
-        "color": "Gray"
+        "color": "Gray",
+        "category": "clothes"
     },
     {
+        "id": 2,
         "name": "Nike Running Shoes",
         "brand": "Nike",
         "price": [
             {
                 "store": "Nike",
-                "price": "119.90 BGN"
+                "price": "129.90"
             },
             {
                 "store": "SportDepot",
-                "price": "129.99 BGN"
+                "price": "119.99"
             }
         ],
         "size": [
@@ -59,19 +62,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "High-performance running shoes with excellent support.",
-        "color": "Black"
+        "color": "Black",
+        "category": "shoes"
     },
     {
+        "id": 3,
         "name": "Adidas Hoodie",
         "brand": "Adidas",
         "price": [
             {
                 "store": "Adidas",
-                "price": "89.90 BGN"
+                "price": "89.90"
             },
             {
                 "store": "SportBox",
-                "price": "95.00 BGN"
+                "price": "95.00"
             }
         ],
         "size": [
@@ -93,19 +98,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A warm and durable hoodie perfect for cold weather.",
-        "color": "Navy Blue"
+        "color": "Navy Blue",
+        "category": "clothes"
     },
     {
+        "id": 4,
         "name": "Ray-Ban Sunglasses",
         "brand": "Ray-Ban",
         "price": [
             {
                 "store": "Ray-Ban",
-                "price": "159.90 BGN"
+                "price": "159.90"
             },
             {
                 "store": "Opticlasa",
-                "price": "170.00 BGN"
+                "price": "170.00"
             }
         ],
         "size": [
@@ -123,19 +130,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Classic aviator sunglasses with UV protection.",
-        "color": "Gold"
+        "color": "Gold",
+        "category": "accessories"
     },
     {
+        "id": 5,
         "name": "Puma Joggers",
         "brand": "Puma",
         "price": [
             {
                 "store": "Puma",
-                "price": "69.90 BGN"
+                "price": "69.90"
             },
             {
                 "store": "Decathlon",
-                "price": "72.50 BGN"
+                "price": "72.50"
             }
         ],
         "size": [
@@ -156,19 +165,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Comfortable joggers for sports and casual wear.",
-        "color": "Black"
+        "color": "Black",
+        "category": "clothes"
     },
     {
+        "id": 6,
         "name": "Tommy Hilfiger T-Shirt",
         "brand": "Tommy Hilfiger",
         "price": [
             {
                 "store": "Tommy Hilfiger",
-                "price": "49.90 BGN"
+                "price": "49.90"
             },
             {
                 "store": "FashionDays",
-                "price": "54.99 BGN"
+                "price": "54.99"
             }
         ],
         "size": [
@@ -189,19 +200,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A premium cotton T-shirt with the iconic Tommy logo.",
-        "color": "White"
+        "color": "White",
+        "category": "clothes"
     },
     {
+        "id": 7,
         "name": "Zara Blazer",
         "brand": "Zara",
         "price": [
             {
                 "store": "Zara",
-                "price": "119.90 BGN"
+                "price": "119.90"
             },
             {
                 "store": "AboutYou",
-                "price": "124.90 BGN"
+                "price": "124.90"
             }
         ],
         "size": [
@@ -222,19 +235,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A sleek blazer suitable for both formal and casual events.",
-        "color": "Black"
+        "color": "Black",
+        "category": "clothes"
     },
     {
+        "id": 8,
         "name": "Levi's Jeans",
         "brand": "Levi's",
         "price": [
             {
                 "store": "Levi's",
-                "price": "99.90 BGN"
+                "price": "99.90"
             },
             {
                 "store": "DenimShop",
-                "price": "109.90 BGN"
+                "price": "109.90"
             }
         ],
         "size": [
@@ -255,19 +270,228 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Classic denim jeans with a comfortable fit.",
-        "color": "Blue"
+        "color": "Blue",
+        "category": "clothes"
     },
     {
+        "id": 9,
+        "name": "Calvin Klein shirt",
+        "brand": "Calvin Klein",
+        "price": [
+            {
+                "store": "Calvin Klein",
+                "price": "39.90"
+            },
+            {
+                "store": "Answear",
+                "price": "45.00"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "link": [
+            {
+                "store": "Calvin Klein",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "Answear",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "Soft and breathable shirt for everyday comfort.",
+        "color": "White",
+        "category": "clothes"
+    },
+    {
+        "id": 10,
+        "name": "Guess Handbag",
+        "brand": "Guess",
+        "price": [
+            {
+                "store": "Guess",
+                "price": "159.90"
+            },
+            {
+                "store": "BGFashion",
+                "price": "165.00"
+            }
+        ],
+        "size": [
+            "One Size"
+        ],
+        "link": [
+            {
+                "store": "Guess",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "BGFashion",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "A stylish handbag with ample storage space.",
+        "color": "Beige",
+        "category": "bags"
+    },
+    {
+        "id": 11,
+        "name": "Puma Joggers",
+        "brand": "Puma",
+        "price": [
+            {
+                "store": "Puma",
+                "price": "69.90"
+            },
+            {
+                "store": "Decathlon",
+                "price": "72.50"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "link": [
+            {
+                "store": "Puma",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "Decathlon",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "Comfortable joggers for sports and casual wear.",
+        "color": "Black",
+        "category": "clothes"
+    },
+    {
+        "id": 12,
+        "name": "Tommy Hilfiger T-Shirt",
+        "brand": "Tommy Hilfiger",
+        "price": [
+            {
+                "store": "Tommy Hilfiger",
+                "price": "49.90"
+            },
+            {
+                "store": "FashionDays",
+                "price": "54.99"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "link": [
+            {
+                "store": "Tommy Hilfiger",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "FashionDays",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "A premium cotton T-shirt with the iconic Tommy logo.",
+        "color": "White",
+        "category": "clothes"
+    },
+    {
+        "id": 13,
+        "name": "Zara Blazer",
+        "brand": "Zara",
+        "price": [
+            {
+                "store": "Zara",
+                "price": "119.90"
+            },
+            {
+                "store": "AboutYou",
+                "price": "124.90"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "link": [
+            {
+                "store": "Zara",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "AboutYou",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "A sleek blazer suitable for both formal and casual events.",
+        "color": "Black",
+        "category": "clothes"
+    },
+    {
+        "id": 14,
+        "name": "Levi's Jeans",
+        "brand": "Levi's",
+        "price": [
+            {
+                "store": "Levi's",
+                "price": "99.90"
+            },
+            {
+                "store": "DenimShop",
+                "price": "109.90"
+            }
+        ],
+        "size": [
+            "28",
+            "30",
+            "32",
+            "34"
+        ],
+        "link": [
+            {
+                "store": "Levi's",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "DenimShop",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "Classic denim jeans with a comfortable fit.",
+        "color": "Blue",
+        "category": "clothes"
+    },
+    {
+        "id": 15,
         "name": "Calvin Klein Underwear",
         "brand": "Calvin Klein",
         "price": [
             {
                 "store": "Calvin Klein",
-                "price": "39.90 BGN"
+                "price": "39.90"
             },
             {
                 "store": "Answear",
-                "price": "45.00 BGN"
+                "price": "45.00"
             }
         ],
         "size": [
@@ -288,19 +512,21 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "Soft and breathable underwear for everyday comfort.",
-        "color": "White"
+        "color": "White",
+        "category": "clothes"
     },
     {
+        "id": 16,
         "name": "Guess Handbag",
         "brand": "Guess",
         "price": [
             {
                 "store": "Guess",
-                "price": "159.90 BGN"
+                "price": "159.90"
             },
             {
                 "store": "BGFashion",
-                "price": "165.00 BGN"
+                "price": "165.00"
             }
         ],
         "size": [
@@ -318,6 +544,7 @@
         ],
         "image": "https://via.placeholder.com/200x200",
         "description": "A stylish handbag with ample storage space.",
-        "color": "Beige"
+        "color": "Beige",
+        "category": "bags"
     }
 ]
