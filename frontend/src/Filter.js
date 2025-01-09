@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
 
 const Filter = ({ onFilter }) => {
-  const [price, setPrice] = useState(0);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
-  const [expandedSections, setExpandedSections] = useState([]);
-
-  const navigate = useNavigate(); 
+  const [price, setPrice] = useState(1000);
+  const [expandedSections, setExpandedSections] = useState(["category"]);
 
   const categories = ["Clothes", "Bags", "Shoes", "Accessories"];
   const colors = ["#c7eb91", "#000", "#71a79f", "#dda3d1"];
@@ -37,7 +34,6 @@ const Filter = ({ onFilter }) => {
       price,
     };
     onFilter && onFilter(filters); 
-    navigate("/products", { state: filters }); 
   };
 
   const clearFilters = () => {

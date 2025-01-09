@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-const Products = () => {
+const Products = ({ filters }) => {
     const [products, setProducts] = useState([]);
     const [hoveredCard, setHoveredCard] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("all"); 
+    const [selectedCategory, setSelectedCategory] = useState("all");
     const itemsPerPage = 10;
 
     useEffect(() => {
@@ -38,20 +38,42 @@ const Products = () => {
         setCurrentPage(1); 
     };
 
-    const filteredProducts = products.filter((product) => {
-        return selectedCategory === "all" || product.category === selectedCategory;
-    });
+    const applyFilters = (productsToFilter) => {
+        if (!filters || !productsToFilter) return productsToFilter;
 
-    const sortedProducts = filteredProducts.sort((a, b) => {
-        if (sortOption === "lowToHigh") {
-            return a.price[0]?.price - b.price[0]?.price;
-        } else if (sortOption === "highToLow") {
-            return b.price[0]?.price - a.price[0]?.price;
-        }
-        return 0; 
-    });
+        return productsToFilter.filter(product => {
+            const matchesCategory = !filters.categories.length || 
+                filters.categories.map(c => c.toLowerCase()).includes(product.category.toLowerCase());
+            
+            const matchesColor = !filters.colors.length || 
+                filters.colors.includes(product.color);
+            
+            const matchesSize = !filters.sizes.length || 
+                product.size.some(s => filters.sizes.includes(s));
+            
+            const matchesBrand = !filters.brands.length || 
+                filters.brands.includes(product.brand);
+            
+            const lowestPrice = Math.min(...product.price.map(p => parseFloat(p.price)));
+            const matchesPrice = !filters.maxPrice || lowestPrice <= filters.maxPrice;
 
-    const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+            return matchesCategory && matchesColor && matchesSize && 
+                   matchesBrand && matchesPrice;
+        });
+    };
+
+    const productsToShow = applyFilters(products)
+        .filter(product => selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase())
+        .sort((a, b) => {
+            if (sortOption === "lowToHigh") {
+                return parseFloat(a.price[0].price) - parseFloat(b.price[0].price);
+            } else if (sortOption === "highToLow") {
+                return parseFloat(b.price[0].price) - parseFloat(a.price[0].price);
+            }
+            return 0;
+        });
+
+    const totalPages = Math.ceil(productsToShow.length / itemsPerPage);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -61,7 +83,7 @@ const Products = () => {
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const productsToShow = sortedProducts.slice(startIndex, endIndex);
+    const productsToShowPaginated = productsToShow.slice(startIndex, endIndex);
 
 
     const styles = {
@@ -309,7 +331,7 @@ const Products = () => {
             </header>
 
             <div style={styles.grid}>
-                {productsToShow.map((product) => (
+                {productsToShowPaginated.map((product) => (
                 <div
                     key={product.id} 
                     style={{
