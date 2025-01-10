@@ -1,12 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom"; 
 
 const Filter = ({ onFilter }) => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedColors, setSelectedColors] = useState([]);
-  const [selectedSizes, setSelectedSizes] = useState([]);
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [price, setPrice] = useState(1000);
-  const [expandedSections, setExpandedSections] = useState(["category"]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const [price, setPrice] = useState(location.state?.price || 0);
+  const [selectedCategories, setSelectedCategories] = useState(location.state?.categories || []);
+  const [selectedColors, setSelectedColors] = useState(location.state?.colors || []);
+  const [selectedSizes, setSelectedSizes] = useState(location.state?.sizes || []);
+  const [selectedBrands, setSelectedBrands] = useState(location.state?.brands || []);
+  
+  const [expandedSections, setExpandedSections] = useState(() => {
+    const sections = [];
+    if (location.state?.categories?.length) sections.push("category");
+    if (location.state?.colors?.length) sections.push("color");
+    if (location.state?.sizes?.length) sections.push("size");
+    if (location.state?.brands?.length) sections.push("brand");
+    if (location.state?.price > 0) sections.push("price");
+    return sections.length ? sections : [];
+  });
+
+  useEffect(() => {
+    if (location.state) {
+      const filters = {
+        categories: location.state.categories || [],
+        colors: location.state.colors || [],
+        sizes: location.state.sizes || [],
+        brands: location.state.brands || [],
+        price: location.state.price || 0,
+      };
+      onFilter(filters);
+    }
+  }, [location.state, onFilter]);
 
   const categories = ["Clothes", "Bags", "Shoes", "Accessories"];
   const colors = ["#c7eb91", "#000", "#71a79f", "#dda3d1"];
@@ -33,7 +59,11 @@ const Filter = ({ onFilter }) => {
       brands: selectedBrands,
       price,
     };
-    onFilter && onFilter(filters); 
+    onFilter(filters);
+    navigate("/products", { 
+      state: filters,
+      target: "_blank"
+    });
   };
 
   const clearFilters = () => {
@@ -142,7 +172,7 @@ const Filter = ({ onFilter }) => {
   };
 
   return (
-    <div style={styles.container}>
+    <div className="filter-section" style={styles.container}>
       <div style={styles.section}>
         <h2 style={styles.title} onClick={() => toggleSection("category")}>
           Category {expandedSections.includes("category") ? "▼" : "▶"}

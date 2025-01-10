@@ -1,7 +1,10 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   const styles = {
     navbar: {
       display: "flex",
@@ -11,7 +14,11 @@ const Navbar = () => {
       padding: "10px 20px",
       backgroundColor: "white",
       background: "linear-gradient(to left, black 50%, white 50%)", 
-      fontFamily: "'Saira Stencil One', sans-serif", 
+      fontFamily: "'Saira Stencil One', sans-serif",
+      position: "sticky",
+      top: 0,
+      zIndex: 1000,
+      boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
     },
     navList: {
       display: "flex",
@@ -60,12 +67,49 @@ const Navbar = () => {
     },
   };
 
+  const scrollToFilter = () => {
+    const filterElement = document.querySelector('.filter-section');
+    if (filterElement) {
+      filterElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleHomeClick = () => {
+    navigate('/');
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <nav style={styles.navbar}>
       <ul style={styles.navList}>
-        <li style={styles.navItem}><a href="#products" style={{ color: "inherit", textDecoration: "none" }}>Products</a></li>
-        <li style={styles.filterItem}><a href="#filter" style={{ color: "inherit", textDecoration: "none" }}>Filter</a></li>
-        <li style={styles.navItem}><a href="#home" style={{ color: "inherit", textDecoration: "none" }}>Home</a></li>
+        <li style={styles.navItem}>
+          <Link 
+            to="/products" 
+            target="_blank"
+            state={{ showFilter: true }}
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            Products
+          </Link>
+        </li>
+        <li style={styles.filterItem}>
+          <span 
+            onClick={scrollToFilter} 
+            style={{ color: "inherit", textDecoration: "none", cursor: "pointer" }}
+          >
+            Filter
+          </span>
+        </li>
+        <li style={styles.navItem}>
+          <span 
+            onClick={handleHomeClick}
+            style={{ color: "inherit", textDecoration: "none", cursor: "pointer" }}
+          >
+            Home
+          </span>
+        </li>
       </ul>
       <div style={styles.searchContainer}>
         <input
@@ -73,7 +117,6 @@ const Navbar = () => {
           placeholder="Search..."
           style={styles.searchInput}
         />
-         
       </div>
     </nav>
   );

@@ -112,10 +112,10 @@ const Products = ({ filters }) => {
         },
         grid: {
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, 300px)",
             gap: "20px",
             padding: "20px 30px",
-            alignItems: "stretch",
+            justifyContent: "center",
         },
         card: {
             display: "flex",
@@ -129,7 +129,9 @@ const Products = ({ filters }) => {
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             transition: "transform 0.3s, box-shadow 0.3s",
             backgroundColor: "#f9f9f9",
-            minHeight: "200px",
+            width: "270px",
+            height: "400px",
+            margin: "0 auto",
         },
         cardHover: {
             transform: "scale(1.05)",
@@ -137,7 +139,7 @@ const Products = ({ filters }) => {
         },
         image: {
             width: "100%",
-            height: "180px",
+            height: "200px",
             objectFit: "cover",
             borderRadius: "10px",
         },

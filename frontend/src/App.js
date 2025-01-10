@@ -47,7 +47,25 @@ function App() {
               </div>
             </>
           } />
-          <Route path="/products" element={<Products filters={filters} />} />
+          <Route path="/products" element={
+            <div style={{
+              display: 'flex',
+              padding: '20px',
+              maxWidth: '1400px',
+              margin: '0 auto',
+              gap: '30px'
+            }}>
+              <div style={{ flex: '0 0 250px' }}>
+                <Filter onFilter={handleFilter} />
+              </div>
+              <div style={{ 
+                flex: '1',
+                maxWidth: 'calc(100% - 280px)'
+              }}>
+                <Products filters={filters} />
+              </div>
+            </div>
+          } />
         </Routes>
         <Footer />
       </div>
