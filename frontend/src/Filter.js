@@ -60,10 +60,7 @@ const Filter = ({ onFilter }) => {
       price,
     };
     onFilter(filters);
-    navigate("/products", { 
-      state: filters,
-      target: "_blank"
-    });
+    navigate("/products", { state: filters });
   };
 
   const clearFilters = () => {
@@ -72,6 +69,24 @@ const Filter = ({ onFilter }) => {
     setSelectedSizes([]);
     setSelectedBrands([]);
     setPrice(0);
+    
+    const emptyFilters = {
+      categories: [],
+      colors: [],
+      sizes: [],
+      brands: [],
+      price: 0,
+    };
+    onFilter(emptyFilters);
+    navigate("/products", { state: emptyFilters });
+  };
+
+  const hasActiveFilters = () => {
+    return selectedCategories.length > 0 ||
+           selectedColors.length > 0 ||
+           selectedSizes.length > 0 ||
+           selectedBrands.length > 0 ||
+           price > 0;
   };
 
   const styles = {
@@ -298,14 +313,33 @@ const Filter = ({ onFilter }) => {
               type="range"
               min="0"
               max="100"
+              step="1"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => setPrice(Number(e.target.value))}
               style={{ width: "80%" }}
             />
             <span>{price} BGN</span>
           </div>
         )}
       </div>
+
+      {hasActiveFilters() && (
+        <div style={{ 
+          padding: "10px", 
+          marginBottom: "10px", 
+          backgroundColor: "#f0f0f0",
+          borderRadius: "5px",
+          fontSize: "14px"
+        }}>
+          Active filters: {[
+            selectedCategories.length && `${selectedCategories.length} categories`,
+            selectedColors.length && `${selectedColors.length} colors`,
+            selectedSizes.length && `${selectedSizes.length} sizes`,
+            selectedBrands.length && `${selectedBrands.length} brands`,
+            price > 0 && `Price up to ${price} BGN`
+          ].filter(Boolean).join(", ")}
+        </div>
+      )}
 
       <button
         style={styles.button}
