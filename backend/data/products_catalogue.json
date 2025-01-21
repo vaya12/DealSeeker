@@ -1,0 +1,33 @@
+[
+    {
+        "id": 1,
+        "name": "H&M Pullover",
+        "brand": "H&M",
+        "price": [
+            {
+                "store": "H&M Online",
+                "price": "39.99"
+            }
+        ],
+        "size": [
+            "S",
+            "M",
+            "L",
+            "XL"
+        ],
+        "link": [
+            {
+                "store": "H&M Online",
+                "url": "www.hm.com"
+            },
+            {
+                "store": "Emag",
+                "url": "www.hm.com"
+            }
+        ],
+        "image": "https://via.placeholder.com/200x200",
+        "description": "A comfortable and stylish pullover for everyday wear.",
+        "color": "Gray",
+        "category": "clothes"
+    }
+]
