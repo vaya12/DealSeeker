@@ -1,0 +1,47 @@
+{
+    "merchant": "H&M Online",
+    "products": [
+        {
+            "id": "HM001",
+            "name": "H&M Pullover",
+            "description": "A comfortable and stylish pullover for everyday wear.",
+            "brand": "H&M",
+            "category": "clothes",
+            "image": "https://via.placeholder.com/200x200",
+            "variants": [
+                {
+                    "color": "Gray",
+                    "sizes": ["S", "M", "L", "XL"]
+                }
+            ],
+            "current_price": "39.99",
+            "original_price": "49.99",
+            "is_on_sale": true,
+            "available_sizes": ["S", "M", "L", "XL"],
+            "available_colors": ["Gray"],
+            "stock_status": "in_stock",
+            "store_url": "www.hm.com/products/pullover"
+        },
+        {
+            "id": "HM002",
+            "name": "Basic T-Shirt",
+            "description": "Classic cotton t-shirt.",
+            "brand": "H&M",
+            "category": "clothes",
+            "image": "https://via.placeholder.com/200x200",
+            "variants": [
+                {
+                    "color": "White",
+                    "sizes": ["S", "M", "L", "XL"]
+                }
+            ],
+            "current_price": "9.99",
+            "original_price": "12.99",
+            "is_on_sale": true,
+            "available_sizes": ["S", "M", "L", "XL"],
+            "available_colors": ["White"],
+            "stock_status": "in_stock",
+            "store_url": "www.hm.com/products/basic-tshirt"
+        }
+    ]
+} 
