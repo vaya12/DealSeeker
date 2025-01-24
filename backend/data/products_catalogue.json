@@ -2,32 +2,173 @@
     {
         "id": 1,
         "name": "H&M Pullover",
+        "description": "A comfortable and stylish pullover for everyday wear.",
         "brand": "H&M",
-        "price": [
+        "category": "clothes",
+        "image": "https://via.placeholder.com/200x200",
+        "variants": [
             {
-                "store": "H&M Online",
-                "price": "39.99"
+                "color": "Gray",
+                "sizes": ["S", "M", "L", "XL"]
             }
         ],
-        "size": [
-            "S",
-            "M",
-            "L",
-            "XL"
-        ],
-        "link": [
+        "stores": [
             {
-                "store": "H&M Online",
-                "url": "www.hm.com"
+                "name": "H&M Online",
+                "website_url": "www.hm.com",
+                "store_url": "www.hm.com/products/pullover",
+                "current_price": "39.99",
+                "original_price": "49.99",
+                "is_on_sale": true,
+                "available_sizes": ["S", "M", "L", "XL"],
+                "available_colors": ["Gray"],
+                "stock_status": "in_stock"
             },
             {
-                "store": "Emag",
-                "url": "www.hm.com"
+                "name": "Emag",
+                "website_url": "www.emag.bg",
+                "store_url": "www.emag.bg/products/pullover",
+                "current_price": "45.99",
+                "original_price": "49.99",
+                "is_on_sale": true,
+                "available_sizes": ["S", "M", "L"],
+                "available_colors": ["Gray"],
+                "stock_status": "limited"
             }
         ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 2,
+        "name": "Nike Running Shoes",
+        "description": "High-performance running shoes with excellent support.",
+        "brand": "Nike",
+        "category": "shoes",
         "image": "https://via.placeholder.com/200x200",
-        "description": "A comfortable and stylish pullover for everyday wear.",
-        "color": "Gray",
-        "category": "clothes"
+        "variants": [
+            {
+                "color": "Black",
+                "sizes": ["40", "41", "42", "43"]
+            },
+            {
+                "color": "White",
+                "sizes": ["41", "42", "43"]
+            }
+        ],
+        "stores": [
+            {
+                "name": "Nike",
+                "website_url": "www.nike.com",
+                "store_url": "www.nike.com/products/running-shoes",
+                "current_price": "129.90",
+                "original_price": "149.90",
+                "is_on_sale": true,
+                "available_sizes": ["40", "41", "42", "43"],
+                "available_colors": ["Black", "White"],
+                "stock_status": "in_stock"
+            },
+            {
+                "name": "SportDepot",
+                "website_url": "www.sportdepot.bg",
+                "store_url": "www.sportdepot.bg/products/nike-shoes",
+                "current_price": "119.99",
+                "original_price": "149.90",
+                "is_on_sale": true,
+                "available_sizes": ["40", "41", "43"],
+                "available_colors": ["Black"],
+                "stock_status": "limited"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 3,
+        "name": "Zara Blazer",
+        "description": "A sleek blazer suitable for both formal and casual events.",
+        "brand": "Zara",
+        "category": "clothes",
+        "image": "https://via.placeholder.com/200x200",
+        "variants": [
+            {
+                "color": "Black",
+                "sizes": ["S", "M", "L", "XL"]
+            },
+            {
+                "color": "Navy",
+                "sizes": ["S", "M", "L"]
+            }
+        ],
+        "stores": [
+            {
+                "name": "Zara",
+                "website_url": "www.zara.com",
+                "store_url": "www.zara.com/products/blazer",
+                "current_price": "119.90",
+                "original_price": "159.90",
+                "is_on_sale": true,
+                "available_sizes": ["S", "M", "L", "XL"],
+                "available_colors": ["Black", "Navy"],
+                "stock_status": "in_stock"
+            },
+            {
+                "name": "AboutYou",
+                "website_url": "www.aboutyou.bg",
+                "store_url": "www.aboutyou.bg/p/zara/blazer",
+                "current_price": "124.90",
+                "original_price": "159.90",
+                "is_on_sale": true,
+                "available_sizes": ["S", "M"],
+                "available_colors": ["Black"],
+                "stock_status": "limited"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 4,
+        "name": "Ray-Ban Sunglasses",
+        "description": "Classic aviator sunglasses with UV protection.",
+        "brand": "Ray-Ban",
+        "category": "accessories",
+        "image": "https://via.placeholder.com/200x200",
+        "variants": [
+            {
+                "color": "Gold",
+                "sizes": ["One Size"]
+            },
+            {
+                "color": "Silver",
+                "sizes": ["One Size"]
+            }
+        ],
+        "stores": [
+            {
+                "name": "Ray-Ban",
+                "website_url": "www.ray-ban.com",
+                "store_url": "www.ray-ban.com/products/aviator",
+                "current_price": "159.90",
+                "original_price": "189.90",
+                "is_on_sale": true,
+                "available_sizes": ["One Size"],
+                "available_colors": ["Gold", "Silver"],
+                "stock_status": "in_stock"
+            },
+            {
+                "name": "Opticlasa",
+                "website_url": "www.opticlasa.bg",
+                "store_url": "www.opticlasa.bg/ray-ban/aviator",
+                "current_price": "170.00",
+                "original_price": "189.90",
+                "is_on_sale": true,
+                "available_sizes": ["One Size"],
+                "available_colors": ["Gold"],
+                "stock_status": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
     }
 ]
