@@ -2,41 +2,86 @@ const express = require('express');
 const { createConnection } = require('../database/dbConfig');
 const router = express.Router();
 
-// GET /api/products
 router.get('/products', async (req, res) => {
     try {
         const connection = await createConnection();
         
-        // Извличане на query параметрите
+        let sql = `
+            SELECT
+                p.*,
+                c.name as category_name,
+                GROUP_CONCAT(DISTINCT col.hex_code) as available_colors,
+                GROUP_CONCAT(DISTINCT s.name) as available_sizes,
+                MIN(pp.current_price) as min_price,
+                MAX(pp.current_price) as max_price
+
+            FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                LEFT JOIN product_prices pp ON pp.product_id = p.id
+                LEFT JOIN colors col ON pp.color_id = col.id
+                LEFT JOIN sizes s ON pp.size_id = s.id  
+        `;
+
+        const [products] = await connection.execute(sql);
+
+        for (const product of products) {
+            const [product_prices] = await connection.execute(`
+                SELECT * FROM product_prices pp
+
+                WHERE pp.product_id = ?
+            `, [product.id]);
+
+            product.available_colors = product.available_colors ? 
+                [...new Set(product.available_colors.split(','))] : [];
+            product.available_sizes = product.available_sizes ? 
+                [...new Set(product.available_sizes.split(','))] : [];
+            product.prices = Object.values(product_prices);
+        }
+
+        await connection.end();
+        res.json({ products });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/products/search', async (req, res) => {
+    try {
+        const connection = await createConnection();
+        
         const { 
             minPrice, 
             maxPrice, 
             category,
             search,
             color,
-            size
+            size,
+            store,
+            sort = 'price',    
+            order = 'asc',     
+            page = 1,
+            limit = 10
         } = req.query;
 
-        // Базова SQL заявка
         let sql = `
-            SELECT 
+            SELECT DISTINCT
                 p.*,
                 c.name as category_name,
-                col.name as color_name,
-                s.name as size_name,
                 st.name as store_name,
-                pp.current_price,
-                pp.original_price,
-                pp.is_on_sale,
-                ps.store_url
+                st.website_url,
+                st.catalog_url,
+                GROUP_CONCAT(DISTINCT col.name) as available_colors,
+                GROUP_CONCAT(DISTINCT s.name) as available_sizes,
+                MIN(pp.current_price) as min_price,
+                MAX(pp.current_price) as max_price
             FROM products p
-            JOIN product_variants pv ON p.id = pv.product_id
-            JOIN colors col ON pv.color_id = col.id
-            JOIN sizes s ON pv.size_id = s.id
-            JOIN product_stores ps ON pv.id = ps.product_variant_id
-            JOIN stores st ON ps.store_id = st.id
-            JOIN product_prices pp ON ps.id = pp.product_store_id
-            JOIN categories c ON p.category_id = c.id
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN product_prices pp ON p.id = pp.product_store_id
+            LEFT JOIN colors col ON pp.color_id = col.id
+            LEFT JOIN sizes s ON pp.size_id = s.id
+            LEFT JOIN stores st ON pp.product_store_id = st.id
             WHERE 1=1
         `;
 
@@ -67,142 +112,130 @@ router.get('/products', async (req, res) => {
             params.push(size);
         }
 
+        if (store) {
+            sql += ` AND st.name = ?`;
+            params.push(store);
+        }
+
         if (search) {
             sql += ` AND (p.name LIKE ? OR p.description LIKE ? OR p.brand LIKE ?)`;
             const searchTerm = `%${search}%`;
             params.push(searchTerm, searchTerm, searchTerm);
         }
 
-        sql += ` ORDER BY p.id, pp.current_price ASC`;
+        sql += ` GROUP BY p.id`;
+
+        sql += ` ORDER BY `;
+        switch(sort) {
+            case 'price':
+                sql += `min_price ${order}`;
+                break;
+            case 'name':
+                sql += `p.name ${order}`;
+                break;
+            case 'date':
+                sql += `p.created_at ${order}`;
+                break;
+            default:
+                sql += `p.id ${order}`;
+        }
+
+        const offset = (page - 1) * limit;
+        sql += ` LIMIT ? OFFSET ?`;
+        params.push(parseInt(limit), offset);
 
         const [rows] = await connection.execute(sql, params);
-
-        // Групиране на данните по продукт
-        const groupedProducts = rows.reduce((acc, row) => {
-            if (!acc[row.id]) {
-                acc[row.id] = {
-                    id: row.id,
-                    name: row.name,
-                    description: row.description,
-                    brand: row.brand,
-                    category: row.category_name,
-                    image: row.image,
-                    colors: new Set(),
-                    sizes: new Set(),
-                    stores: [],
-                    created_at: row.created_at,
-                    updated_at: row.updated_at
-                };
-            }
-
-            acc[row.id].colors.add(row.color_name);
-            acc[row.id].sizes.add(row.size_name);
-
-            // Добавяме магазина само ако вече не съществува
-            const storeExists = acc[row.id].stores.find(s => s.name === row.store_name);
-            if (!storeExists) {
-                acc[row.id].stores.push({
-                    name: row.store_name,
-                    url: row.store_url,
-                    current_price: row.current_price,
-                    original_price: row.original_price,
-                    is_on_sale: row.is_on_sale
-                });
-            }
-
-            return acc;
-        }, {});
-
-        // Преобразуване на Set обектите в масиви
-        const products = Object.values(groupedProducts).map(product => ({
-            ...product,
-            colors: Array.from(product.colors),
-            sizes: Array.from(product.sizes)
-        }));
         
+        const formattedProducts = rows.map(row => ({
+            ...row,
+            available_colors: row.available_colors ? [...new Set(row.available_colors.split(','))] : [],
+            available_sizes: row.available_sizes ? [...new Set(row.available_sizes.split(','))] : []
+        }));
+
+        const [countResult] = await connection.execute(
+            'SELECT COUNT(DISTINCT p.id) as total FROM products p'
+        );
+        const total = countResult[0].total;
+
         await connection.end();
-        res.json(products);
+        res.json({
+            products: formattedProducts,
+            pagination: {
+                total,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total_pages: Math.ceil(total / limit)
+            }
+        });
+
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// GET /api/products/:id
 router.get('/products/:id', async (req, res) => {
     try {
         const connection = await createConnection();
-        
-        const [rows] = await connection.execute(`
+        const productId = req.params.id;
+
+        const sql = `
             SELECT 
                 p.*,
                 c.name as category_name,
-                col.name as color_name,
-                s.name as size_name,
                 st.name as store_name,
+                st.website_url,
+                st.catalog_url,
                 pp.current_price,
                 pp.original_price,
-                pp.is_on_sale,
-                ps.store_url
+                pp.stock,
+                col.name as color_name,
+                col.hex_code as color_hex,
+                s.name as size_name
             FROM products p
-            JOIN product_variants pv ON p.id = pv.product_id
-            JOIN colors col ON pv.color_id = col.id
-            JOIN sizes s ON pv.size_id = s.id
-            JOIN product_stores ps ON pv.id = ps.product_variant_id
-            JOIN stores st ON ps.store_id = st.id
-            JOIN product_prices pp ON ps.id = pp.product_store_id
-            JOIN categories c ON p.category_id = c.id
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN product_prices pp ON p.id = pp.product_store_id
+            LEFT JOIN colors col ON pp.color_id = col.id
+            LEFT JOIN sizes s ON pp.size_id = s.id
+            LEFT JOIN stores st ON pp.product_store_id = st.id
             WHERE p.id = ?
-            ORDER BY pp.current_price ASC
-        `, [req.params.id]);
+        `;
+
+        const [rows] = await connection.execute(sql, [productId]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ error: 'Product not found' });
+            res.status(404).json({ error: 'Product not found' });
+            return;
         }
 
-        // Използваме същата логика за групиране
-        const groupedProducts = rows.reduce((acc, row) => {
-            if (!acc[row.id]) {
-                acc[row.id] = {
-                    id: row.id,
-                    name: row.name,
-                    description: row.description,
-                    brand: row.brand,
-                    category: row.category_name,
-                    image: row.image,
-                    colors: new Set(),
-                    sizes: new Set(),
-                    stores: [],
-                    created_at: row.created_at,
-                    updated_at: row.updated_at
-                };
-            }
-
-            acc[row.id].colors.add(row.color_name);
-            acc[row.id].sizes.add(row.size_name);
-
-            const storeExists = acc[row.id].stores.find(s => s.name === row.store_name);
-            if (!storeExists) {
-                acc[row.id].stores.push({
-                    name: row.store_name,
-                    url: row.store_url,
+        const product = {
+            ...rows[0],
+            stores: rows.reduce((stores, row) => {
+                if (!stores[row.store_name]) {
+                    stores[row.store_name] = {
+                        name: row.store_name,
+                        website_url: row.website_url,
+                        catalog_url: row.catalog_url,
+                        variants: []
+                    };
+                }
+                stores[row.store_name].variants.push({
+                    color: row.color_name,
+                    color_hex: row.color_hex,
+                    size: row.size_name,
                     current_price: row.current_price,
                     original_price: row.original_price,
-                    is_on_sale: row.is_on_sale
+                    stock: row.stock
                 });
-            }
+                return stores;
+            }, {})
+        };
 
-            return acc;
-        }, {});
-
-        const product = Object.values(groupedProducts).map(product => ({
-            ...product,
-            colors: Array.from(product.colors),
-            sizes: Array.from(product.sizes)
-        }))[0];
+        product.prices = Object.values(product.prices);
 
         await connection.end();
         res.json(product);
+
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });

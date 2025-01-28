@@ -10,14 +10,18 @@ const Products = ({ filters }) => {
     const itemsPerPage = 10;
 
     useEffect(() => {
-        fetch("/products_catalogue.json")
+        fetch("http://localhost:3000/api/products")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch products data");
                 }
                 return response.json();
             })
-            .then((data) => setProducts(data))
+            .then((data) => 
+                {
+                    setProducts(data)
+                    console.log(data);
+                })
             .catch((error) => console.error("Error loading JSON:", error));
     }, []);
 
@@ -350,11 +354,14 @@ const Products = ({ filters }) => {
                     />
                     <h3 style={styles.name}>{product.name}</h3>
                     <p style={styles.price}>
-                        {Array.isArray(product.price) && product.price.length === 1
+                        {product.prices.map((price)=>{
+                            return <span>{price.current_price}</span>
+                        })}
+                        {/* {Array.isArray(product.prices) && product.prices.length === 1
                             ? `At ${product.price[0].store}: ${product.price[0].price} BGN`
                             : Array.isArray(product.price) && product.price.length > 1
                             ? `From ${product.price[0].price || "N/A"} BGN | available in ${product.price.length} stores`
-                            : "Price not available"}
+                            : "Price not available"} */}
                     </p>
                     <p style={styles.size}>
                         Available sizes: {product.size?.length ? product.size.join(", ") : "No sizes available"}
