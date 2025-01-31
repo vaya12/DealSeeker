@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { productService } from './services/productService';
 
 const Products = ({ filters }) => {
     const [products, setProducts] = useState([]);
@@ -8,21 +9,32 @@ const Products = ({ filters }) => {
     const [sortOption, setSortOption] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const itemsPerPage = 10;
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:3000/api/products")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch products data");
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await productService.getAllProducts();
+                console.log('Fetched products:', data); 
+                
+                if (data && Array.isArray(data.products)) {
+                    setProducts(data.products);
+                } else {
+                    setError('Invalid data format received from server');
+                    console.error('Invalid data format:', data);
                 }
-                return response.json();
-            })
-            .then((data) => 
-                {
-                    setProducts(data)
-                    console.log(data);
-                })
-            .catch((error) => console.error("Error loading JSON:", error));
+            } catch (error) {
+                setError(error.message);
+                console.error('Error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
     }, []);
 
     const categories = [
@@ -47,18 +59,18 @@ const Products = ({ filters }) => {
 
         return productsToFilter.filter(product => {
             const matchesCategory = !filters.categories.length || 
-                filters.categories.map(c => c.toLowerCase()).includes(product.category.toLowerCase());
+                filters.categories.map(c => c.toLowerCase()).includes(product.category_id.toString());
             
             const matchesColor = !filters.colors.length || 
-                filters.colors.includes(product.color);
+                product.prices.some(p => filters.colors.includes(p.color_id?.toString()));
             
             const matchesSize = !filters.sizes.length || 
-                product.size.some(s => filters.sizes.includes(s));
+                product.prices.some(p => filters.sizes.includes(p.size_id?.toString()));
             
             const matchesBrand = !filters.brands.length || 
                 filters.brands.includes(product.brand);
             
-            const lowestPrice = Math.min(...product.price.map(p => parseFloat(p.price)));
+            const lowestPrice = Math.min(...product.prices.map(p => parseFloat(p.current_price)));
             const matchesPrice = !filters.maxPrice || lowestPrice <= filters.maxPrice;
 
             return matchesCategory && matchesColor && matchesSize && 
@@ -67,12 +79,12 @@ const Products = ({ filters }) => {
     };
 
     const productsToShow = applyFilters(products)
-        .filter(product => selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase())
+        .filter(product => selectedCategory === "all" || product.category_id.toString() === selectedCategory)
         .sort((a, b) => {
             if (sortOption === "lowToHigh") {
-                return parseFloat(a.price[0].price) - parseFloat(b.price[0].price);
+                return parseFloat(a.prices[0].current_price) - parseFloat(b.prices[0].current_price);
             } else if (sortOption === "highToLow") {
-                return parseFloat(b.price[0].price) - parseFloat(a.price[0].price);
+                return parseFloat(b.prices[0].current_price) - parseFloat(a.prices[0].current_price);
             }
             return 0;
         });
@@ -314,6 +326,9 @@ const Products = ({ filters }) => {
         setSelectedProduct(null);
     };
 
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
     return (
         <>
             <header style={styles.header}>
@@ -354,17 +369,14 @@ const Products = ({ filters }) => {
                     />
                     <h3 style={styles.name}>{product.name}</h3>
                     <p style={styles.price}>
-                        {product.prices.map((price)=>{
-                            return <span>{price.current_price}</span>
-                        })}
-                        {/* {Array.isArray(product.prices) && product.prices.length === 1
-                            ? `At ${product.price[0].store}: ${product.price[0].price} BGN`
-                            : Array.isArray(product.price) && product.price.length > 1
-                            ? `From ${product.price[0].price || "N/A"} BGN | available in ${product.price.length} stores`
-                            : "Price not available"} */}
+                        From {Math.min(...product.prices.map(p => parseFloat(p.current_price)))} BGN
+                        <br />
+                        Available in {product.prices.length} stores
                     </p>
                     <p style={styles.size}>
-                        Available sizes: {product.size?.length ? product.size.join(", ") : "No sizes available"}
+                        Available sizes: {
+                            [...new Set(product.prices.map(p => p.size_id))].join(", ")
+                        }
                     </p>
                     <button
                         style={styles.detailsButton}
@@ -397,22 +409,24 @@ const Products = ({ filters }) => {
                                 <h2 style={styles.name}>{selectedProduct.name}</h2>
                                 <p>{selectedProduct.description}</p>
                                 <p style={styles.price}>
-                                    {selectedProduct.price?.length === 1
-                                        ? `${selectedProduct.price[0].store}: ${selectedProduct.price[0].price}`
-                                        : `Lowest price: ${selectedProduct.price?.[0]?.price || "N/A"} BGN | available in ${selectedProduct.price?.length || 0} stores`}
+                                    From {Math.min(...selectedProduct.prices.map(p => parseFloat(p.current_price)))} BGN
+                                    <br />
+                                    Available in {selectedProduct.prices.length} stores
                                 </p>
                                 <p style={styles.size}>
-                                    Available sizes: {selectedProduct.size?.length ? selectedProduct.size.join(", ") : "No sizes available"}
+                                    Available sizes: {
+                                        [...new Set(selectedProduct.prices.map(p => p.size_id))].join(", ")
+                                    }
                                 </p>
                             </div>
                         </div>
                         <div style={styles.storeListContainer}>
-                            {selectedProduct.price?.map((store) => (
-                                <div key={store.store} style={styles.storeBox}>
-                                    <span style={styles.storeName}>{store.store}</span>
-                                    <span style={styles.storePrice}>{store.price}</span>
+                            {selectedProduct.prices.map((price) => (
+                                <div key={price.product_store_id} style={styles.storeBox}>
+                                    <span style={styles.storeName}>Store {price.product_store_id}</span>
+                                    <span style={styles.storePrice}>{price.current_price} BGN</span>
                                     <a
-                                        href={store.url || "#"}
+                                        href="#"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={styles.storeButton}

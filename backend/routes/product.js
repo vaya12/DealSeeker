@@ -39,6 +39,7 @@ router.get('/products', async (req, res) => {
         }
 
         await connection.end();
+        console.log('Products:', products);
         res.json({ products });
 
     } catch (error) {
