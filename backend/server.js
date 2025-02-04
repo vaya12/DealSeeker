@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const productRoutes = require('./routes/product');
+const path = require('path');
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(cors({
 }));
 
 app.use('/api', productRoutes);
+
+app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to DealSeeker API' });

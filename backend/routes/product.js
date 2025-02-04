@@ -14,12 +14,21 @@ router.get('/products', async (req, res) => {
                 GROUP_CONCAT(DISTINCT s.name) as available_sizes,
                 MIN(pp.current_price) as min_price,
                 MAX(pp.current_price) as max_price
-
             FROM products p
-                LEFT JOIN categories c ON p.category_id = c.id
-                LEFT JOIN product_prices pp ON pp.product_id = p.id
-                LEFT JOIN colors col ON pp.color_id = col.id
-                LEFT JOIN sizes s ON pp.size_id = s.id  
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN product_prices pp ON pp.product_id = p.id
+            LEFT JOIN colors col ON pp.color_id = col.id
+            LEFT JOIN sizes s ON pp.size_id = s.id
+            GROUP BY 
+                p.id,
+                p.name,
+                p.description,
+                p.brand,
+                p.category_id,
+                p.image,
+                p.created_at,
+                p.updated_at,
+                c.name
         `;
 
         const [products] = await connection.execute(sql);
@@ -27,19 +36,19 @@ router.get('/products', async (req, res) => {
         for (const product of products) {
             const [product_prices] = await connection.execute(`
                 SELECT * FROM product_prices pp
-
+                LEFT JOIN stores s ON pp.product_store_id = s.id
                 WHERE pp.product_id = ?
             `, [product.id]);
+
 
             product.available_colors = product.available_colors ? 
                 [...new Set(product.available_colors.split(','))] : [];
             product.available_sizes = product.available_sizes ? 
                 [...new Set(product.available_sizes.split(','))] : [];
-            product.prices = Object.values(product_prices);
+            product.prices = product_prices;
         }
 
         await connection.end();
-        console.log('Products:', products);
         res.json({ products });
 
     } catch (error) {

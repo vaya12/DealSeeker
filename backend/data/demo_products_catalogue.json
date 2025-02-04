@@ -5,7 +5,7 @@
         "description": "A comfortable and stylish pullover for everyday wear.",
         "brand": "H&M",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "frontend/src/photos/hm_pullover.jpg",
         "prices": [
                     {
                         "product_store_id": 1,
@@ -36,6 +36,61 @@
         
         "created_at": "2024-01-21T07:20:24.000Z",
         "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 2,
+        "name": "Nike Air Max",
+        "description": "Classic Nike sneakers with Air technology for maximum comfort.",
+        "brand": "Nike",
+        "category_id": 3,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 1,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "189.99",
+                "original_price": "199.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 3,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "179.99",
+                "original_price": "199.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 3,
+        "name": "Zara Handbag",
+        "description": "Elegant leather handbag perfect for any occasion.",
+        "brand": "Zara",
+        "category_id": 2,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 2,
+                "size_id": 1,
+                "color_id": 2,
+                "current_price": "89.99",
+                "original_price": "99.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 3,
+                "size_id": 1,
+                "color_id": 2,
+                "current_price": "79.99",
+                "original_price": "99.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
     }
-    
 ]

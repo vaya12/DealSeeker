@@ -191,101 +191,118 @@ const Products = ({ filters }) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             backgroundColor: "white",
-            padding: "20px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            borderRadius: "10px",
+            padding: "30px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+            borderRadius: "20px",
             zIndex: 1000,
-            maxWidth: "600px",
-            width: "100%",
-            boxSizing: "border-box",
-            overflowY: "auto",
-        },
-        modalContent: {
-            display: "flex",
-            alignItems: "flex-start",
-            gap: "20px",
+            width: "80%",
+            maxWidth: "900px",
+            minHeight: "500px",
+            display: "grid",
+            gridTemplateColumns: "40% 60%",
+            gap: "30px",
         },
         modalImage: {
-            flex: "1",
-            maxWidth: "50%",
-            borderRadius: "10px",
-        },
-        modalDetails: {
-            flex: "2",
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-        },
-        overlay: {
-            position: "fixed",
-            top: 0,
-            left: 0,
             width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 999,
+            height: "350px",
+            objectFit: "contain",
+            backgroundColor: "#f8f8f8",
+            borderRadius: "15px",
+            padding: "10px",
+        },
+        productTitle: {
+            fontSize: "24px",
+            fontWeight: "500",
+            marginBottom: "8px",
+            color: "#1a1a1a",
+        },
+        productDescription: {
+            fontSize: "14px",
+            color: "#666",
+            lineHeight: "1.5",
+            marginBottom: "15px",
+        },
+        priceInfo: {
+            fontSize: "20px",
+            color: "#1a1a1a",
+            fontWeight: "500",
+            marginBottom: "20px",
+        },
+        sizesContainer: {
+            marginTop: "15px",
+            padding: "15px",
+            backgroundColor: "#f8f8f8",
+            borderRadius: "12px",
+        },
+        sizesTitle: {
+            fontSize: "16px",
+            fontWeight: "500",
+            marginBottom: "8px",
+            color: "#1a1a1a",
+        },
+        sizesList: {
+            fontSize: "14px",
+            color: "#666",
+        },
+        storesSection: {
+            marginTop: "15px",
+        },
+        storesTitle: {
+            fontSize: "18px",
+            fontWeight: "500",
+            marginBottom: "15px",
+            color: "#1a1a1a",
+        },
+        storeBox: {
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr 1fr",
+            alignItems: "center",
+            padding: "15px",
+            backgroundColor: "#f8f8f8",
+            borderRadius: "10px",
+            marginBottom: "10px",
+            gap: "15px",
+        },
+        storeName: {
+            fontSize: "14px",
+            fontWeight: "500",
+            color: "#1a1a1a",
+        },
+        storePrice: {
+            fontSize: "14px",
+            color: "#1a1a1a",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+        },
+        originalPrice: {
+            textDecoration: "line-through",
+            color: "#999",
+            fontSize: "13px",
+        },
+        storeButton: {
+            padding: "8px 16px",
+            backgroundColor: "#1a1a1a",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "14px",
+            fontWeight: "bold",
+            transition: "all 0.2s ease",
+            width: "100%",
+            textAlign: "center",
         },
         closeButton: {
             position: "absolute",
-            top: "10px",
-            right: "10px",
-            background: "transparent",
+            top: "15px",
+            right: "15px",
+            background: "none",
             border: "none",
             fontSize: "20px",
             cursor: "pointer",
-        },
-        storeListContainer: {
-            display: "block", 
-            width: "100%", 
-            marginTop: "20px", 
-            padding: "10px",
-            borderRadius: "10px", 
-            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
-            boxSizing: "border-box", 
-            overflowX: "hidden", 
-        },
-        storeBox: {
-            display: "flex",
-            justifyContent: "space-between", 
-            alignItems: "center",
-            backgroundColor: "#FFF",
-            padding: "15px",
-            borderRadius: "10px",
-            marginBottom: "10px", 
-            fontFamily: "'Arial', sans-serif",
-            fontWeight: "bold",
-            width: "100%",
-            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", 
-            boxSizing: "border-box", 
-            overflowX: "hidden",
-        },
-        
-        storeName: {
-            fontSize: "18px",
-            color: "#333",
-            flex: "1", 
-        },
-        storePrice: {
-            fontSize: "18px",
-            color: "#333",
-            flex: "1", 
-            textAlign: "center", 
-        },
-        storeButton: {
-            backgroundColor: "#AFCBC4",
-            borderRadius: "5px",
-            padding: "5px 10px",
-            color: "#FFF",
-            fontWeight: "bold",
-            cursor: "pointer",
-            textDecoration: "none",
-            flex: "1", 
-            textAlign: "center", 
-            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)", 
-        },
-        storeButtonHover: {
-            backgroundColor: "#6ca390",
-            color: "white",
+            color: "#666",
+            padding: "5px",
         },
         pagination: {
             display: "flex",
@@ -371,11 +388,11 @@ const Products = ({ filters }) => {
                     <p style={styles.price}>
                         From {Math.min(...product.prices.map(p => parseFloat(p.current_price)))} BGN
                         <br />
-                        Available in {product.prices.length} stores
+                        Available in {new Set(product.prices.map(p => p.product_store_id)).size} stores
                     </p>
                     <p style={styles.size}>
                         Available sizes: {
-                            [...new Set(product.prices.map(p => p.size_id))].join(", ")
+                            product.available_sizes.join(", ")
                         }
                     </p>
                     <button
@@ -391,7 +408,7 @@ const Products = ({ filters }) => {
 
             </div>
 
-
+            
             {selectedProduct && (
                 <>
                     <div style={styles.overlay} onClick={closeModal} />
@@ -406,40 +423,49 @@ const Products = ({ filters }) => {
                                 style={styles.modalImage}
                             />
                             <div style={styles.modalDetails}>
-                                <h2 style={styles.name}>{selectedProduct.name}</h2>
-                                <p>{selectedProduct.description}</p>
-                                <p style={styles.price}>
-                                    From {Math.min(...selectedProduct.prices.map(p => parseFloat(p.current_price)))} BGN
+                                <h2 style={styles.productTitle}>{selectedProduct.name}</h2>
+                                <p style={styles.productDescription}>{selectedProduct.description}</p>
+                                <p style={styles.priceInfo}>
+                                    From {selectedProduct.min_price} BGN
                                     <br />
-                                    Available in {selectedProduct.prices.length} stores
+                                    Available in {new Set(selectedProduct.prices.map(p => p.product_store_id)).size} stores
                                 </p>
-                                <p style={styles.size}>
-                                    Available sizes: {
-                                        [...new Set(selectedProduct.prices.map(p => p.size_id))].join(", ")
-                                    }
-                                </p>
+                                <div style={styles.sizesContainer}>
+                                    <p style={styles.sizesTitle}>Available sizes:</p>
+                                    <p style={styles.sizesList}>{selectedProduct.available_sizes.join(", ")}</p>
+                                </div>
                             </div>
                         </div>
-                        <div style={styles.storeListContainer}>
-                            {selectedProduct.prices.map((price) => (
-                                <div key={price.product_store_id} style={styles.storeBox}>
-                                    <span style={styles.storeName}>Store {price.product_store_id}</span>
-                                    <span style={styles.storePrice}>{price.current_price} BGN</span>
-                                    <a
-                                        href="#"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={styles.storeButton}
-                                        onMouseEnter={(e) => (e.target.style.backgroundColor = "#6ca390")}
-                                        onMouseLeave={(e) => (e.target.style.backgroundColor = "#AFCBC4")}
-                                    >
-                                        Go to the store
-                                    </a>
-                                </div>
-                            ))}
+                        <div style={styles.storesSection}>
+                            <h3 style={styles.storesTitle}>Available in these stores:</h3>
+                            <div style={styles.storeListContainer}>
+                                {selectedProduct.prices.map((price) => {
+                                    return (
+                                        <div key={price.product_store_id} style={styles.storeBox}>
+                                            <span style={styles.storeName}>{price.name}</span>
+                                            <span style={styles.storePrice}>
+                                                {price.current_price} BGN
+                                                {price.original_price !== price.current_price && (
+                                                    <span style={styles.originalPrice}>
+                                                        {price.original_price} BGN
+                                                    </span>
+                                                )}
+                                            </span>
+                                            <button
+                                                style={styles.storeButton}
+                                                onClick={() => {
+                                                    console.log(`Redirecting to store ${price.product_store_id}`);
+                                                }}
+                                                onMouseEnter={(e) => (e.target.style.backgroundColor = "#AFCBC4")}
+                                                onMouseLeave={(e) => (e.target.style.backgroundColor = "#000")}
+                                            >
+                                                Go to the store
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
-
-                                                
                     </div>
                 </>
             )}
