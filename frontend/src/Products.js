@@ -212,7 +212,7 @@ const Products = ({ filters }) => {
         },
         productTitle: {
             fontSize: "24px",
-            fontWeight: "500",
+            fontWeight: "bold",
             marginBottom: "8px",
             color: "#1a1a1a",
         },
@@ -236,7 +236,7 @@ const Products = ({ filters }) => {
         },
         sizesTitle: {
             fontSize: "16px",
-            fontWeight: "500",
+            fontWeight: "bold",
             marginBottom: "8px",
             color: "#1a1a1a",
         },
@@ -249,7 +249,7 @@ const Products = ({ filters }) => {
         },
         storesTitle: {
             fontSize: "18px",
-            fontWeight: "500",
+            fontWeight: "bold",
             marginBottom: "15px",
             color: "#1a1a1a",
         },
@@ -265,12 +265,13 @@ const Products = ({ filters }) => {
         },
         storeName: {
             fontSize: "14px",
-            fontWeight: "500",
+            fontWeight: "bold",
             color: "#1a1a1a",
         },
         storePrice: {
-            fontSize: "14px",
-            color: "#1a1a1a",
+            fontSize: "16px",
+            color: "#6CA390",
+            fontWeight: "bold",
             display: "flex",
             alignItems: "center",
             gap: "8px",
@@ -278,7 +279,7 @@ const Products = ({ filters }) => {
         originalPrice: {
             textDecoration: "line-through",
             color: "#999",
-            fontSize: "13px",
+            fontSize: "14px",
         },
         storeButton: {
             padding: "8px 16px",
@@ -329,6 +330,80 @@ const Products = ({ filters }) => {
             cursor: "not-allowed",
             backgroundColor: "#f0f0f0",
         },
+        colorsContainer: {
+            margin: "10px 0",
+            textAlign: "center",
+            width: "100%"
+        },
+        colorsTitle: {
+            fontSize: "14px",
+            color: "#666",
+            marginBottom: "8px"
+        },
+        colorsWrapper: {
+            display: "flex",
+            justifyContent: "center",
+            gap: "8px",
+            flexWrap: "wrap",
+            padding: "0 15px"
+        },
+        colorCircle: {
+            width: "25px",
+            height: "25px",
+            borderRadius: "50%",
+            cursor: "pointer",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            transition: "transform 0.2s ease",
+            "&:hover": {
+                transform: "scale(1.1)"
+            }
+        },
+        modalColorsContainer: {
+            marginTop: "15px",
+            padding: "15px",
+            textAlign: "center",
+            backgroundColor: "#f8f8f8",
+            borderRadius: "12px",
+        },
+        modalColorCircle: {
+            width: "30px",
+            height: "30px",
+            borderRadius: "50%",
+            cursor: "pointer",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            transition: "transform 0.2s ease",
+            "&:hover": {
+                transform: "scale(1.1)"
+            }
+        },
+        modalSectionTitle: {
+            fontSize: "16px",
+            fontWeight: "bold",
+            marginBottom: "12px",
+            textAlign: "center"
+        },
+        storeInfo: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+        },
+        saleLogo: {
+            width: '40px',
+            height: '40px',
+            objectFit: 'contain',
+            animation: 'pulse 2s infinite'
+        },
+        '@keyframes pulse': {
+            '0%': {
+                transform: 'scale(1)'
+            },
+            '50%': {
+                transform: 'scale(1.1)'
+            },
+            '100%': {
+                transform: 'scale(1)'
+            }
+        }
     };
 
     const handleCardHover = (id) => {
@@ -390,10 +465,24 @@ const Products = ({ filters }) => {
                         <br />
                         Available in {new Set(product.prices.map(p => p.product_store_id)).size} stores
                     </p>
+                    <div style={styles.colorsContainer}>
+                        <p style={styles.colorsTitle}>Available colors:</p>
+                        <div style={styles.colorsWrapper}>
+                            {product.available_colors.map((color, index) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        ...styles.colorCircle,
+                                        backgroundColor: color,
+                                        border: color === '#FFFFFF' ? '1px solid #ddd' : 'none'
+                                    }}
+                                    title={color}
+                                />
+                            ))}
+                        </div>
+                    </div>
                     <p style={styles.size}>
-                        Available sizes: {
-                            product.available_sizes.join(", ")
-                        }
+                        Available sizes: {product.available_sizes.join(", ")}
                     </p>
                     <button
                         style={styles.detailsButton}
@@ -418,31 +507,54 @@ const Products = ({ filters }) => {
                         </button>
                         <div style={styles.modalContent}>
                             <img
-                                src={selectedProduct.image || "https://via.placeholder.com/240"}
+                                src={selectedProduct.image || "https://via.placeholder.com/200x200"}
                                 alt={selectedProduct.name}
                                 style={styles.modalImage}
                             />
                             <div style={styles.modalDetails}>
                                 <h2 style={styles.productTitle}>{selectedProduct.name}</h2>
                                 <p style={styles.productDescription}>{selectedProduct.description}</p>
-                                <p style={styles.priceInfo}>
-                                    From {selectedProduct.min_price} BGN
-                                    <br />
-                                    Available in {new Set(selectedProduct.prices.map(p => p.product_store_id)).size} stores
-                                </p>
                                 <div style={styles.sizesContainer}>
                                     <p style={styles.sizesTitle}>Available sizes:</p>
                                     <p style={styles.sizesList}>{selectedProduct.available_sizes.join(", ")}</p>
                                 </div>
+                                <div style={styles.modalColorsContainer}>
+                                <h3 style={styles.modalSectionTitle}>Available colors:</h3>
+                                <div style={styles.colorsWrapper}>
+                                    {selectedProduct.available_colors.map((color, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                ...styles.modalColorCircle,
+                                                backgroundColor: color,
+                                                border: color === '#FFFFFF' ? '1px solid #ddd' : 'none'
+                                            }}
+                                            title={color}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
                             </div>
                         </div>
                         <div style={styles.storesSection}>
                             <h3 style={styles.storesTitle}>Available in these stores:</h3>
                             <div style={styles.storeListContainer}>
-                                {selectedProduct.prices.map((price) => {
-                                    return (
+                                {Array.from(new Set(selectedProduct.prices.map(p => p.product_store_id)))
+                                    .map(storeId => selectedProduct.prices.find(p => p.product_store_id === storeId))
+                                    .sort((a, b) => parseFloat(a.current_price) - parseFloat(b.current_price))
+                                    .map(price => (
                                         <div key={price.product_store_id} style={styles.storeBox}>
-                                            <span style={styles.storeName}>{price.name}</span>
+                                            <div style={styles.storeInfo}>
+                                                <span style={styles.storeName}>{price.name}</span>
+                                                {parseFloat(price.current_price) < parseFloat(price.original_price) && (
+                                                    <img 
+                                                        src="/sale_logo.png" 
+                                                        alt="Sale" 
+                                                        style={styles.saleLogo}
+                                                    />
+                                                )}
+                                            </div>
                                             <span style={styles.storePrice}>
                                                 {price.current_price} BGN
                                                 {price.original_price !== price.current_price && (
@@ -462,8 +574,7 @@ const Products = ({ filters }) => {
                                                 Go to the store
                                             </button>
                                         </div>
-                                    );
-                                })}
+                                    ))}
                             </div>
                         </div>
                     </div>
