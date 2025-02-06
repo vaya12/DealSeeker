@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { productService } from './services/productService';
 
 const groupProducts = (products) => {
@@ -53,6 +53,7 @@ const Products = ({ filters }) => {
     const [loading, setLoading] = useState(true);
     const [hoveredButton, setHoveredButton] = useState(null);
     const [clickedButton, setClickedButton] = useState(null);
+    const [noResults, setNoResults] = useState(false);
 
     const itemsPerPageOptions = [
         { value: 5, label: '5 products' },
@@ -60,6 +61,58 @@ const Products = ({ filters }) => {
         { value: 15, label: '15 products' },
         { value: 20, label: '20 products' }
     ];
+
+    const filteredProducts = useMemo(() => {
+        console.log('Current filters:', filters);
+        console.log('All products:', products);
+        
+        if (!products.length) return [];
+
+        return products.filter(product => {
+            // Category filter
+            const categoryMatch = filters.categories.length === 0 || 
+                filters.categories.some(category => 
+                    product.category_name.toLowerCase() === category.toLowerCase()
+                );
+
+            // Color filter
+            const colorMatch = filters.colors.length === 0 || 
+                filters.colors.some(filterColor => 
+                    product.available_colors.some(productColor => 
+                        productColor.toLowerCase() === filterColor.toLowerCase()
+                    )
+                );
+
+            // Size filter
+            const sizeMatch = filters.sizes.length === 0 || 
+                filters.sizes.some(filterSize => 
+                    product.available_sizes.includes(filterSize)
+                );
+
+            // Brand filter
+            const brandMatch = filters.brands.length === 0 || 
+                filters.brands.some(brand => 
+                    product.brand.toLowerCase() === brand.toLowerCase()
+                );
+
+            // Price filter
+            const productPrice = parseFloat(product.min_price);
+            const priceMatch = 
+                (!filters.minPrice || productPrice >= filters.minPrice) && 
+                (!filters.maxPrice || productPrice <= filters.maxPrice);
+
+            console.log(`Product ${product.name} matches:`, {
+                categoryMatch,
+                colorMatch,
+                sizeMatch,
+                brandMatch,
+                priceMatch
+            });
+
+            // Product must match ALL active filters
+            return categoryMatch && colorMatch && sizeMatch && brandMatch && priceMatch;
+        });
+    }, [products, filters]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -86,6 +139,12 @@ const Products = ({ filters }) => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        const hasNoResults = filteredProducts.length === 0;
+        console.log('No results:', hasNoResults);
+        setNoResults(hasNoResults);
+    }, [filteredProducts]);
+
     const categories = [
         { label: "Sort by category:", value: "all" },
         { label: "Clothes", value: "clothes" },
@@ -109,31 +168,7 @@ const Products = ({ filters }) => {
         setCurrentPage(1);
     };
 
-    const applyFilters = (productsToFilter) => {
-        if (!filters || !productsToFilter) return productsToFilter;
-
-        return productsToFilter.filter(product => {
-            const matchesCategory = !filters.categories.length || 
-                filters.categories.map(c => c.toLowerCase()).includes(product.category_name.toLowerCase());
-            
-            const matchesColor = !filters.colors.length || 
-                product.available_colors.some(color => filters.colors.includes(color));
-            
-            const matchesSize = !filters.sizes.length || 
-                product.available_sizes.some(size => filters.sizes.includes(size));
-            
-            const matchesBrand = !filters.brands.length || 
-                filters.brands.includes(product.brand);
-            
-            const lowestPrice = parseFloat(product.min_price);
-            const matchesPrice = !filters.maxPrice || lowestPrice <= filters.maxPrice;
-
-            return matchesCategory && matchesColor && matchesSize && 
-                   matchesBrand && matchesPrice;
-        });
-    };
-
-    const productsToShow = applyFilters(products)
+    const productsToShow = filteredProducts
         .filter(product => selectedCategory === "all" || 
             product.category_name.toLowerCase() === selectedCategory.toLowerCase())
         .sort((a, b) => {
@@ -542,6 +577,25 @@ const Products = ({ filters }) => {
             margin: "5px 0",
             fontStyle: "italic"
         },
+        noResults: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "50px",
+            textAlign: "center"
+        },
+        noResultsTitle: {
+            fontSize: "24px",
+            fontWeight: "bold",
+            marginBottom: "20px",
+            color: "#1a1a1a"
+        },
+        noResultsText: {
+            fontSize: "16px",
+            color: "#666",
+            lineHeight: "1.5"
+        },
     };
 
     const handleCardHover = (id) => {
@@ -558,6 +612,17 @@ const Products = ({ filters }) => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
+    if (noResults) {
+        return (
+            <div style={styles.noResults}>
+                <h2 style={styles.noResultsTitle}>No Results Found</h2>
+                <p style={styles.noResultsText}>
+                    We couldn't find any products matching your filters.
+                    Try adjusting your search criteria.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <>

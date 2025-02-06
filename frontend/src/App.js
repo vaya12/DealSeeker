@@ -13,7 +13,8 @@ function App() {
     colors: [],
     sizes: [],
     brands: [],
-    maxPrice: 1000
+    minPrice: 0,
+    maxPrice: 300
   });
 
   const handleFilter = (newFilters) => {

@@ -55,13 +55,15 @@ const Filter = ({ onFilter }) => {
 
   const handleFilter = () => {
     const filters = {
-      categories: selectedCategories.map(cat => cat.toLowerCase()),
+      categories: selectedCategories,
       colors: selectedColors,
       sizes: selectedSizes,
       brands: selectedBrands,
-      minPrice: minPrice > 0 ? minPrice : null,
-      maxPrice: maxPrice > 0 ? maxPrice : null
+      minPrice: Number(minPrice) || 0,
+      maxPrice: Number(maxPrice) || 300
     };
+    
+    console.log('Sending filters:', filters);
     onFilter(filters);
     navigate("/products", { state: filters });
   };
