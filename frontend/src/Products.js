@@ -48,9 +48,16 @@ const Products = ({ filters }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
-    const itemsPerPage = 10;
+    const [itemsPerPage, setItemsPerPage] = useState(12);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const itemsPerPageOptions = [
+        { value: 5, label: '5 products' },
+        { value: 10, label: '10 products' },
+        { value: 15, label: '15 products' },
+        { value: 20, label: '20 products' }
+    ];
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -86,12 +93,18 @@ const Products = ({ filters }) => {
     ];
 
     const handleSortChange = (event) => {
-        setSortOption(event.target.current_price); 
+        setSortOption(event.target.value);
     };
 
     const handleCategoryChange = (event) => {
-        setSelectedCategory(event.target.category_name);
+        setSelectedCategory(event.target.value);
         setCurrentPage(1); 
+    };
+
+    const handleItemsPerPageChange = (event) => {
+        const newItemsPerPage = parseInt(event.target.value);
+        setItemsPerPage(newItemsPerPage);
+        setCurrentPage(1);
     };
 
     const applyFilters = (productsToFilter) => {
@@ -99,18 +112,18 @@ const Products = ({ filters }) => {
 
         return productsToFilter.filter(product => {
             const matchesCategory = !filters.categories.length || 
-                filters.categories.map(c => c.toLowerCase()).includes(product.category_id.toString());
+                filters.categories.map(c => c.toLowerCase()).includes(product.category_name.toLowerCase());
             
             const matchesColor = !filters.colors.length || 
-                product.prices.some(p => filters.colors.includes(p.color_id?.toString()));
+                product.available_colors.some(color => filters.colors.includes(color));
             
             const matchesSize = !filters.sizes.length || 
-                product.prices.some(p => filters.sizes.includes(p.size_id?.toString()));
+                product.available_sizes.some(size => filters.sizes.includes(size));
             
             const matchesBrand = !filters.brands.length || 
                 filters.brands.includes(product.brand);
             
-            const lowestPrice = Math.min(...product.prices.map(p => parseFloat(p.current_price)));
+            const lowestPrice = parseFloat(product.min_price);
             const matchesPrice = !filters.maxPrice || lowestPrice <= filters.maxPrice;
 
             return matchesCategory && matchesColor && matchesSize && 
@@ -119,12 +132,13 @@ const Products = ({ filters }) => {
     };
 
     const productsToShow = applyFilters(products)
-        .filter(product => selectedCategory === "all" || product.category_id.toString() === selectedCategory)
+        .filter(product => selectedCategory === "all" || 
+            product.category_name.toLowerCase() === selectedCategory.toLowerCase())
         .sort((a, b) => {
             if (sortOption === "lowToHigh") {
-                return parseFloat(a.prices[0].current_price) - parseFloat(b.prices[0].current_price);
+                return parseFloat(a.min_price) - parseFloat(b.min_price);
             } else if (sortOption === "highToLow") {
-                return parseFloat(b.prices[0].current_price) - parseFloat(a.prices[0].current_price);
+                return parseFloat(b.max_price) - parseFloat(a.max_price);
             }
             return 0;
         });
@@ -134,6 +148,7 @@ const Products = ({ filters }) => {
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
@@ -152,14 +167,6 @@ const Products = ({ filters }) => {
             color: "#fff",
             padding: "15px 30px",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        },
-        dropdown: {
-            padding: "10px",
-            fontSize: "16px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            backgroundColor: "#fff",
-            cursor: "pointer",
         },
         title: {
             fontFamily: "'Saira Stencil One', sans-serif",
@@ -351,24 +358,29 @@ const Products = ({ filters }) => {
             alignItems: "center",
             marginTop: "20px",
             marginBottom: "50px",
+            gap: "10px"
         },
         pageButton: {
             padding: "10px 20px",
-            margin: "0 5px",
             border: "1px solid #ccc",
             borderRadius: "5px",
             backgroundColor: "#fff",
             cursor: "pointer",
             fontWeight: "bold",
-            transition: "background-color 0.3s",
+            transition: "all 0.3s ease",
+            "&:hover": {
+                backgroundColor: "#f0f0f0"
+            }
         },
         pageButtonActive: {
             backgroundColor: "#000",
             color: "#fff",
+            borderColor: "#000"
         },
         pageButtonDisabled: {
-            cursor: "not-allowed",
             backgroundColor: "#f0f0f0",
+            cursor: "not-allowed",
+            opacity: 0.5
         },
         colorsContainer: {
             margin: "10px 0",
@@ -443,7 +455,30 @@ const Products = ({ filters }) => {
             '100%': {
                 transform: 'scale(1)'
             }
-        }
+        },
+        controlsContainer: {
+            display: "flex",
+            gap: "15px",
+            alignItems: "center",
+            flexWrap: "wrap"
+        },
+        dropdown: {
+            padding: "8px 12px",
+            border: "1px solid #ddd",
+            borderRadius: "6px",
+            backgroundColor: "#fff",
+            fontSize: "14px",
+            cursor: "pointer",
+            minWidth: "150px",
+            "&:hover": {
+                borderColor: "#999"
+            },
+            "&:focus": {
+                outline: "none",
+                borderColor: "#666"
+            }
+        },
+        
     };
 
     const handleCardHover = (id) => {
@@ -465,22 +500,42 @@ const Products = ({ filters }) => {
         <>
             <header style={styles.header}>
                 <h1 style={styles.title}>Products</h1>
-                <select
-                    style={styles.dropdown}
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                >
-                    {categories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                            {category.label}
-                        </option>
-                    ))}
-                </select>
-                <select style={styles.dropdown} value={sortOption} onChange={handleSortChange}>
-                    <option value="">Sort by</option>
-                    <option value="lowToHigh">Price: Low to High</option>
-                    <option value="highToLow">Price: High to Low</option>
-                </select>
+                <div style={styles.controlsContainer}>
+                    <select
+                        style={styles.dropdown}
+                        value={selectedCategory}
+                        onChange={handleCategoryChange}
+                    >
+                        {categories.map((category) => (
+                            <option key={category.value} value={category.value}>
+                                {category.label}
+                            </option>
+                        ))}
+                    </select>
+                    
+                    <select 
+                        style={styles.dropdown} 
+                        value={sortOption} 
+                        onChange={handleSortChange}
+                    >
+                        <option value="">Sort by</option>
+                        <option value="lowToHigh">Price: Low to High</option>
+                        <option value="highToLow">Price: High to Low</option>
+                    </select>
+
+                    <select
+                        style={styles.dropdown}
+                        value={itemsPerPage}
+                        onChange={handleItemsPerPageChange}
+                    >
+                        <option value="all">Products per page</option>
+                        {itemsPerPageOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </header>
 
             <div style={styles.grid}>
@@ -620,40 +675,44 @@ const Products = ({ filters }) => {
                     </div>
                 </>
             )}
-            <div style={styles.pagination}>
-                <button
-                    style={{
-                        ...styles.pageButton,
-                        ...(currentPage === 1 ? styles.pageButtonDisabled : {}),
-                    }}
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                >
-                    Previous
-                </button>
-                {Array.from({ length: totalPages }, (_, index) => (
+            {totalPages > 1 && (
+                <div style={styles.pagination}>
                     <button
-                        key={index + 1}
                         style={{
                             ...styles.pageButton,
-                            ...(currentPage === index + 1 ? styles.pageButtonActive : {}),
+                            ...(currentPage === 1 ? styles.pageButtonDisabled : {})
                         }}
-                        onClick={() => handlePageChange(index + 1)}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
                     >
-                        {index + 1}
+                        Previous
                     </button>
-                ))}
-                <button
-                    style={{
-                        ...styles.pageButton,
-                        ...(currentPage === totalPages ? styles.pageButtonDisabled : {}),
-                    }}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                >
-                    Next
-                </button>
-            </div>
+
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index + 1}
+                            style={{
+                                ...styles.pageButton,
+                                ...(currentPage === index + 1 ? styles.pageButtonActive : {})
+                            }}
+                            onClick={() => handlePageChange(index + 1)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+
+                    <button
+                        style={{
+                            ...styles.pageButton,
+                            ...(currentPage === totalPages ? styles.pageButtonDisabled : {})
+                        }}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </>
     );
 };
