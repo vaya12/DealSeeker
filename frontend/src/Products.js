@@ -163,7 +163,7 @@ const Products = ({ filters }) => {
             justifyContent: "space-between",
             alignItems: "center",
             marginBottom: "20px",
-            backgroundColor: "#1a1a1a",
+            backgroundColor: "#000",
             color: "#fff",
             padding: "15px 30px",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
@@ -243,27 +243,39 @@ const Products = ({ filters }) => {
             borderRadius: "10px",
             fontWeight: "bold",
         },
+        modalOverlay: {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)", 
+            zIndex: 999,
+        },
         modal: {
             position: "fixed",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             backgroundColor: "white",
-            padding: "30px",
+            padding: "5px",
             borderRadius: "20px",
             zIndex: 1000,
             width: "90%",
-            maxWidth: "1000px",
-            maxHeight: "90vh",
+            maxWidth: "800px",
+            maxHeight: "70vh",
             overflow: "auto",
             display: "flex",
             flexDirection: "column",
-            gap: "30px"
+            gap: "30px",
+            borderStyle: "solid",
+            borderColor: "#afcbc4",
+            borderWidth: "thick"
         },
         modalContent: {
             display: "flex",
             gap: "30px",
-            marginBottom: "30px"
+            marginBottom: "20px"
         },
         modalLeftSection: {
             flex: "0 0 40%"
@@ -648,6 +660,8 @@ const Products = ({ filters }) => {
 
             
             {selectedProduct && (
+                <>
+                <div style={styles.modalOverlay} onClick={closeModal}></div>
                 <div style={styles.modal}>
                     <button style={styles.closeButton} onClick={closeModal}>
                         &times;
@@ -726,6 +740,7 @@ const Products = ({ filters }) => {
                         </div>
                     </div>
                 </div>
+                </>
             )}
             {totalPages > 1 && (
                 <div style={styles.pagination}>
@@ -767,6 +782,7 @@ const Products = ({ filters }) => {
             )}
         </>
     );
+    
 };
 
 export default Products;
