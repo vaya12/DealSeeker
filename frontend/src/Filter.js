@@ -5,7 +5,8 @@ const Filter = ({ onFilter }) => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [price, setPrice] = useState(location.state?.price || 0);
+  const [minPrice, setMinPrice] = useState(location.state?.minPrice || 0);
+  const [maxPrice, setMaxPrice] = useState(location.state?.maxPrice || 300);
   const [selectedCategories, setSelectedCategories] = useState(location.state?.categories || []);
   const [selectedColors, setSelectedColors] = useState(location.state?.colors || []);
   const [selectedSizes, setSelectedSizes] = useState(location.state?.sizes || []);
@@ -28,16 +29,17 @@ const Filter = ({ onFilter }) => {
         colors: location.state.colors || [],
         sizes: location.state.sizes || [],
         brands: location.state.brands || [],
-        price: location.state.price || 0,
+        minPrice: location.state.minPrice || 0,
+        maxPrice: location.state.maxPrice || 300,
       };
       onFilter(filters);
     }
   }, [location.state, onFilter]);
 
-  const categories = ["Clothes", "Bags", "Shoes", "Accessories"];
-  const colors = ["#c7eb91", "#000", "#71a79f", "#dda3d1"];
+  const categories = ["clothes", "bags", "shoes", "accessories"];
+  const colors = ["#808080", "#000000", "#FFFFFF", "#000080"];
   const sizes = ["XS", "S", "M", "L", "XL"];
-  const brands = ["Nike", "Adidas", "Puma", "Reebok"];
+  const brands = ["H&M", "Nike", "Adidas", "Puma", "Zara"];
 
   const toggleSection = (section) => {
     setExpandedSections((prev) =>
@@ -53,11 +55,12 @@ const Filter = ({ onFilter }) => {
 
   const handleFilter = () => {
     const filters = {
-      categories: selectedCategories,
+      categories: selectedCategories.map(cat => cat.toLowerCase()),
       colors: selectedColors,
       sizes: selectedSizes,
       brands: selectedBrands,
-      price,
+      minPrice: minPrice > 0 ? minPrice : null,
+      maxPrice: maxPrice > 0 ? maxPrice : null
     };
     onFilter(filters);
     navigate("/products", { state: filters });
@@ -68,14 +71,16 @@ const Filter = ({ onFilter }) => {
     setSelectedColors([]);
     setSelectedSizes([]);
     setSelectedBrands([]);
-    setPrice(0);
+    setMinPrice(0);
+    setMaxPrice(300);
     
     const emptyFilters = {
       categories: [],
       colors: [],
       sizes: [],
       brands: [],
-      price: 0,
+      minPrice: 0,
+      maxPrice: 300,
     };
     onFilter(emptyFilters);
     navigate("/products", { state: emptyFilters });
@@ -86,7 +91,8 @@ const Filter = ({ onFilter }) => {
            selectedColors.length > 0 ||
            selectedSizes.length > 0 ||
            selectedBrands.length > 0 ||
-           price > 0;
+           minPrice > 0 ||
+           maxPrice > 0;
   };
 
   const styles = {
@@ -184,6 +190,36 @@ const Filter = ({ onFilter }) => {
     clearButtonHover: {
       backgroundColor: "#bbb",
     },
+    priceRangeContainer: {
+      padding: "15px 10px",
+    },
+    priceInputs: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: "15px",
+    },
+    priceInputGroup: {
+      display: "flex",
+      alignItems: "center",
+      flex: "1",
+    },
+    priceInput: {
+      width: "70px",
+      padding: "8px",
+      border: "1px solid #ddd",
+      borderRadius: "4px",
+      fontSize: "14px",
+      marginRight: "5px",
+    },
+    currencyLabel: {
+      fontSize: "14px",
+      color: "#666",
+    },
+    priceSeparator: {
+      margin: "0 10px",
+      color: "#666",
+    },
   };
 
   return (
@@ -201,21 +237,11 @@ const Filter = ({ onFilter }) => {
                   ...styles.item,
                   ...(selectedCategories.includes(category) && styles.itemActive),
                 }}
-                onMouseEnter={(e) => {
-                  if (!selectedCategories.includes(category)) {
-                    e.target.style.backgroundColor = styles.itemHover.backgroundColor;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!selectedCategories.includes(category)) {
-                    e.target.style.backgroundColor = styles.item.backgroundColor;
-                  }
-                }}
                 onClick={() =>
                   toggleSelection(category, selectedCategories, setSelectedCategories)
                 }
               >
-                {category}
+                {category.charAt(0).toUpperCase() + category.slice(1)}
               </div>
             ))}
           </div>
@@ -308,17 +334,44 @@ const Filter = ({ onFilter }) => {
           Price Range {expandedSections.includes("price") ? "▼" : "▶"}
         </h2>
         {expandedSections.includes("price") && (
-          <div style={styles.range}>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              step="1"
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-              style={{ width: "80%" }}
-            />
-            <span>{price} BGN</span>
+          <div style={styles.priceRangeContainer}>
+            <div style={styles.priceInputs}>
+              <div style={styles.priceInputGroup}>
+                <input
+                  type="number"
+                  min="0"
+                  max={maxPrice}
+                  value={minPrice}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (value <= maxPrice) {
+                      setMinPrice(value);
+                    }
+                  }}
+                  style={styles.priceInput}
+                  placeholder="Min"
+                />
+                <span style={styles.currencyLabel}>BGN</span>
+              </div>
+              <span style={styles.priceSeparator}>-</span>
+              <div style={styles.priceInputGroup}>
+                <input
+                  type="number"
+                  min={minPrice}
+                  max="1000"
+                  value={maxPrice}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    if (value >= minPrice) {
+                      setMaxPrice(value);
+                    }
+                  }}
+                  style={styles.priceInput}
+                  placeholder="Max"
+                />
+                <span style={styles.currencyLabel}>BGN</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -336,7 +389,8 @@ const Filter = ({ onFilter }) => {
             selectedColors.length && `${selectedColors.length} colors`,
             selectedSizes.length && `${selectedSizes.length} sizes`,
             selectedBrands.length && `${selectedBrands.length} brands`,
-            price > 0 && `Price up to ${price} BGN`
+            minPrice > 0 && `Price from ${minPrice} BGN`,
+            maxPrice > 0 && `Price up to ${maxPrice} BGN`
           ].filter(Boolean).join(", ")}
         </div>
       )}
