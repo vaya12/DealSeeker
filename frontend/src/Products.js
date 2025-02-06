@@ -51,6 +51,8 @@ const Products = ({ filters }) => {
     const [itemsPerPage, setItemsPerPage] = useState(12);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [hoveredButton, setHoveredButton] = useState(null);
+    const [clickedButton, setClickedButton] = useState(null);
 
     const itemsPerPageOptions = [
         { value: 5, label: '5 products' },
@@ -232,16 +234,16 @@ const Products = ({ filters }) => {
             color: "#777",
         },
         detailsButton: {
-            marginTop: "auto",
-            padding: "10px 10px",
-            backgroundColor: "black",
-            color: "white",
+            padding: "10px 20px",
+            backgroundColor: "#000",
+            color: "#fff",
             border: "none",
+            borderRadius: "5px",
             cursor: "pointer",
-            transition: "background-color 0.2s",
             width: "100%",
-            borderRadius: "10px",
             fontWeight: "bold",
+            marginTop: "auto",
+            transition: "all 0.3s ease",
         },
         modalOverlay: {
             position: "fixed",
@@ -310,20 +312,19 @@ const Products = ({ filters }) => {
             marginBottom: "20px",
         },
         sizesContainer: {
-            marginTop: "15px",
-            padding: "15px",
-            backgroundColor: "#f8f8f8",
-            borderRadius: "12px",
+            marginBottom: "10px",
+            textAlign: "center"
         },
         sizesTitle: {
-            fontSize: "16px",
+            fontSize: "14px",
             fontWeight: "bold",
-            marginBottom: "8px",
-            color: "#1a1a1a",
+            marginBottom: "5px",
+            color: "#333"
         },
         sizesList: {
             fontSize: "14px",
             color: "#666",
+            margin: "0"
         },
         storesSection: {
             marginTop: "15px",
@@ -424,8 +425,9 @@ const Products = ({ filters }) => {
         },
         colorsTitle: {
             fontSize: "14px",
-            color: "#666",
-            marginBottom: "8px"
+            color: "#000",
+            marginBottom: "8px",
+            fontWeight: "bold"
         },
         colorsWrapper: {
             display: "flex",
@@ -534,6 +536,12 @@ const Products = ({ filters }) => {
             gap: "15px",
             alignItems: "center"
         },
+        storesCount: {
+            fontSize: "14px",
+            color: "#666",
+            margin: "5px 0",
+            fontStyle: "italic"
+        },
     };
 
     const handleCardHover = (id) => {
@@ -594,68 +602,96 @@ const Products = ({ filters }) => {
             </header>
 
             <div style={styles.grid}>
-                {productsToShowPaginated.map((product) => (
-                <div
-                    key={product.id} 
-                    style={{
-                        ...styles.card,
-                        ...(hoveredCard === product.id ? styles.cardHover : {}), 
-                    }}
-                    onMouseEnter={() => handleCardHover(product.id)} 
-                    onMouseLeave={() => setHoveredCard(null)} 
-                >
-                    <div style={styles.imageContainer}>
-                        <img
-                            src={product.image || "https://via.placeholder.com/200x200"}
-                            alt={product.name}
-                            style={styles.image}
-                        />
-                        {product.prices.some(price => 
-                            parseFloat(price.current_price) < parseFloat(price.original_price)
-                        ) && (
-                            <img 
-                                src="/sale_logo.png" 
-                                alt="Sale" 
-                                style={styles.cardSaleLogo}
-                            />
-                        )}
-                    </div>
-                    <h3 style={styles.name}>{product.name}</h3>
-                    <p style={styles.price}>
-                        From {Math.min(...product.prices.map(p => parseFloat(p.current_price)))} BGN
-                        <br />
-                        Available in {new Set(product.prices.map(p => p.product_store_id)).size} stores
-                    </p>
-                    <div style={styles.colorsContainer}>
-                        <p style={styles.colorsTitle}>Available colors:</p>
-                        <div style={styles.colorsWrapper}>
-                            {product.available_colors.map((color, index) => (
-                                <div
-                                    key={index}
-                                    style={{
-                                        ...styles.colorCircle,
-                                        backgroundColor: color,
-                                        border: color === '#FFFFFF' ? '1px solid #ddd' : 'none'
-                                    }}
-                                    title={color}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    <p style={styles.size}>
-                        Available sizes: {product.available_sizes.join(", ")}
-                    </p>
-                    <button
-                        style={styles.detailsButton}
-                        onClick={() => openModal(product)}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = "#AFCBC4"}
-                        onMouseLeave={(e) => e.target.style.backgroundColor = "#000"}
-                    >
-                        Product Details
-                    </button>
-                </div>
-            ))}
+                {productsToShowPaginated.map((product) => {
+                    const hasMultipleStores = product.prices.length > 1;
+                    const singleStore = !hasMultipleStores ? product.prices[0] : null;
 
+                    return (
+                        <div
+                            key={product.id}
+                            style={{
+                                ...styles.card,
+                                ...(hoveredCard === product.id ? styles.cardHover : {})
+                            }}
+                            onMouseEnter={() => handleCardHover(product.id)}
+                            onMouseLeave={() => handleCardHover(null)}
+                        >
+                            <div style={styles.imageContainer}>
+                                <img
+                                    src={product.image || "https://via.placeholder.com/200x200"}
+                                    alt={product.name}
+                                    style={styles.image}
+                                />
+                                {product.prices.some(price => 
+                                    parseFloat(price.current_price) < parseFloat(price.original_price)
+                                ) && (
+                                    <img 
+                                        src="/sale_logo.png" 
+                                        alt="Sale" 
+                                        style={styles.cardSaleLogo}
+                                    />
+                                )}
+                            </div>
+                            <h3 style={styles.name}>{product.name}</h3>
+                            <p style={styles.price}>
+                                From {product.min_price} BGN
+                                {product.min_price !== product.max_price && ` - ${product.max_price} BGN`}
+                            </p>
+                            <p style={styles.storesCount}>
+                                Available in {product.prices.length} {product.prices.length === 1 ? 'store' : 'stores'}
+                            </p>
+                            <div style={styles.sizesContainer}>
+                                <p style={styles.sizesTitle}>Available sizes:</p>
+                                <p style={styles.sizesList}>
+                                    {product.available_sizes.join(", ")}
+                                </p>
+                            </div>
+                            <div style={styles.colorsContainer}>
+                                <p style={styles.colorsTitle}>Available colors:</p>
+                                <div style={styles.colorsWrapper}>
+                                    {product.available_colors.map((color, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                ...styles.colorCircle,
+                                                backgroundColor: color,
+                                                border: color === '#FFFFFF' ? '1px solid #ddd' : 'none'
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                            <button
+                                style={{
+                                    ...styles.detailsButton,
+                                    ...(hoveredButton === product.id ? {
+                                        backgroundColor: "#afcbc4",
+                                        transform: "translateY(-2px)",
+                                        boxShadow: "0 4px 8px rgba(0,0,0,0.1)"
+                                    } : {}),
+                                    ...(clickedButton === product.id ? {
+                                        transform: "translateY(0)",
+                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                                        backgroundColor: "#afcbc4"
+                                    } : {})
+                                }}
+                                onMouseEnter={() => setHoveredButton(product.id)}
+                                onMouseLeave={() => setHoveredButton(null)}
+                                onMouseDown={() => setClickedButton(product.id)}
+                                onMouseUp={() => setClickedButton(null)}
+                                onClick={hasMultipleStores 
+                                    ? () => openModal(product)
+                                    : () => window.open(singleStore.website_url, '_blank', 'noopener,noreferrer')
+                                }
+                            >
+                                {hasMultipleStores 
+                                    ? 'Product Details'
+                                    : `Go to ${singleStore.name}`
+                                }
+                            </button>
+                        </div>
+                    );
+                })}
             </div>
 
             
