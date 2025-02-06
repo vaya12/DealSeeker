@@ -5,7 +5,7 @@
         "description": "A comfortable and stylish pullover for everyday wear.",
         "brand": "H&M",
         "category_id": 1,
-        "image": "frontend/src/photos/hm_pullover.jpg",
+        "image": "https://image.hm.com/assets/hm/cf/1b/cf1b06a12e2f935b0f2553e7d143f1cc5539fb88.jpg?imwidth=564",
         "prices": [
                     {
                         "product_store_id": 1,
@@ -43,13 +43,13 @@
         "description": "Classic Nike sneakers with Air technology for maximum comfort.",
         "brand": "Nike",
         "category_id": 3,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b9739f66-98f6-42a7-8fe6-6b25ef0b9d83/NIKE+AIR+MAX+PLUS.png",
         "prices": [
             {
                 "product_store_id": 1,
                 "size_id": 2,
                 "color_id": 1,
-                "current_price": "189.99",
+                "current_price": "199.99",
                 "original_price": "199.99",
                 "stock": "in_stock"
             },
@@ -71,13 +71,13 @@
         "description": "Elegant leather handbag perfect for any occasion.",
         "brand": "Zara",
         "category_id": 2,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/21b5/1c1c/4c9648efa1f7/4694ddec560d/16100510500-ult30/16100510500-ult30.jpg?ts=1738236796688&w=2480",
         "prices": [
             {
                 "product_store_id": 2,
                 "size_id": 1,
                 "color_id": 2,
-                "current_price": "89.99",
+                "current_price": "99.99",
                 "original_price": "99.99",
                 "stock": "in_stock"
             },
@@ -99,13 +99,13 @@
         "description": "Premium running shoes with responsive cushioning.",
         "brand": "Adidas",
         "category_id": 3,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.ftshp.digital/img/p/1/3/4/2/5/4/9/1342549-full_product.jpg",
         "prices": [
             {
                 "product_store_id": 1,
                 "size_id": 2,
                 "color_id": 1,
-                "current_price": "199.99",
+                "current_price": "249.99",
                 "original_price": "249.99",
                 "stock": "in_stock"
             },
@@ -127,7 +127,7 @@
         "description": "A comfortable and stylish pullover for everyday wear.",
         "brand": "H&M",
         "category_id": 1,
-        "image": "frontend/src/photos/hm_pullover.jpg",
+        "image": "https://image.hm.com/assets/hm/cf/1b/cf1b06a12e2f935b0f2553e7d143f1cc5539fb88.jpg?imwidth=564",
         "prices": [
             {
                 "product_store_id": 1,
@@ -147,7 +147,7 @@
         "description": "Lightweight and breathable training shorts.",
         "brand": "Puma",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_500,h_500/global/403267/01/sv01/fnd/EEA/fmt/png/Palermo-Moda-Lovers-Sneakers-Women",
         "prices": [
             {
                 "product_store_id": 2,
@@ -161,7 +161,7 @@
                 "product_store_id": 3,
                 "size_id": 3,
                 "color_id": 1,
-                "current_price": "34.99",
+                "current_price": "39.99",
                 "original_price": "39.99",
                 "stock": "in_stock"
             }
@@ -175,7 +175,7 @@
         "description": "Professional training t-shirt with DRI-FIT technology.",
         "brand": "Nike",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 1,
@@ -203,7 +203,7 @@
         "description": "Classic leather jacket with modern design.",
         "brand": "Zara",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 2,
@@ -223,13 +223,13 @@
         "description": "Comfortable track pants for sports and leisure.",
         "brand": "Adidas",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 1,
                 "size_id": 3,
                 "color_id": 1,
-                "current_price": "59.99",
+                "current_price": "79.99",
                 "original_price": "79.99",
                 "stock": "in_stock"
             },
@@ -251,7 +251,7 @@
         "description": "Classic Nike sneakers with Air technology for maximum comfort.",
         "brand": "Nike",
         "category_id": 3,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 2,
@@ -271,13 +271,13 @@
         "description": "Lightweight running shoes for maximum performance.",
         "brand": "Puma",
         "category_id": 3,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 2,
                 "size_id": 2,
                 "color_id": 3,
-                "current_price": "129.99",
+                "current_price": "149.99",
                 "original_price": "149.99",
                 "stock": "in_stock"
             },
@@ -299,7 +299,7 @@
         "description": "Classic denim jeans with modern fit.",
         "brand": "Zara",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 2,
@@ -319,13 +319,13 @@
         "description": "Warm and stylish winter jacket for cold days.",
         "brand": "H&M",
         "category_id": 1,
-        "image": "https://via.placeholder.com/200x200",
+        "image": "https://static.zara.net/assets/public/9edb/eb46/2e364fce9d29/7be0de77fb53/04391826800-e1/04391826800-e1.jpg?ts=1723803083453&w=850",
         "prices": [
             {
                 "product_store_id": 1,
                 "size_id": 2,
                 "color_id": 1,
-                "current_price": "89.99",
+                "current_price": "119.99",
                 "original_price": "119.99",
                 "stock": "in_stock"
             },

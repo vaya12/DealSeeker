@@ -193,18 +193,29 @@ const Products = ({ filters }) => {
             transition: "transform 0.3s, box-shadow 0.3s",
             backgroundColor: "#f9f9f9",
             width: "270px",
-            height: "400px",
+            height: "450px",
             margin: "0 auto",
         },
         cardHover: {
             transform: "scale(1.05)",
             boxShadow: "0 6px 12px rgba(0, 0, 0, 0.2)",
         },
+        imageContainer: {
+            width: "100%",
+            height: "250px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+            borderRadius: "10px",
+            marginBottom: "10px",
+            position: "relative",
+        },
         image: {
             width: "100%",
-            height: "200px",
-            objectFit: "cover",
-            borderRadius: "10px",
+            height: "100%",
+            objectFit: "contain",
+            padding: "10px",
         },
         name: {
             fontSize: "18px",
@@ -239,15 +250,26 @@ const Products = ({ filters }) => {
             transform: "translate(-50%, -50%)",
             backgroundColor: "white",
             padding: "30px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
             borderRadius: "20px",
             zIndex: 1000,
-            width: "80%",
-            maxWidth: "900px",
-            minHeight: "500px",
-            display: "grid",
-            gridTemplateColumns: "40% 60%",
+            width: "90%",
+            maxWidth: "1000px",
+            maxHeight: "90vh",
+            overflow: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px"
+        },
+        modalContent: {
+            display: "flex",
             gap: "30px",
+            marginBottom: "30px"
+        },
+        modalLeftSection: {
+            flex: "0 0 40%"
+        },
+        modalRightSection: {
+            flex: "1"
         },
         modalImage: {
             width: "100%",
@@ -301,14 +323,15 @@ const Products = ({ filters }) => {
             color: "#1a1a1a",
         },
         storeBox: {
+            width: "100%",
+            maxWidth: "600px",
             display: "grid",
             gridTemplateColumns: "2fr 1fr 1fr",
             alignItems: "center",
             padding: "15px",
             backgroundColor: "#f8f8f8",
             borderRadius: "10px",
-            marginBottom: "10px",
-            gap: "15px",
+            gap: "15px"
         },
         storeName: {
             fontSize: "14px",
@@ -478,7 +501,27 @@ const Products = ({ filters }) => {
                 borderColor: "#666"
             }
         },
-        
+        cardSaleLogo: {
+            position: 'absolute',
+            top: '0px',
+            right: '10px',
+            width: '40px',
+            height: '40px',
+            objectFit: 'contain',
+            animation: 'pulse 2s infinite'
+        },
+        modalStoresSection: {
+            width: "100%",
+            borderTop: "1px solid #eee",
+            paddingTop: "30px",
+            marginTop: "auto"
+        },
+        storesGrid: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "15px",
+            alignItems: "center"
+        },
     };
 
     const handleCardHover = (id) => {
@@ -549,11 +592,22 @@ const Products = ({ filters }) => {
                     onMouseEnter={() => handleCardHover(product.id)} 
                     onMouseLeave={() => setHoveredCard(null)} 
                 >
-                    <img
-                        src={product.image || "https://via.placeholder.com/240"}
-                        alt={product.name}
-                        style={styles.image}
-                    />
+                    <div style={styles.imageContainer}>
+                        <img
+                            src={product.image || "https://via.placeholder.com/200x200"}
+                            alt={product.name}
+                            style={styles.image}
+                        />
+                        {product.prices.some(price => 
+                            parseFloat(price.current_price) < parseFloat(price.original_price)
+                        ) && (
+                            <img 
+                                src="/sale_logo.png" 
+                                alt="Sale" 
+                                style={styles.cardSaleLogo}
+                            />
+                        )}
+                    </div>
                     <h3 style={styles.name}>{product.name}</h3>
                     <p style={styles.price}>
                         From {Math.min(...product.prices.map(p => parseFloat(p.current_price)))} BGN
@@ -594,26 +648,32 @@ const Products = ({ filters }) => {
 
             
             {selectedProduct && (
-                <>
-                    <div style={styles.overlay} onClick={closeModal} />
-                    <div style={styles.modal}>
-                        <button style={styles.closeButton} onClick={closeModal}>
-                            &times;
-                        </button>
-                        <div style={styles.modalContent}>
+                <div style={styles.modal}>
+                    <button style={styles.closeButton} onClick={closeModal}>
+                        &times;
+                    </button>
+                    
+                    <div style={styles.modalContent}>
+                        <div style={styles.modalLeftSection}>
                             <img
-                                src={selectedProduct.image || "https://via.placeholder.com/200x200"}
+                                src={selectedProduct.image}
                                 alt={selectedProduct.name}
                                 style={styles.modalImage}
                             />
-                            <div style={styles.modalDetails}>
-                                <h2 style={styles.productTitle}>{selectedProduct.name}</h2>
-                                <p style={styles.productDescription}>{selectedProduct.description}</p>
-                                <div style={styles.sizesContainer}>
-                                    <p style={styles.sizesTitle}>Available sizes:</p>
-                                    <p style={styles.sizesList}>{selectedProduct.available_sizes.join(", ")}</p>
-                                </div>
-                                <div style={styles.modalColorsContainer}>
+                        </div>
+
+                        <div style={styles.modalRightSection}>
+                            <h2 style={styles.productTitle}>{selectedProduct.name}</h2>
+                            <p style={styles.productDescription}>{selectedProduct.description}</p>
+                            
+                            <div style={styles.sizesContainer}>
+                                <h3 style={styles.modalSectionTitle}>Available sizes:</h3>
+                                <p style={styles.sizesList}>
+                                    {selectedProduct.available_sizes.join(", ")}
+                                </p>
+                            </div>
+
+                            <div style={styles.modalColorsContainer}>
                                 <h3 style={styles.modalSectionTitle}>Available colors:</h3>
                                 <div style={styles.colorsWrapper}>
                                     {selectedProduct.available_colors.map((color, index) => (
@@ -629,51 +689,43 @@ const Products = ({ filters }) => {
                                     ))}
                                 </div>
                             </div>
-
-                            </div>
-                        </div>
-                        <div style={styles.storesSection}>
-                            <h3 style={styles.storesTitle}>Available in these stores:</h3>
-                            <div style={styles.storeListContainer}>
-                                {Array.from(new Set(selectedProduct.prices.map(p => p.product_store_id)))
-                                    .map(storeId => selectedProduct.prices.find(p => p.product_store_id === storeId))
-                                    .sort((a, b) => parseFloat(a.current_price) - parseFloat(b.current_price))
-                                    .map(price => (
-                                        <div key={price.product_store_id} style={styles.storeBox}>
-                                            <div style={styles.storeInfo}>
-                                                <span style={styles.storeName}>{price.name}</span>
-                                                {parseFloat(price.current_price) < parseFloat(price.original_price) && (
-                                                    <img 
-                                                        src="/sale_logo.png" 
-                                                        alt="Sale" 
-                                                        style={styles.saleLogo}
-                                                    />
-                                                )}
-                                            </div>
-                                            <span style={styles.storePrice}>
-                                                {price.current_price} BGN
-                                                {price.original_price !== price.current_price && (
-                                                    <span style={styles.originalPrice}>
-                                                        {price.original_price} BGN
-                                                    </span>
-                                                )}
-                                            </span>
-                                            <button
-                                                style={styles.storeButton}
-                                                onClick={() => {
-                                                    window.open(price.website_url, '_blank', 'noopener,noreferrer');
-                                                }}
-                                                onMouseEnter={(e) => (e.target.style.backgroundColor = "#AFCBC4")}
-                                                onMouseLeave={(e) => (e.target.style.backgroundColor = "#000")}
-                                            >
-                                                Go to the store
-                                            </button>
-                                        </div>
-                                    ))}
-                            </div>
                         </div>
                     </div>
-                </>
+
+                    <div style={styles.modalStoresSection}>
+                        <h3 style={styles.storesTitle}>Available in these stores:</h3>
+                        <div style={styles.storesGrid}>
+                            {selectedProduct.prices.map((price, index) => (
+                                <div key={index} style={styles.storeBox}>
+                                    <div style={styles.storeInfo}>
+                                        <span style={styles.storeName}>{price.name}</span>
+                                        {parseFloat(price.current_price) < parseFloat(price.original_price) && (
+                                            <img 
+                                                src="/sale_logo.png" 
+                                                alt="Sale" 
+                                                style={styles.saleLogo}
+                                            />
+                                        )}
+                                    </div>
+                                    <span style={styles.storePrice}>
+                                        {price.current_price} BGN
+                                        {price.original_price !== price.current_price && (
+                                            <span style={styles.originalPrice}>
+                                                {price.original_price} BGN
+                                            </span>
+                                        )}
+                                    </span>
+                                    <button
+                                        style={styles.storeButton}
+                                        onClick={() => window.open(price.website_url, '_blank')}
+                                    >
+                                        Go to the store
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             )}
             {totalPages > 1 && (
                 <div style={styles.pagination}>
