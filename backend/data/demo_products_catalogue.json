@@ -92,5 +92,253 @@
         ],
         "created_at": "2024-01-21T07:20:24.000Z",
         "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 4,
+        "name": "Adidas Ultraboost",
+        "description": "Premium running shoes with responsive cushioning.",
+        "brand": "Adidas",
+        "category_id": 3,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 1,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "199.99",
+                "original_price": "249.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 3,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "189.99",
+                "original_price": "249.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 5,
+        "name": "H&M Pullover",
+        "description": "A comfortable and stylish pullover for everyday wear.",
+        "brand": "H&M",
+        "category_id": 1,
+        "image": "frontend/src/photos/hm_pullover.jpg",
+        "prices": [
+            {
+                "product_store_id": 1,
+                "size_id": 2,
+                "color_id": 4,
+                "current_price": "35.99",
+                "original_price": "45.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 6,
+        "name": "Puma Training Shorts",
+        "description": "Lightweight and breathable training shorts.",
+        "brand": "Puma",
+        "category_id": 1,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 2,
+                "size_id": 3,
+                "color_id": 1,
+                "current_price": "29.99",
+                "original_price": "39.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 3,
+                "size_id": 3,
+                "color_id": 1,
+                "current_price": "34.99",
+                "original_price": "39.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 7,
+        "name": "Nike Pro T-Shirt",
+        "description": "Professional training t-shirt with DRI-FIT technology.",
+        "brand": "Nike",
+        "category_id": 1,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 1,
+                "size_id": 2,
+                "color_id": 2,
+                "current_price": "45.99",
+                "original_price": "45.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 3,
+                "size_id": 2,
+                "color_id": 2,
+                "current_price": "39.99",
+                "original_price": "45.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 8,
+        "name": "Zara Leather Jacket",
+        "description": "Classic leather jacket with modern design.",
+        "brand": "Zara",
+        "category_id": 1,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 2,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "159.99",
+                "original_price": "199.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 9,
+        "name": "Adidas Track Pants",
+        "description": "Comfortable track pants for sports and leisure.",
+        "brand": "Adidas",
+        "category_id": 1,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 1,
+                "size_id": 3,
+                "color_id": 1,
+                "current_price": "59.99",
+                "original_price": "79.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 2,
+                "size_id": 3,
+                "color_id": 1,
+                "current_price": "69.99",
+                "original_price": "79.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 10,
+        "name": "Nike Air Max",
+        "description": "Classic Nike sneakers with Air technology for maximum comfort.",
+        "brand": "Nike",
+        "category_id": 3,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 2,
+                "size_id": 3,
+                "color_id": 2,
+                "current_price": "169.99",
+                "original_price": "199.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 11,
+        "name": "Puma Running Shoes",
+        "description": "Lightweight running shoes for maximum performance.",
+        "brand": "Puma",
+        "category_id": 3,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 2,
+                "size_id": 2,
+                "color_id": 3,
+                "current_price": "129.99",
+                "original_price": "149.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 3,
+                "size_id": 2,
+                "color_id": 3,
+                "current_price": "119.99",
+                "original_price": "149.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 12,
+        "name": "Zara Denim Jeans",
+        "description": "Classic denim jeans with modern fit.",
+        "brand": "Zara",
+        "category_id": 1,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 2,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "79.99",
+                "original_price": "89.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
+    },
+    {
+        "id": 13,
+        "name": "H&M Winter Jacket",
+        "description": "Warm and stylish winter jacket for cold days.",
+        "brand": "H&M",
+        "category_id": 1,
+        "image": "https://via.placeholder.com/200x200",
+        "prices": [
+            {
+                "product_store_id": 1,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "89.99",
+                "original_price": "119.99",
+                "stock": "in_stock"
+            },
+            {
+                "product_store_id": 2,
+                "size_id": 2,
+                "color_id": 1,
+                "current_price": "99.99",
+                "original_price": "119.99",
+                "stock": "in_stock"
+            }
+        ],
+        "created_at": "2024-01-21T07:20:24.000Z",
+        "updated_at": "2024-01-21T07:20:24.000Z"
     }
 ]

@@ -1,6 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { productService } from './services/productService';
 
+const groupProducts = (products) => {
+    const groupedProducts = {};
+    
+    products.forEach(product => {
+        const key = `${product.name}_${product.brand}`; 
+        
+        if (!groupedProducts[key]) {
+            groupedProducts[key] = {
+                ...product,
+                prices: [...product.prices],
+                available_sizes: new Set(product.available_sizes),
+                available_colors: new Set(product.available_colors)
+            };
+        } else {
+            groupedProducts[key].prices = [
+                ...groupedProducts[key].prices,
+                ...product.prices
+            ];
+            
+            product.available_sizes.forEach(size => 
+                groupedProducts[key].available_sizes.add(size)
+            );
+            
+            product.available_colors.forEach(color => 
+                groupedProducts[key].available_colors.add(color)
+            );
+            
+            const allPrices = groupedProducts[key].prices.map(p => parseFloat(p.current_price));
+            groupedProducts[key].min_price = Math.min(...allPrices).toFixed(2);
+            groupedProducts[key].max_price = Math.max(...allPrices).toFixed(2);
+        }
+    });
+
+    return Object.values(groupedProducts).map(product => ({
+        ...product,
+        available_sizes: Array.from(product.available_sizes),
+        available_colors: Array.from(product.available_colors)
+    }));
+};
+
 const Products = ({ filters }) => {
     const [products, setProducts] = useState([]);
     const [hoveredCard, setHoveredCard] = useState(null);
@@ -18,10 +58,10 @@ const Products = ({ filters }) => {
                 setLoading(true);
                 setError(null);
                 const data = await productService.getAllProducts();
-                console.log('Fetched products:', data); 
                 
                 if (data && Array.isArray(data.products)) {
-                    setProducts(data.products);
+                    const groupedProducts = groupProducts(data.products);
+                    setProducts(groupedProducts);
                 } else {
                     setError('Invalid data format received from server');
                     console.error('Invalid data format:', data);
@@ -46,11 +86,11 @@ const Products = ({ filters }) => {
     ];
 
     const handleSortChange = (event) => {
-        setSortOption(event.target.value); 
+        setSortOption(event.target.current_price); 
     };
 
     const handleCategoryChange = (event) => {
-        setSelectedCategory(event.target.value);
+        setSelectedCategory(event.target.category_name);
         setCurrentPage(1); 
     };
 
@@ -566,7 +606,7 @@ const Products = ({ filters }) => {
                                             <button
                                                 style={styles.storeButton}
                                                 onClick={() => {
-                                                    console.log(`Redirecting to store ${price.product_store_id}`);
+                                                    window.open(price.website_url, '_blank', 'noopener,noreferrer');
                                                 }}
                                                 onMouseEnter={(e) => (e.target.style.backgroundColor = "#AFCBC4")}
                                                 onMouseLeave={(e) => (e.target.style.backgroundColor = "#000")}
