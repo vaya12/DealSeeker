@@ -69,33 +69,27 @@ const Products = ({ filters }) => {
         if (!products.length) return [];
 
         return products.filter(product => {
-            // Category filter
             const categoryMatch = filters.categories.length === 0 || 
                 filters.categories.some(category => 
                     product.category_name.toLowerCase() === category.toLowerCase()
                 );
 
-            // Color filter
             const colorMatch = filters.colors.length === 0 || 
                 filters.colors.some(filterColor => 
                     product.available_colors.some(productColor => 
                         productColor.toLowerCase() === filterColor.toLowerCase()
                     )
                 );
-
-            // Size filter
             const sizeMatch = filters.sizes.length === 0 || 
                 filters.sizes.some(filterSize => 
                     product.available_sizes.includes(filterSize)
                 );
 
-            // Brand filter
             const brandMatch = filters.brands.length === 0 || 
                 filters.brands.some(brand => 
                     product.brand.toLowerCase() === brand.toLowerCase()
                 );
 
-            // Price filter
             const productPrice = parseFloat(product.min_price);
             const priceMatch = 
                 (!filters.minPrice || productPrice >= filters.minPrice) && 
@@ -109,7 +103,6 @@ const Products = ({ filters }) => {
                 priceMatch
             });
 
-            // Product must match ALL active filters
             return categoryMatch && colorMatch && sizeMatch && brandMatch && priceMatch;
         });
     }, [products, filters]);
@@ -299,7 +292,7 @@ const Products = ({ filters }) => {
             borderRadius: "20px",
             zIndex: 1000,
             width: "90%",
-            maxWidth: "800px",
+            maxWidth: "1000px",
             maxHeight: "70vh",
             overflow: "auto",
             display: "flex",
@@ -311,8 +304,10 @@ const Products = ({ filters }) => {
         },
         modalContent: {
             display: "flex",
-            gap: "30px",
-            marginBottom: "20px"
+            flexDirection: "column",
+            padding: "20px",
+            maxHeight: "80vh",
+            overflowY: "auto"
         },
         modalLeftSection: {
             flex: "0 0 40%"
@@ -322,11 +317,11 @@ const Products = ({ filters }) => {
         },
         modalImage: {
             width: "100%",
-            height: "350px",
+            height: "auto",
+            maxHeight: "400px",
             objectFit: "contain",
-            backgroundColor: "#f8f8f8",
             borderRadius: "15px",
-            padding: "10px",
+            padding: "5px",
         },
         productTitle: {
             fontSize: "24px",
@@ -348,7 +343,11 @@ const Products = ({ filters }) => {
         },
         sizesContainer: {
             marginBottom: "10px",
-            textAlign: "center"
+            textAlign: "center",
+            backgroundColor: "#f8f8f8",
+            borderRadius: "10px",
+            padding: "10px",
+            margin: "10px 0"
         },
         sizesTitle: {
             fontSize: "14px",
@@ -504,28 +503,28 @@ const Products = ({ filters }) => {
             fontSize: "16px",
             fontWeight: "bold",
             marginBottom: "12px",
-            textAlign: "center"
+            textAlign: "center",
         },
         storeInfo: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
+            display: "flex",
+            alignItems: "center",
+            gap: "10px"
         },
         saleLogo: {
-            width: '40px',
-            height: '40px',
-            objectFit: 'contain',
-            animation: 'pulse 2s infinite'
+            width: "40px",
+            height: "40px",
+            objectFit: "contain",
+            animation: "pulse 2s infinite"
         },
-        '@keyframes pulse': {
+        "@keyframes pulse": {
             '0%': {
-                transform: 'scale(1)'
+                transform: "scale(1)"
             },
             '50%': {
-                transform: 'scale(1.1)'
+                transform: "scale(1.1)"
             },
             '100%': {
-                transform: 'scale(1)'
+                transform: "scale(1)"
             }
         },
         controlsContainer: {
@@ -551,13 +550,13 @@ const Products = ({ filters }) => {
             }
         },
         cardSaleLogo: {
-            position: 'absolute',
-            top: '0px',
-            right: '10px',
-            width: '40px',
-            height: '40px',
-            objectFit: 'contain',
-            animation: 'pulse 2s infinite'
+            position: "absolute",
+            top: "0px",
+            right: "10px",
+            width: "40px",
+            height: "40px",
+            objectFit: "contain",
+            animation: "pulse 2s infinite"
         },
         modalStoresSection: {
             width: "100%",
@@ -569,7 +568,8 @@ const Products = ({ filters }) => {
             display: "flex",
             flexDirection: "column",
             gap: "15px",
-            alignItems: "center"
+            maxHeight: "400px",
+            overflowY: "auto"
         },
         storesCount: {
             fontSize: "14px",
@@ -775,81 +775,218 @@ const Products = ({ filters }) => {
             {selectedProduct && (
                 <>
                 <div style={styles.modalOverlay} onClick={closeModal}></div>
-                <div style={styles.modal}>
+                <div style={{
+                    ...styles.modal,
+                    width: '90%',
+                    maxWidth: '1200px',
+                    margin: '20px auto',
+                    maxHeight: '90vh',
+                    overflow: 'auto'
+                }}>
                     <button style={styles.closeButton} onClick={closeModal}>
                         &times;
                     </button>
                     
                     <div style={styles.modalContent}>
-                        <div style={styles.modalLeftSection}>
-                            <img
-                                src={selectedProduct.image}
-                                alt={selectedProduct.name}
-                                style={styles.modalImage}
-                            />
-                        </div>
+                        <h2 style={{
+                            ...styles.productTitle, 
+                            marginBottom: '20px',
+                            fontSize: 'clamp(18px, 2vw, 24px)',
+                            borderBottom: '1px solid #eee',
+                            paddingBottom: '15px'
+                        }}>
+                            {selectedProduct.name}
+                        </h2>
 
-                        <div style={styles.modalRightSection}>
-                            <h2 style={styles.productTitle}>{selectedProduct.name}</h2>
-                            <p style={styles.productDescription}>{selectedProduct.description}</p>
-                            
-                            <div style={styles.sizesContainer}>
-                                <h3 style={styles.modalSectionTitle}>Available sizes:</h3>
-                                <p style={styles.sizesList}>
-                                    {selectedProduct.available_sizes.join(", ")}
-                                </p>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+                            gap: '30px',
+                            marginBottom: '20px'
+                        }}>
+                            <div style={{
+                                flex: window.innerWidth <= 768 ? '1' : '0 0 40%'
+                            }}>
+                                <img
+                                    src={selectedProduct.image}
+                                    alt={selectedProduct.name}
+                                    style={{
+                                        width: '100%',
+                                        height: 'auto',
+                                        maxHeight: '500px',
+                                        objectFit: 'contain',
+                                        borderRadius: '8px'
+                                    }}
+                                />
                             </div>
 
-                            <div style={styles.modalColorsContainer}>
-                                <h3 style={styles.modalSectionTitle}>Available colors:</h3>
-                                <div style={styles.colorsWrapper}>
-                                    {selectedProduct.available_colors.map((color, index) => (
-                                        <div
-                                            key={index}
-                                            style={{
-                                                ...styles.modalColorCircle,
-                                                backgroundColor: color,
-                                                border: color === '#FFFFFF' ? '1px solid #ddd' : 'none'
-                                            }}
-                                            title={color}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                            <div style={{
+                                flex: '1',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '20px'
+                            }}>
+                                <div>
+                                    <p style={{
+                                        fontSize: 'clamp(14px, 1.5vw, 16px)',
+                                        color: '#333',
+                                        lineHeight: '1.5',
+                                        marginBottom: '20px'
+                                    }}>
+                                        {selectedProduct.description}
+                                    </p>
 
-                    <div style={styles.modalStoresSection}>
-                        <h3 style={styles.storesTitle}>Available in these stores:</h3>
-                        <div style={styles.storesGrid}>
-                            {selectedProduct.prices.map((price, index) => (
-                                <div key={index} style={styles.storeBox}>
-                                    <div style={styles.storeInfo}>
-                                        <span style={styles.storeName}>{price.name}</span>
-                                        {parseFloat(price.current_price) < parseFloat(price.original_price) && (
-                                            <img 
-                                                src="/sale_logo.png" 
-                                                alt="Sale" 
-                                                style={styles.saleLogo}
-                                            />
-                                        )}
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
+                                        gap: '20px',
+                                        padding: '15px',
+                                        backgroundColor: '#f8f8f8',
+                                        borderRadius: '8px',
+                                        marginBottom: '20px'
+                                    }}>
+                                        <div style={{
+                                            flex: '1',
+                                            minWidth: window.innerWidth <= 480 ? '100%' : '45%'
+                                        }}>
+                                            <h3 style={{
+                                                fontSize: '14px',
+                                                color: '#666',
+                                                marginBottom: '8px'
+                                            }}>
+                                                Available sizes:
+                                            </h3>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexWrap: 'wrap',
+                                                gap: '8px'
+                                            }}>
+                                                {selectedProduct.available_sizes.map((size, index) => (
+                                                    <span key={index} style={{
+                                                        padding: '4px 12px',
+                                                        backgroundColor: 'white',
+                                                        border: '1px solid #ddd',
+                                                        borderRadius: '4px',
+                                                        fontSize: '13px'
+                                                    }}>
+                                                        {size}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div style={{
+                                            flex: '1',
+                                            minWidth: window.innerWidth <= 480 ? '100%' : '45%'
+                                        }}>
+                                            <h3 style={{
+                                                fontSize: '14px',
+                                                color: '#666',
+                                                marginBottom: '8px'
+                                            }}>
+                                                Available colors:
+                                            </h3>
+                                            <div style={{
+                                                display: 'flex',
+                                                flexWrap: 'wrap',
+                                                gap: '8px'
+                                            }}>
+                                                {selectedProduct.available_colors.map((color, index) => (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            width: '24px',
+                                                            height: '24px',
+                                                            borderRadius: '50%',
+                                                            backgroundColor: color,
+                                                            border: color.toLowerCase() === '#ffffff' ? '1px solid #ddd' : 'none',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                        title={color}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span style={styles.storePrice}>
-                                        {price.current_price} BGN
-                                        {price.original_price !== price.current_price && (
-                                            <span style={styles.originalPrice}>
-                                                {price.original_price} BGN
-                                            </span>
-                                        )}
-                                    </span>
-                                    <button
-                                        style={styles.storeButton}
-                                        onClick={() => window.open(price.website_url, '_blank')}
-                                    >
-                                        Go to the store
-                                    </button>
                                 </div>
-                            ))}
+
+                                <div>
+                                    <h3 style={{
+                                        fontSize: 'clamp(16px, 1.8vw, 18px)',
+                                        marginBottom: '15px'
+                                    }}>
+                                        Available in these stores:
+                                    </h3>
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '8px'
+                                    }}>
+                                        {selectedProduct.prices.map((price, index) => (
+                                            <div key={index} style={{
+                                                display: 'flex',
+                                                flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
+                                                justifyContent: 'space-between',
+                                                alignItems: window.innerWidth <= 480 ? 'stretch' : 'center',
+                                                padding: '12px',
+                                                backgroundColor: '#f8f8f8',
+                                                borderRadius: '8px',
+                                                gap: window.innerWidth <= 480 ? '10px' : '0'
+                                            }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '10px'
+                                                }}>
+                                                    <span style={{fontSize: '14px'}}>{price.name}</span>
+                                                    {parseFloat(price.current_price) < parseFloat(price.original_price) && (
+                                                        <img src="/sale_logo.png" alt="Sale" style={styles.saleLogo} />
+                                                    )}
+                                                </div>
+                                                
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '15px',
+                                                    justifyContent: window.innerWidth <= 480 ? 'space-between' : 'flex-end'
+                                                }}>
+                                                    <span style={{
+                                                        fontSize: '16px',
+                                                        fontWeight: '500'
+                                                    }}>
+                                                        {price.current_price} BGN
+                                                        {price.original_price !== price.current_price && (
+                                                            <span style={{
+                                                                marginLeft: '8px',
+                                                                fontSize: '14px',
+                                                                color: '#999',
+                                                                textDecoration: 'line-through'
+                                                            }}>
+                                                                {price.original_price} BGN
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                    <button
+                                                        style={{
+                                                            padding: '8px 16px',
+                                                            backgroundColor: '#000',
+                                                            color: '#fff',
+                                                            border: 'none',
+                                                            borderRadius: '4px',
+                                                            cursor: 'pointer',
+                                                            minWidth: '120px',
+                                                            fontSize: '14px'
+                                                        }}
+                                                        onClick={() => window.open(price.website_url, '_blank')}
+                                                    >
+                                                        Go to store
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
