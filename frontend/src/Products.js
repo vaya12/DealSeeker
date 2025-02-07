@@ -596,6 +596,16 @@ const Products = ({ filters }) => {
             color: "#666",
             lineHeight: "1.5"
         },
+        priceContainer: {
+            fontSize: "16px",
+            marginBottom: "10px",
+            color: "#1a1a1a"
+        },
+        availabilityInfo: {
+            fontSize: "14px",
+            color: "#666",
+            marginBottom: "10px"
+        },
     };
 
     const handleCardHover = (id) => {
@@ -670,6 +680,9 @@ const Products = ({ filters }) => {
                 {productsToShowPaginated.map((product) => {
                     const hasMultipleStores = product.prices.length > 1;
                     const singleStore = !hasMultipleStores ? product.prices[0] : null;
+                    const priceDisplay = singleStore 
+                        ? `${singleStore.current_price} BGN`
+                        : `From ${product.min_price} BGN`;
 
                     return (
                         <div
@@ -698,13 +711,12 @@ const Products = ({ filters }) => {
                                 )}
                             </div>
                             <h3 style={styles.name}>{product.name}</h3>
-                            <p style={styles.price}>
-                                From {product.min_price} BGN
-                                {product.min_price !== product.max_price && ` - ${product.max_price} BGN`}
-                            </p>
-                            <p style={styles.storesCount}>
+                            <div style={styles.priceContainer}>
+                                {priceDisplay}
+                            </div>
+                            <div style={styles.availabilityInfo}>
                                 Available in {product.prices.length} {product.prices.length === 1 ? 'store' : 'stores'}
-                            </p>
+                            </div>
                             <div style={styles.sizesContainer}>
                                 <p style={styles.sizesTitle}>Available sizes:</p>
                                 <p style={styles.sizesList}>

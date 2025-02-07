@@ -12,15 +12,13 @@ const Filter = ({ onFilter }) => {
   const [selectedSizes, setSelectedSizes] = useState(location.state?.sizes || []);
   const [selectedBrands, setSelectedBrands] = useState(location.state?.brands || []);
   
-  const [expandedSections, setExpandedSections] = useState(() => {
-    const sections = [];
-    if (location.state?.categories?.length) sections.push("category");
-    if (location.state?.colors?.length) sections.push("color");
-    if (location.state?.sizes?.length) sections.push("size");
-    if (location.state?.brands?.length) sections.push("brand");
-    if (location.state?.price > 0) sections.push("price");
-    return sections.length ? sections : [];
-  });
+  const [expandedSections, setExpandedSections] = useState([
+    "category",
+    "color",
+    "size",
+    "brand",
+    "price"
+  ]);
 
   useEffect(() => {
     if (location.state) {
@@ -106,6 +104,10 @@ const Filter = ({ onFilter }) => {
       maxWidth: "300px",
       fontFamily: "Arial, sans-serif",
     },
+    arrow: {
+      fontSize: "12px",
+      marginRight: "5px"
+    },
     section: {
       marginBottom: "15px",
     },
@@ -151,6 +153,7 @@ const Filter = ({ onFilter }) => {
       cursor: "pointer",
       border: "1px solid transparent",
       transition: "all 0.3s",
+      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)"
     },
     colorBoxActive: {
       border: "2px solid #6ca390",
@@ -179,7 +182,7 @@ const Filter = ({ onFilter }) => {
     },
     clearButton: {
       width: "100%",
-      backgroundColor: "#ddd",
+      backgroundColor: "#f0f0f0",
       color: "#333",
       fontSize: "14px",
       padding: "8px",
@@ -228,7 +231,7 @@ const Filter = ({ onFilter }) => {
     <div className="filter-section" style={styles.container}>
       <div style={styles.section}>
         <h2 style={styles.title} onClick={() => toggleSection("category")}>
-          Category {expandedSections.includes("category") ? "▼" : "▶"}
+          Category <span style={styles.arrow}>{expandedSections.includes("category") ? "▼" : "▶"}</span>
         </h2>
         {expandedSections.includes("category") && (
           <div style={styles.options}>
@@ -238,6 +241,16 @@ const Filter = ({ onFilter }) => {
                 style={{
                   ...styles.item,
                   ...(selectedCategories.includes(category) && styles.itemActive),
+                }}
+                onMouseEnter={(e) => {
+                  if (!selectedSizes.includes(category)) {
+                    e.target.style.backgroundColor = styles.itemHover.backgroundColor;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!selectedSizes.includes(category)) {
+                    e.target.style.backgroundColor = styles.item.backgroundColor;
+                  }
                 }}
                 onClick={() =>
                   toggleSelection(category, selectedCategories, setSelectedCategories)
@@ -251,7 +264,7 @@ const Filter = ({ onFilter }) => {
       </div>
       <div style={styles.section}>
         <h2 style={styles.title} onClick={() => toggleSection("color")}>
-          Color {expandedSections.includes("color") ? "▼" : "▶"}
+          Color <span style={styles.arrow}>{expandedSections.includes("color") ? "▼" : "▶"}</span>
         </h2>
         {expandedSections.includes("color") && (
           <div style={styles.options}>
@@ -271,7 +284,7 @@ const Filter = ({ onFilter }) => {
       </div>
       <div style={styles.section}>
         <h2 style={styles.title} onClick={() => toggleSection("size")}>
-          Size {expandedSections.includes("size") ? "▼" : "▶"}
+          Size <span style={styles.arrow}>{expandedSections.includes("size") ? "▼" : "▶"}</span>
         </h2>
         {expandedSections.includes("size") && (
           <div style={styles.options}>
@@ -302,7 +315,7 @@ const Filter = ({ onFilter }) => {
       </div>
       <div style={styles.section}>
         <h2 style={styles.title} onClick={() => toggleSection("brand")}>
-          Brand {expandedSections.includes("brand") ? "▼" : "▶"}
+          Brand <span style={styles.arrow}>{expandedSections.includes("brand") ? "▼" : "▶"}</span>
         </h2>
         {expandedSections.includes("brand") && (
           <div style={styles.options}>
@@ -333,7 +346,7 @@ const Filter = ({ onFilter }) => {
       </div>
       <div style={styles.section}>
         <h2 style={styles.title} onClick={() => toggleSection("price")}>
-          Price Range {expandedSections.includes("price") ? "▼" : "▶"}
+          Price Range <span style={styles.arrow}>{expandedSections.includes("price") ? "▼" : "▶"}</span>
         </h2>
         {expandedSections.includes("price") && (
           <div style={styles.priceRangeContainer}>
@@ -382,7 +395,6 @@ const Filter = ({ onFilter }) => {
         <div style={{ 
           padding: "10px", 
           marginBottom: "10px", 
-          backgroundColor: "#f0f0f0",
           borderRadius: "5px",
           fontSize: "14px"
         }}>
