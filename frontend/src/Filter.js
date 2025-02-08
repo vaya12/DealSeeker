@@ -20,6 +20,9 @@ const Filter = ({ onFilter }) => {
     "price"
   ]);
 
+  const [availableBrands, setAvailableBrands] = useState([]);
+  const [availableColors, setAvailableColors] = useState([]);
+
   useEffect(() => {
     if (location.state) {
       const filters = {
@@ -34,10 +37,26 @@ const Filter = ({ onFilter }) => {
     }
   }, [location.state, onFilter]);
 
+  useEffect(() => {
+    const fetchFilterData = async () => {
+      try {
+        const brandsResponse = await fetch('/api/brands');
+        const brandsData = await brandsResponse.json();
+        setAvailableBrands(brandsData);
+
+        const colorsResponse = await fetch('/api/colors');
+        const colorsData = await colorsResponse.json();
+        setAvailableColors(colorsData);
+      } catch (error) {
+        console.error('Error fetching filter data:', error);
+      }
+    };
+
+    fetchFilterData();
+  }, []);
+
   const categories = ["clothes", "bags", "shoes", "accessories"];
-  const colors = ["#808080", "#000000", "#FFFFFF", "#000080"];
   const sizes = ["XS", "S", "M", "L", "XL"];
-  const brands = ["H&M", "Nike", "Adidas", "Puma", "Zara"];
 
   const toggleSection = (section) => {
     setExpandedSections((prev) =>
@@ -243,12 +262,12 @@ const Filter = ({ onFilter }) => {
                   ...(selectedCategories.includes(category) && styles.itemActive),
                 }}
                 onMouseEnter={(e) => {
-                  if (!selectedSizes.includes(category)) {
+                  if (!selectedCategories.includes(category)) {
                     e.target.style.backgroundColor = styles.itemHover.backgroundColor;
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!selectedSizes.includes(category)) {
+                  if (!selectedCategories.includes(category)) {
                     e.target.style.backgroundColor = styles.item.backgroundColor;
                   }
                 }}
@@ -268,15 +287,16 @@ const Filter = ({ onFilter }) => {
         </h2>
         {expandedSections.includes("color") && (
           <div style={styles.options}>
-            {colors.map((color) => (
+            {availableColors.map((color) => (
               <div
-                key={color}
+                key={color.hex_code}
                 style={{
                   ...styles.colorBox,
-                  backgroundColor: color,
-                  ...(selectedColors.includes(color) && styles.colorBoxActive),
+                  backgroundColor: color.hex_code,
+                  ...(selectedColors.includes(color.hex_code) && styles.colorBoxActive),
                 }}
-                onClick={() => toggleSelection(color, selectedColors, setSelectedColors)}
+                onClick={() => toggleSelection(color.hex_code, selectedColors, setSelectedColors)}
+                title={color.name}
               ></div>
             ))}
           </div>
@@ -319,7 +339,7 @@ const Filter = ({ onFilter }) => {
         </h2>
         {expandedSections.includes("brand") && (
           <div style={styles.options}>
-            {brands.map((brand) => (
+            {availableBrands.map((brand) => (
               <div
                 key={brand}
                 style={{
@@ -395,7 +415,7 @@ const Filter = ({ onFilter }) => {
         <div style={{ 
           padding: "10px", 
           marginBottom: "10px", 
-          borderRadius: "5px",
+          borderRadius: "5px", 
           fontSize: "14px"
         }}>
           Active filters: {[

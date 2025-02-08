@@ -252,4 +252,32 @@ router.get('/products/:id', async (req, res) => {
     }
 });
 
+router.get('/brands', async (req, res) => {
+    try {
+        const connection = await createConnection();
+        const [brands] = await connection.execute('SELECT DISTINCT brand FROM products WHERE brand IS NOT NULL');
+        await connection.end();
+        res.json(brands.map(b => b.brand));
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/colors', async (req, res) => {
+    try {
+        const connection = await createConnection();
+        const [colors] = await connection.execute(`
+            SELECT DISTINCT c.name, c.hex_code 
+            FROM colors c
+            INNER JOIN product_prices pp ON c.id = pp.color_id
+        `);
+        await connection.end();
+        res.json(colors);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 module.exports = router;
