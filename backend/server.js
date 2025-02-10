@@ -3,6 +3,7 @@ const cors = require('cors');
 const productRoutes = require('./routes/product');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const adminRoutes = require('./routes/admin');
 const path = require('path');
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(cors({
 app.use('/api', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
