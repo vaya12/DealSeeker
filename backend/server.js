@@ -4,6 +4,7 @@ const productRoutes = require('./routes/product');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
+const { startSyncCronJob } = require('./jobs/syncProducts');
 const path = require('path');
 
 const app = express();
@@ -33,6 +34,9 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Something broke!' });
 });
+
+// Start the cron job
+startSyncCronJob();
 
 const PORT = 3001;
 app.listen(PORT, () => {
