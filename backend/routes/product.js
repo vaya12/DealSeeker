@@ -280,4 +280,84 @@ router.get('/colors', async (req, res) => {
     }
 });
 
+router.get('/sizes', async (req, res) => {
+    try {
+        const connection = await createConnection();
+        const [sizes] = await connection.execute(`
+            SELECT DISTINCT s.name
+            FROM sizes s
+            INNER JOIN product_prices pp ON s.id = pp.size_id
+            WHERE s.name IS NOT NULL
+            ORDER BY s.name
+        `);
+        await connection.end();
+        res.json(sizes.map(s => s.name));
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/available-filters', async (req, res) => {
+    try {
+        const connection = await createConnection();
+        const { size, color, brand } = req.query;
+        
+        let sql = `
+            SELECT DISTINCT
+                c.name as color_name,
+                c.hex_code,
+                s.name as size_name,
+                p.brand
+            FROM products p
+            LEFT JOIN product_prices pp ON p.id = pp.product_id
+            LEFT JOIN colors c ON pp.color_id = c.id
+            LEFT JOIN sizes s ON pp.size_id = s.id
+            WHERE 1=1
+        `;
+        
+        const params = [];
+
+        if (size) {
+            sql += ` AND s.name = ?`;
+            params.push(size);
+        }
+
+        if (color) {
+            sql += ` AND c.hex_code = ?`;
+            params.push(color);
+        }
+
+        if (brand) {
+            sql += ` AND p.brand = ?`;
+            params.push(brand);
+        }
+
+        sql += ` GROUP BY c.hex_code, c.name, s.name, p.brand`;
+
+        const [results] = await connection.execute(sql, params);
+
+        const availableFilters = {
+            colors: [...new Set(results
+                .filter(r => r.hex_code)
+                .map(r => ({
+                    name: r.color_name,
+                    hex_code: r.hex_code
+                })))],
+            sizes: [...new Set(results
+                .filter(r => r.size_name)
+                .map(r => r.size_name))],
+            brands: [...new Set(results
+                .filter(r => r.brand)
+                .map(r => r.brand))]
+        };
+
+        await connection.end();
+        res.json(availableFilters);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 module.exports = router;
