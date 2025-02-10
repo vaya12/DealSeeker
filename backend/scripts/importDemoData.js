@@ -5,6 +5,11 @@ async function deleteDbTables() {
     const connection = await createConnection();
     try {
         const tables = [
+            'sync_logs',
+            'search_history',
+            'favorites',
+            'users',
+            'merchants',
             'product_prices',
             'product_views',
             'price_reports',
@@ -14,7 +19,7 @@ async function deleteDbTables() {
             'products',
             'sizes',
             'categories',
-            'colors',
+            'colors'
         ];
 
         for (const table of tables) {
