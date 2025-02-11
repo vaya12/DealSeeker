@@ -4,6 +4,7 @@ const productRoutes = require('./routes/product');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
+const catalogRoutes = require('./routes/catalog');
 const { startSyncCronJob } = require('./jobs/syncProducts');
 const path = require('path');
 
@@ -23,6 +24,7 @@ app.use('/api', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/catalog', catalogRoutes);
 
 app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
@@ -35,7 +37,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something broke!' });
 });
 
-// Start the cron job
 startSyncCronJob();
 
 const PORT = 3001;
