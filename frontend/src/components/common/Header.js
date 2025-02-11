@@ -1,7 +1,7 @@
 import React from "react";
-import "./Header.css";
-import leftPhoto from "./photos/header_left_photo.jpg";
-import rightPhoto from "./photos/header_right_photo.jpg";
+import "./styles/Header.css";
+import leftPhoto from "../../photos/header_left_photo.jpg";
+import rightPhoto from "../../photos/header_right_photo.jpg";
 
 const Header = () => {
   const styles = {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { productService } from './services/productService';
+import { productService } from '../../services/productService';
 
 const groupProducts = (products) => {
     const groupedProducts = {};

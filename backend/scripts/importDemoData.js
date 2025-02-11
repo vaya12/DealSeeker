@@ -1,34 +1,27 @@
 const { createConnection } = require('../database/dbConfig');
 const fs = require('fs').promises;
 
-async function deleteDbTables() {
-    const connection = await createConnection();
+async function deleteDbTables(connection) {
     try {
-        const tables = [
-            'sync_logs',
-            'search_history',
-            'favorites',
-            'users',
-            'merchants',
-            'product_prices',
-            'product_views',
-            'price_reports',
-            'product_stores',
-            'stores',
-            'product_variants',
-            'products',
-            'sizes',
-            'categories',
-            'colors'
-        ];
-
-        for (const table of tables) {
-            await connection.execute(`DROP TABLE IF EXISTS ${table} CASCADE`);
-        }
+        await connection.execute('SET FOREIGN_KEY_CHECKS = 0');
+        
+        await connection.execute('DROP TABLE IF EXISTS catalog_uploads');
+        await connection.execute('DROP TABLE IF EXISTS catalog_sync_logs');
+        await connection.execute('DROP TABLE IF EXISTS price_history');
+        await connection.execute('DROP TABLE IF EXISTS product_categories');
+        await connection.execute('DROP TABLE IF EXISTS product_images');
+        await connection.execute('DROP TABLE IF EXISTS products');
+        await connection.execute('DROP TABLE IF EXISTS stores');
+        await connection.execute('DROP TABLE IF EXISTS merchants');
+        await connection.execute('DROP TABLE IF EXISTS users');
+        await connection.execute('DROP TABLE IF EXISTS categories');
+        
+        await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
+        
+        console.log('Tables deleted successfully');
     } catch (error) {
         console.error('Error deleting tables:', error);
-    } finally {
-        await connection.end();
+        throw error;
     }
 }
 
@@ -259,7 +252,8 @@ async function importProducts(connection) {
 }
 
 async function main() {
-    await deleteDbTables();
+    const connection = await createConnection();
+    await deleteDbTables(connection);
     await createDbTables();
     await importInitialData();
 }

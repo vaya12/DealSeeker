@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, `catalog-${uniqueSuffix}.json`)
+        cb(null, file.fieldname + '-' + uniqueSuffix + '.json')
     }
 });
 
@@ -21,7 +21,7 @@ const upload = multer({
         if (file.mimetype === 'application/json') {
             cb(null, true);
         } else {
-            cb(new Error('Only JSON files are allowed'));
+            cb(new Error('Only JSON files are allowed!'));
         }
     },
     limits: {
@@ -30,8 +30,12 @@ const upload = multer({
 });
 
 router.post('/upload', auth, isMerchant, upload.single('catalog'), async (req, res) => {
-    const connection = await createConnection();
     try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        const connection = await createConnection();
         const catalogData = JSON.parse(req.file.buffer.toString());
         
         const validation = await CatalogManager.validateCatalog(catalogData);
@@ -54,20 +58,19 @@ router.post('/upload', auth, isMerchant, upload.single('catalog'), async (req, r
         });
     } catch (error) {
         console.error('Error uploading catalog:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    } finally {
-        await connection.end();
+        res.status(500).json({ message: 'Error uploading catalog' });
     }
 });
 
 router.get('/status/:uploadId', auth, isMerchant, async (req, res) => {
-    const connection = await createConnection();
     try {
+        const { uploadId } = req.params;
+        const connection = await createConnection();
         const [uploads] = await connection.execute(`
             SELECT status, admin_notes, created_at, processed_at
             FROM catalog_uploads
             WHERE id = ? AND merchant_id = ?
-        `, [req.params.uploadId, req.user.merchantId]);
+        `, [uploadId, req.user.merchantId]);
 
         if (uploads.length === 0) {
             return res.status(404).json({ error: 'Upload not found' });
@@ -75,16 +78,14 @@ router.get('/status/:uploadId', auth, isMerchant, async (req, res) => {
 
         res.json(uploads[0]);
     } catch (error) {
-        console.error('Error getting upload status:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    } finally {
-        await connection.end();
+        console.error('Error checking status:', error);
+        res.status(500).json({ message: 'Error checking status' });
     }
 });
 
 router.get('/pending', auth, isAdmin, async (req, res) => {
-    const connection = await createConnection();
     try {
+        const connection = await createConnection();
         const [uploads] = await connection.execute(`
             SELECT cu.*, m.name as merchant_name, s.name as store_name
             FROM catalog_uploads cu
@@ -96,18 +97,16 @@ router.get('/pending', auth, isAdmin, async (req, res) => {
 
         res.json(uploads);
     } catch (error) {
-        console.error('Error getting pending catalogs:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    } finally {
-        await connection.end();
+        console.error('Error fetching pending catalogs:', error);
+        res.status(500).json({ message: 'Error fetching pending catalogs' });
     }
 });
 
 router.post('/:uploadId/review', auth, isAdmin, async (req, res) => {
-    const connection = await createConnection();
     try {
+        const { uploadId } = req.params;
         const { status, notes } = req.body;
-        const uploadId = req.params.uploadId;
+        const connection = await createConnection();
 
         await connection.beginTransaction();
 
@@ -133,8 +132,8 @@ router.post('/:uploadId/review', auth, isAdmin, async (req, res) => {
         res.json({ message: `Catalog ${status}` });
     } catch (error) {
         await connection.rollback();
-        console.error('Error reviewing catalog:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error submitting review:', error);
+        res.status(500).json({ message: 'Error submitting review' });
     } finally {
         await connection.end();
     }
