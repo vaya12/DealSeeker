@@ -24,7 +24,7 @@ import {
   Cancel as RejectIcon,
   Visibility as ViewIcon
 } from '@mui/icons-material';
-import { catalogService } from '../../services/catalogService';
+import catalogService from '../../services/catalogService';
 
 const CatalogReview = () => {
   const [catalogs, setCatalogs] = useState([]);

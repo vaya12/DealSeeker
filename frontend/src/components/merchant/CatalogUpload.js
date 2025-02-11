@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Typography, Paper, CircularProgress, LinearProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import { catalogService } from '../../services/catalogService';
+import catalogService from '../../services/catalogService';
 
 const Input = styled('input')({
     display: 'none',
