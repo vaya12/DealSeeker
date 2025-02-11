@@ -1,25 +1,41 @@
 const jwt = require('jsonwebtoken');
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        
         if (!token) {
-            return res.status(401).json({ error: 'Authentication required' });
+            return res.status(401).json({ message: 'Authentication required' });
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        res.status(401).json({ message: 'Invalid token' });
     }
 };
 
-const isAdmin = (req, res, next) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Admin access required' });
+const isMerchant = async (req, res, next) => {
+    try {
+        if (req.user.role !== 'merchant') {
+            return res.status(403).json({ message: 'Merchant access required' });
+        }
+        next();
+    } catch (error) {
+        res.status(403).json({ message: 'Access denied' });
     }
-    next();
 };
 
-module.exports = { auth, isAdmin }; 
+const isAdmin = async (req, res, next) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Admin access required' });
+        }
+        next();
+    } catch (error) {
+        res.status(403).json({ message: 'Access denied' });
+    }
+};
+
+module.exports = { auth, isMerchant, isAdmin }; 
