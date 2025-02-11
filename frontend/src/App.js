@@ -1,11 +1,13 @@
 import './App.css';
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./NavBar";
-import Header from "./Header";
-import Filter from "./Filter";
-import Footer from "./Footer";
-import Products from "./Products";
+import Navbar from "./components/common/NavBar";
+import Header from "./components/common/Header";
+import Filter from "./components/common/Filter";
+import Footer from "./components/common/Footer";
+import Products from "./components/common/Products";
+import CatalogUpload from './components/merchant/CatalogUpload';
+import CatalogReview from './components/admin/CatalogReview';
 
 function App() {
   const [filters, setFilters] = useState({
@@ -67,6 +69,8 @@ function App() {
               </div>
             </div>
           } />
+          <Route path="/merchant/catalog" element={<CatalogUpload />} />
+          <Route path="/admin/catalogs" element={<CatalogReview />} />
         </Routes>
         <Footer />
       </div>
