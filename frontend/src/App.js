@@ -8,6 +8,7 @@ import Footer from "./components/common/Footer";
 import Products from "./components/common/Products";
 import CatalogUpload from './components/merchant/CatalogUpload';
 import CatalogReview from './components/admin/CatalogReview';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 function App() {
   const [filters, setFilters] = useState({
@@ -69,8 +70,22 @@ function App() {
               </div>
             </div>
           } />
-          <Route path="/merchant/catalog" element={<CatalogUpload />} />
-          <Route path="/admin/catalogs" element={<CatalogReview />} />
+          <Route 
+            path="/merchant/catalog" 
+            element={
+              <ProtectedRoute roles={['merchant']}>
+                <CatalogUpload />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/catalogs" 
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <CatalogReview />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
         <Footer />
       </div>
