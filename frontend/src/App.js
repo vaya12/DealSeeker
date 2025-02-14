@@ -9,6 +9,7 @@ import Products from "./components/common/Products";
 import CatalogUpload from './components/merchant/CatalogUpload';
 import CatalogReview from './components/admin/CatalogReview';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import Login from './components/auth/Login';
 
 function App() {
   const [filters, setFilters] = useState({
@@ -70,6 +71,8 @@ function App() {
               </div>
             </div>
           } />
+
+          <Route path="/login" element={<Login />} />
           <Route 
             path="/merchant/catalog" 
             element={
@@ -86,6 +89,12 @@ function App() {
               </ProtectedRoute>
             } 
           />
+
+          <Route path="/catalog/{id}"
+          >
+            {/* <MerchantCatalog id={id}></MerchantCatalog> */}
+          </Route>
+
         </Routes>
         <Footer />
       </div>

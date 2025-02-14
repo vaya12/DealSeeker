@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import "./styles/NavBar.css";
+import { InputAdornment, TextField, Menu, MenuItem, IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const styles = {
     navbar: {
@@ -13,7 +20,7 @@ const Navbar = () => {
       alignItems: "center",
       padding: "10px 20px",
       backgroundColor: "white",
-      background: "linear-gradient(to left, black 50%, white 50%)", 
+      background: "linear-gradient(to left, black 50%, white 50%)",
       fontFamily: "'Saira Stencil One', sans-serif",
       position: "sticky",
       top: 0,
@@ -40,31 +47,91 @@ const Navbar = () => {
       cursor: "pointer",
       color: "#6CA390", 
     },
+    rightSection: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "15px",
+      width: "50%",
+      position: "relative",
+    },
     searchContainer: {
       display: "flex",
       alignItems: "center",
-      padding: "8px 10px",
-      borderRadius: "15px",
-      width: "80%", 
-      maxWidth: "600px",
-      margin: 0,
+      justifyContent: "center",
+      flex: 1,
+      maxWidth: "400px",
+      position: "relative",
     },
     searchInput: {
-      border: "none",
-      padding: "10px",
-      fontSize: "18px",
-      outline: "none",
-      backgroundColor: "#fff8f8", 
-      color: "#6CA390",
-      borderRadius: "15px 0 0 15px",
-      width: "80%", 
+      width: "100%",
+      "& .MuiOutlinedInput-root": {
+        backgroundColor: "#fff",
+        borderRadius: "25px",
+        height: "35px",
+        "& fieldset": {
+          borderColor: "#6CA390",
+          borderWidth: "2px",
+        },
+        "&:hover fieldset": {
+          borderColor: "#6CA390",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "#6CA390",
+          borderWidth: "2px",
+        },
+        "& input": {
+          color: "#000",
+          padding: "8px 15px",
+          "&::placeholder": {
+            color: "#666",
+            opacity: 1,
+          },
+        },
+      },
+      "& .MuiOutlinedInput-root.Mui-focused": {
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#6CA390",
+          borderWidth: "2px",
+        },
+      },
+      "& .MuiInputBase-root": {
+        "&.Mui-focused": {
+          outline: "none",
+        },
+      },
     },
-    searchIcon: {
-      color: "pink",
-      fontSize: "18px",
-      marginLeft: "10px",
+    profileIcon: {
+      color: "white",
+      fontSize: "2rem",
       cursor: "pointer",
     },
+    menuItem: {
+      fontSize: "16px",
+      padding: "10px 20px",
+      minWidth: "150px",
+    },
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return; 
+    
+    const encodedQuery = encodeURIComponent(searchQuery.trim());
+    
+    navigate(`/products?search=${encodedQuery}`);
+    
+    setSearchQuery("");
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(e);
+    }
   };
 
   const scrollToFilter = () => {
@@ -81,14 +148,34 @@ const Navbar = () => {
     }, 100);
   };
 
+  const handleProfileClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfileNavigate = () => {
+    handleClose();
+    navigate('/profile');
+  };
+
+  const handleAuthAction = () => {
+    handleClose();
+    if (user) {
+      logout();
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <nav style={styles.navbar}>
       <ul style={styles.navList}>
         <li style={styles.navItem}>
           <Link 
             to="/products" 
-            target="_blank"
-            state={{ showFilter: true }}
             style={{ color: "inherit", textDecoration: "none" }}
           >
             Products
@@ -111,12 +198,54 @@ const Navbar = () => {
           </span>
         </li>
       </ul>
-      <div style={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="Search..."
-          style={styles.searchInput}
-        />
+      
+      <div style={styles.rightSection}>
+        <form onSubmit={handleSearch} style={styles.searchContainer}>
+          <TextField
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onKeyPress={handleKeyPress}
+            placeholder="Search..."
+            variant="outlined"
+            size="small"
+            sx={styles.searchInput}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon 
+                    style={{ color: "#6CA390", cursor: "pointer" }} 
+                    onClick={handleSearch}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </form>
+        
+        <IconButton onClick={handleProfileClick}>
+          <AccountCircleIcon sx={styles.profileIcon} />
+        </IconButton>
+        
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <MenuItem onClick={handleProfileNavigate} sx={styles.menuItem}>
+            My Profile
+          </MenuItem>
+          <MenuItem onClick={handleAuthAction} sx={styles.menuItem}>
+            {user ? 'Sign Out' : 'Log In'}
+          </MenuItem>
+        </Menu>
       </div>
     </nav>
   );
