@@ -67,10 +67,10 @@ function App() {
               </div>
             </div>
           } />
-          <Route path="/catalog/{id}"
+          {/* <Route path="/catalog/{id}"
           >
             path="/catalog/:id" 
-          </Route>
+          </Route> */}
 
         </Routes>
         <Footer />

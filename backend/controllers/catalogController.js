@@ -1,5 +1,7 @@
 const { createConnection } = require('../database/dbConfig');
 const CatalogManager = require('../services/CatalogManager');
+const fs = require('fs').promises;
+const path = require('path');
 
 exports.uploadCatalog = async (req, res) => {
     try {
@@ -131,5 +133,59 @@ exports.getMerchantCatalogs = async (req, res) => {
     } catch (error) {
         console.error('Error fetching merchant catalogs:', error);
         res.status(500).json({ message: 'Error fetching catalogs' });
+    }
+};
+
+exports.getMerchantCatalog = async (req, res) => {
+    try {
+        const { merchantId } = req.params;
+        
+        const merchantMap = {
+            '1': 'hm.json',
+            '2': 'zara.json',
+            '3': 'nike.json',
+            '4': 'adidas.json',
+            '5': 'puma.json'
+        };
+
+        const catalogFile = merchantMap[merchantId];
+        
+        if (!catalogFile) {
+            return res.status(404).json({ 
+                error: 'Merchant catalog not found' 
+            });
+        }
+
+        const catalogPath = path.join(__dirname, '../data/merchants', catalogFile);
+        const catalogData = await fs.readFile(catalogPath, 'utf8');
+        const catalog = JSON.parse(catalogData);
+
+        res.json(catalog);
+
+    } catch (error) {
+        console.error('Error fetching merchant catalog:', error);
+        res.status(500).json({ 
+            error: 'Internal server error' 
+        });
+    }
+};
+
+exports.syncMerchantProducts = async (req, res) => {
+    try {
+        const { merchantId } = req.params;
+        const { importMerchantProducts } = require('../scripts/importDemoData');
+
+        await importMerchantProducts(merchantId, `http://localhost:3000/api/catalog/${merchantId}`);
+
+        res.json({ 
+            message: 'Products synchronized successfully' 
+        });
+
+    } catch (error) {
+        console.error('Error syncing merchant products:', error);
+        res.status(500).json({ 
+            error: 'Failed to sync merchant products',
+            details: error.message 
+        });
     }
 }; 

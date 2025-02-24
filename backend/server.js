@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const productRoutes = require('./routes/product');
+const catalogRoutes = require('./routes/catalog');
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors({
 }));
 
 app.use('/api', productRoutes);
+app.use('/api/catalog', catalogRoutes);
 app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
 app.get('/', (req, res) => {
