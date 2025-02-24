@@ -1,12 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const productRoutes = require('./routes/product');
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
-const adminRoutes = require('./routes/admin');
-const catalogRoutes = require('./routes/catalog');
-const { startSyncCronJob } = require('./jobs/syncProducts');
 const path = require('path');
+const productRoutes = require('./routes/product');
+
 
 const app = express();
 
@@ -21,11 +17,6 @@ app.use(cors({
 }));
 
 app.use('/api', productRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/catalog', catalogRoutes);
-
 app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
 app.get('/', (req, res) => {
@@ -37,10 +28,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something broke!' });
 });
 
-startSyncCronJob();
-
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log(`API available at http://localhost:${PORT}/api/products`);
 });

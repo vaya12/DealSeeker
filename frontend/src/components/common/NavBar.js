@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
 import "./styles/NavBar.css";
-import { InputAdornment, TextField, Menu, MenuItem, IconButton } from "@mui/material";
+import { InputAdornment, TextField, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const styles = {
     navbar: {
@@ -89,27 +86,11 @@ const Navbar = () => {
           },
         },
       },
-      "& .MuiOutlinedInput-root.Mui-focused": {
-        "& .MuiOutlinedInput-notchedOutline": {
-          borderColor: "#6CA390",
-          borderWidth: "2px",
-        },
-      },
-      "& .MuiInputBase-root": {
-        "&.Mui-focused": {
-          outline: "none",
-        },
-      },
     },
     profileIcon: {
       color: "white",
       fontSize: "2rem",
       cursor: "pointer",
-    },
-    menuItem: {
-      fontSize: "16px",
-      padding: "10px 20px",
-      minWidth: "150px",
     },
   };
 
@@ -118,9 +99,7 @@ const Navbar = () => {
     if (!searchQuery.trim()) return; 
     
     const encodedQuery = encodeURIComponent(searchQuery.trim());
-    
     navigate(`/products?search=${encodedQuery}`);
-    
     setSearchQuery("");
   };
 
@@ -146,28 +125,6 @@ const Navbar = () => {
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 100);
-  };
-
-  const handleProfileClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleProfileNavigate = () => {
-    handleClose();
-    navigate('/profile');
-  };
-
-  const handleAuthAction = () => {
-    handleClose();
-    if (user) {
-      logout();
-    } else {
-      navigate('/login');
-    }
   };
 
   return (
@@ -222,30 +179,9 @@ const Navbar = () => {
           />
         </form>
         
-        <IconButton onClick={handleProfileClick}>
+        <IconButton>
           <AccountCircleIcon sx={styles.profileIcon} />
         </IconButton>
-        
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <MenuItem onClick={handleProfileNavigate} sx={styles.menuItem}>
-            My Profile
-          </MenuItem>
-          <MenuItem onClick={handleAuthAction} sx={styles.menuItem}>
-            {user ? 'Sign Out' : 'Log In'}
-          </MenuItem>
-        </Menu>
       </div>
     </nav>
   );

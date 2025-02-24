@@ -93,6 +93,31 @@ async function createDbTables() {
                 viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             `,
+            `
+            CREATE TABLE IF NOT EXISTS merchants (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                store_id INT NOT NULL,
+                api_key VARCHAR(255),
+                api_url VARCHAR(255),
+                sync_frequency INT DEFAULT 24,
+                last_sync TIMESTAMP NULL,
+                status ENUM('active', 'inactive') DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (store_id) REFERENCES stores(id)
+            );
+            `,
+            `
+            CREATE TABLE IF NOT EXISTS sync_logs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                merchant_id INT NOT NULL,
+                status ENUM('success', 'error') NOT NULL,
+                products_updated INT DEFAULT 0,
+                started_at TIMESTAMP NOT NULL,
+                completed_at TIMESTAMP NULL,
+                error_message TEXT,
+                FOREIGN KEY (merchant_id) REFERENCES merchants(id)
+            );
+            `
         ];
 
         for (const query of sqlQueries) {
