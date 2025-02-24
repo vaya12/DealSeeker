@@ -1,0 +1,180 @@
+{
+    "merchant_id": 3,
+    "name": "Nike",
+    "products": [
+        {
+            "name": "Nike Air Max Plus",
+            "description": "Iconic running shoes with visible Air cushioning and tuned support.",
+            "brand": "Nike",
+            "category_id": 3,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b9739f66-98f6-42a7-8fe6-6b25ef0b9d83/air-max-plus-shoes.png",
+            "prices": [
+                {
+                    "size_id": 6,
+                    "color_id": 1,
+                    "current_price": "179.99",
+                    "original_price": "189.99",
+                    "stock": "in_stock"
+                },
+                {
+                    "size_id": 7,
+                    "color_id": 1,
+                    "current_price": "179.99",
+                    "original_price": "189.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Dri-FIT Running Shirt",
+            "description": "Moisture-wicking running shirt with breathable mesh panels.",
+            "brand": "Nike",
+            "category_id": 1,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/c8be464b-5c56-4bd0-9449-af0f1f10e8a3/dri-fit-running-shirt.png",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 2,
+                    "current_price": "34.99",
+                    "original_price": "34.99",
+                    "stock": "in_stock"
+                },
+                {
+                    "size_id": 3,
+                    "color_id": 2,
+                    "current_price": "34.99",
+                    "original_price": "34.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Pro Training Shorts",
+            "description": "Compression shorts with sweat-wicking technology for intense workouts.",
+            "brand": "Nike",
+            "category_id": 1,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/d5b4e631-1c37-4b3d-8568-4e5b1d7f4a51/pro-training-shorts.png",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 1,
+                    "current_price": "29.99",
+                    "original_price": "34.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Zoom Pegasus 40",
+            "description": "Versatile running shoes with responsive cushioning for daily training.",
+            "brand": "Nike",
+            "category_id": 3,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e8e530a3-2317-4356-9d8f-96d31a924c47/zoom-pegasus-40-road-running-shoes.png",
+            "prices": [
+                {
+                    "size_id": 6,
+                    "color_id": 4,
+                    "current_price": "129.99",
+                    "original_price": "129.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Sportswear Tech Fleece",
+            "description": "Premium fleece hoodie with innovative thermal construction.",
+            "brand": "Nike",
+            "category_id": 1,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/f7503b49-3dbb-41a9-a8e2-44d659401f41/sportswear-tech-fleece-hoodie.png",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 3,
+                    "current_price": "119.99",
+                    "original_price": "119.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Brasilia Training Backpack",
+            "description": "Durable backpack with multiple compartments for gym essentials.",
+            "brand": "Nike",
+            "category_id": 2,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/7a4c6a67-5615-4f15-8b8f-a4e2f52f5c94/brasilia-training-backpack.png",
+            "prices": [
+                {
+                    "size_id": 10,
+                    "color_id": 1,
+                    "current_price": "45.99",
+                    "original_price": "49.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Metcon 9",
+            "description": "Stable training shoes designed for weightlifting and high-intensity workouts.",
+            "brand": "Nike",
+            "category_id": 3,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/88c9b4f5-0109-4e89-b3e9-39d417c27b0f/metcon-9-training-shoes.png",
+            "prices": [
+                {
+                    "size_id": 6,
+                    "color_id": 2,
+                    "current_price": "149.99",
+                    "original_price": "149.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Dri-FIT Basketball Jersey",
+            "description": "Lightweight basketball jersey with sweat-wicking technology.",
+            "brand": "Nike",
+            "category_id": 1,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/2f1e5a2d-5c25-4714-8c44-8e1c970ed0d4/dri-fit-basketball-jersey.png",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 4,
+                    "current_price": "39.99",
+                    "original_price": "44.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Elite Crew Socks",
+            "description": "Performance cushioned socks with arch support.",
+            "brand": "Nike",
+            "category_id": 4,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/9b639266-d140-4f6a-a875-11d37c4a2fa9/elite-crew-socks.png",
+            "prices": [
+                {
+                    "size_id": 10,
+                    "color_id": 1,
+                    "current_price": "14.99",
+                    "original_price": "14.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Nike Windrunner Jacket",
+            "description": "Classic windbreaker with water-repellent finish and chevron design.",
+            "brand": "Nike",
+            "category_id": 1,
+            "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/5c1e3e66-42b9-489d-a0d1-2c22ad79c0ef/windrunner-jacket.png",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 4,
+                    "current_price": "89.99",
+                    "original_price": "99.99",
+                    "stock": "in_stock"
+                }
+            ]
+        }
+    ]
+}

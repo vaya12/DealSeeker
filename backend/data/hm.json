@@ -1,0 +1,187 @@
+{
+    "merchant_id": 1,
+    "name": "H&M",
+    "products": [
+        {
+            "name": "Wool Blend Sweater",
+            "description": "Warm and cozy wool blend sweater with ribbed details at neckline, cuffs, and hem.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/cf/1b/cf1b06a12e2f935b0f2553e7d143f1cc5539fb88.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 3,
+                    "current_price": "39.99",
+                    "original_price": "49.99",
+                    "stock": "in_stock"
+                },
+                {
+                    "size_id": 3,
+                    "color_id": 3,
+                    "current_price": "39.99",
+                    "original_price": "49.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Cotton Slim Fit Shirt",
+            "description": "Classic cotton shirt with slim fit design and button-down collar.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/dd/78/dd78dd78d8d8d8d8d8d8d8d8d8d8d8d8.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 2,
+                    "current_price": "29.99",
+                    "original_price": "29.99",
+                    "stock": "in_stock"
+                },
+                {
+                    "size_id": 3,
+                    "color_id": 2,
+                    "current_price": "29.99",
+                    "original_price": "29.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Cargo Pants",
+            "description": "Relaxed-fit cargo pants in cotton twill with side pockets and adjustable waist.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/ee/55/ee55ee55e5e5e5e5e5e5e5e5e5e5e5e5.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 1,
+                    "current_price": "34.99",
+                    "original_price": "39.99",
+                    "stock": "in_stock"
+                },
+                {
+                    "size_id": 3,
+                    "color_id": 1,
+                    "current_price": "34.99",
+                    "original_price": "39.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Denim Jacket",
+            "description": "Classic denim jacket with button-up front and chest pockets.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/ff/66/ff66ff66f6f6f6f6f6f6f6f6f6f6f6f6.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 2,
+                    "current_price": "49.99",
+                    "original_price": "49.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Knit Sweater",
+            "description": "Soft knit sweater with dropped shoulders and ribbed trim.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/aa/11/aa11aa11a1a1a1a1a1a1a1a1a1a1a1a1.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 4,
+                    "current_price": "29.99",
+                    "original_price": "39.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Hooded Sweatshirt",
+            "description": "Casual hoodie in soft cotton blend with kangaroo pocket.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/bb/22/bb22bb22b2b2b2b2b2b2b2b2b2b2b2b2.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 3,
+                    "current_price": "24.99",
+                    "original_price": "29.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Chino Shorts",
+            "description": "Cotton twill shorts with side pockets and back welt pockets.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/cc/33/cc33cc33c3c3c3c3c3c3c3c3c3c3c3c3.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 2,
+                    "current_price": "19.99",
+                    "original_price": "24.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Canvas Sneakers",
+            "description": "Low-top canvas sneakers with rubber soles.",
+            "brand": "H&M",
+            "category_id": 3,
+            "image": "https://image.hm.com/assets/hm/dd/44/dd44dd44d4d4d4d4d4d4d4d4d4d4d4d4.jpg",
+            "prices": [
+                {
+                    "size_id": 6,
+                    "color_id": 2,
+                    "current_price": "24.99",
+                    "original_price": "29.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Leather Belt",
+            "description": "Classic leather belt with metal buckle.",
+            "brand": "H&M",
+            "category_id": 4,
+            "image": "https://image.hm.com/assets/hm/ee/55/ee55ee55e5e5e5e5e5e5e5e5e5e5e5e5.jpg",
+            "prices": [
+                {
+                    "size_id": 10,
+                    "color_id": 1,
+                    "current_price": "17.99",
+                    "original_price": "19.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Cotton T-Shirt Pack",
+            "description": "Pack of 3 regular-fit cotton t-shirts.",
+            "brand": "H&M",
+            "category_id": 1,
+            "image": "https://image.hm.com/assets/hm/ff/66/ff66ff66f6f6f6f6f6f6f6f6f6f6f6f6.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 2,
+                    "current_price": "19.99",
+                    "original_price": "24.99",
+                    "stock": "in_stock"
+                }
+            ]
+        }
+    ]
+}
