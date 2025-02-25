@@ -1,5 +1,6 @@
 const { createConnection } = require('../database/dbConfig');
 const { importMerchantProducts } = require('../scripts/importDemoData');
+const fetch = require('node-fetch');
 
 exports.getAllMerchants = async (req, res) => {
     const connection = await createConnection();
@@ -46,25 +47,90 @@ exports.syncMerchantProducts = async (req, res) => {
     try {
         const merchantId = req.params.id;
         
-        const [merchants] = await connection.execute(
-            'SELECT catalog_url FROM merchants WHERE id = ?',
-            [merchantId]
-        );
+        await connection.beginTransaction();
         
-        if (merchants.length === 0) {
-            return res.status(404).json({ error: 'Merchant not found' });
+        try {
+            const [merchants] = await connection.execute(
+                'SELECT * FROM merchants WHERE id = ?',
+                [merchantId]
+            );
+            
+            if (merchants.length === 0) {
+                return res.status(404).json({ error: 'Merchant not found' });
+            }
+
+            await connection.execute(`
+                DELETE FROM product_prices 
+                WHERE product_id IN (
+                    SELECT id FROM products 
+                    WHERE merchant_id = ?
+                )
+            `, [merchantId]);
+
+            await connection.execute(`
+                DELETE FROM products 
+                WHERE merchant_id = ?
+            `, [merchantId]);
+
+            const catalogUrl = `http://localhost:3002/api/catalog/${merchantId}`;
+            const response = await fetch(catalogUrl);
+            const catalog = await response.json();
+
+            for (const product of catalog.products) {
+                const [productResult] = await connection.execute(`
+                    INSERT INTO products 
+                    (name, description, brand, category_id, image, merchant_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `, [
+                    product.name, 
+                    product.description, 
+                    product.brand, 
+                    product.category_id, 
+                    product.image,
+                    merchantId
+                ]);
+
+                const productId = productResult.insertId;
+
+                for (const price of product.prices) {
+                    await connection.execute(`
+                        INSERT INTO product_prices 
+                        (product_id, size_id, color_id, current_price, original_price, stock)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `, [
+                        productId,
+                        price.size_id,
+                        price.color_id,
+                        price.current_price,
+                        price.original_price,
+                        price.stock
+                    ]);
+                }
+            }
+
+            await connection.execute(`
+                UPDATE merchants 
+                SET last_sync = NOW()
+                WHERE id = ?
+            `, [merchantId]);
+
+            await connection.commit();
+
+            res.json({ 
+                message: 'Products synchronized successfully',
+                productsCount: catalog.products.length
+            });
+
+        } catch (error) {
+            await connection.rollback();
+            throw error;
         }
-        
-        const { catalog_url } = merchants[0];
-        
-        await importMerchantProducts(merchantId, catalog_url);
-        
-        res.json({ message: 'Products synchronized successfully' });
+
     } catch (error) {
         console.error('Error syncing products:', error);
         res.status(500).json({ 
             error: 'Failed to sync products',
-            details: error.message 
+            details: error.message
         });
     } finally {
         await connection.end();

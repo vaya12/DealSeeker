@@ -139,7 +139,7 @@
             "name": "Canvas Sneakers",
             "description": "Low-top canvas sneakers with rubber soles.",
             "brand": "H&M",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://image.hm.com/assets/hm/dd/44/dd44dd44d4d4d4d4d4d4d4d4d4d4d4d4.jpg",
             "prices": [
                 {
@@ -155,7 +155,7 @@
             "name": "Leather Belt",
             "description": "Classic leather belt with metal buckle.",
             "brand": "H&M",
-            "category_id": 4,
+            "category_id": 3,
             "image": "https://image.hm.com/assets/hm/ee/55/ee55ee55e5e5e5e5e5e5e5e5e5e5e5e5.jpg",
             "prices": [
                 {

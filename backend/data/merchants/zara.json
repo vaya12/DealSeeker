@@ -84,7 +84,7 @@
             "name": "Structured City Bag",
             "description": "Rigid city bag with double handle and detachable shoulder strap.",
             "brand": "Zara",
-            "category_id": 2,
+            "category_id": 4,
             "image": "https://static.zara.net/photos///2024/V/1/1/p/6334/810/800/2/w/563/6334810800_6_1_1.jpg",
             "prices": [
                 {
@@ -132,7 +132,7 @@
             "name": "Leather Ankle Boots",
             "description": "Heeled ankle boots in leather with side zip closure.",
             "brand": "Zara",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://static.zara.net/photos///2024/V/1/1/p/2100/910/800/2/w/563/2100910800_6_2_1.jpg",
             "prices": [
                 {
@@ -164,7 +164,7 @@
             "name": "Crossbody Phone Bag",
             "description": "Mini crossbody bag perfect for phone and essentials.",
             "brand": "Zara",
-            "category_id": 2,
+            "category_id": 4,
             "image": "https://static.zara.net/photos///2024/V/1/1/p/6334/810/800/2/w/563/6334810800_6_1_1.jpg",
             "prices": [
                 {

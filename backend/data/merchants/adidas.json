@@ -6,7 +6,7 @@
             "name": "Adidas Ultraboost Light",
             "description": "Revolutionary running shoes with Light BOOST cushioning for ultimate comfort.",
             "brand": "Adidas",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/fbaf991a78bc4896a3e9ad7800abcec6/Ultraboost_Light_Shoes_Black.jpg",
             "prices": [
                 {
@@ -68,7 +68,7 @@
             "name": "Adidas Stan Smith",
             "description": "Timeless tennis-inspired sneakers with clean design.",
             "brand": "Adidas",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/68ae7ea7849b43eca70aac1e00f5146d/Stan_Smith_Shoes_White.jpg",
             "prices": [
                 {
@@ -84,7 +84,7 @@
             "name": "Adidas Linear Duffel Bag",
             "description": "Spacious duffel bag with adjustable shoulder strap.",
             "brand": "Adidas",
-            "category_id": 2,
+            "category_id": 4,
             "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/c7f5378137d847d7a5d5ac5b0128ccab/Linear_Duffel_Bag_Black.jpg",
             "prices": [
                 {
@@ -116,7 +116,7 @@
             "name": "Adidas Predator Edge Football Boots",
             "description": "Professional football boots with innovative control elements.",
             "brand": "Adidas",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/42d5be8fd908427c9074adbd00d09e8e/Predator_Edge_Boots_Black.jpg",
             "prices": [
                 {
@@ -132,7 +132,7 @@
             "name": "Adidas Training Cap",
             "description": "Lightweight cap with moisture-wicking sweatband.",
             "brand": "Adidas",
-            "category_id": 4,
+            "category_id": 3,
             "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/4f6d6e8d2b714a1c8c75aaa100ba9ba7/Training_Cap_Black.jpg",
             "prices": [
                 {
@@ -164,7 +164,7 @@
             "name": "Adidas Classic Backpack",
             "description": "Versatile backpack with laptop compartment.",
             "brand": "Adidas",
-            "category_id": 2,
+            "category_id": 4,
             "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/1e08c6f20534487b8c74ac8e00e51f8f/Classic_Backpack_Black.jpg",
             "prices": [
                 {

@@ -16,6 +16,7 @@ router.get('/:id', merchantController.getMerchant);
 router.post('/', merchantController.createMerchant);
 router.put('/:id', merchantController.updateMerchant);
 router.delete('/:id', merchantController.deleteMerchant);
+router.get('/:id/sync', merchantController.syncMerchantProducts);
 router.post('/:id/sync', merchantController.syncMerchantProducts);
 
 module.exports = router; 

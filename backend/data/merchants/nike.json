@@ -6,7 +6,7 @@
             "name": "Nike Air Max Plus",
             "description": "Iconic running shoes with visible Air cushioning and tuned support.",
             "brand": "Nike",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b9739f66-98f6-42a7-8fe6-6b25ef0b9d83/air-max-plus-shoes.png",
             "prices": [
                 {
@@ -68,7 +68,7 @@
             "name": "Nike Zoom Pegasus 40",
             "description": "Versatile running shoes with responsive cushioning for daily training.",
             "brand": "Nike",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e8e530a3-2317-4356-9d8f-96d31a924c47/zoom-pegasus-40-road-running-shoes.png",
             "prices": [
                 {
@@ -100,7 +100,7 @@
             "name": "Nike Brasilia Training Backpack",
             "description": "Durable backpack with multiple compartments for gym essentials.",
             "brand": "Nike",
-            "category_id": 2,
+            "category_id": 4,
             "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/7a4c6a67-5615-4f15-8b8f-a4e2f52f5c94/brasilia-training-backpack.png",
             "prices": [
                 {
@@ -116,7 +116,7 @@
             "name": "Nike Metcon 9",
             "description": "Stable training shoes designed for weightlifting and high-intensity workouts.",
             "brand": "Nike",
-            "category_id": 3,
+            "category_id": 2,
             "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/88c9b4f5-0109-4e89-b3e9-39d417c27b0f/metcon-9-training-shoes.png",
             "prices": [
                 {
@@ -148,7 +148,7 @@
             "name": "Nike Elite Crew Socks",
             "description": "Performance cushioned socks with arch support.",
             "brand": "Nike",
-            "category_id": 4,
+            "category_id": 3,
             "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/9b639266-d140-4f6a-a875-11d37c4a2fa9/elite-crew-socks.png",
             "prices": [
                 {
