@@ -26,18 +26,32 @@ async function deleteDbTables(connection) {
 }
 
 
-async function createDbTables() {
-    const connection = await createConnection();
+async function createDbTables(connection) {
     try {
         const sqlQueries = [
             `
-            CREATE TABLE IF NOT EXISTS stores (
+            CREATE TABLE IF NOT EXISTS merchants (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 logo VARCHAR(255),
-                website_url VARCHAR(255) NOT NULL,
+                description TEXT,
                 catalog_url VARCHAR(255) NOT NULL,
-                status ENUM('active', 'inactive') DEFAULT 'active'
+                last_sync TIMESTAMP NULL,
+                status ENUM('active', 'inactive') DEFAULT 'active',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            );
+            `,
+            `
+            CREATE TABLE IF NOT EXISTS sync_logs (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                merchant_id INT NOT NULL,
+                status ENUM('success', 'error') NOT NULL,
+                products_updated INT DEFAULT 0,
+                error_message TEXT,
+                started_at TIMESTAMP NOT NULL,
+                completed_at TIMESTAMP NOT NULL,
+                FOREIGN KEY (merchant_id) REFERENCES merchants(id)
             );
             `,
             `
@@ -49,15 +63,18 @@ async function createDbTables() {
             `,
             `
             CREATE TABLE IF NOT EXISTS product_prices (
+                id INT PRIMARY KEY AUTO_INCREMENT,
                 product_id INT,
                 product_store_id INT,
-                size_id INT DEFAULT 0,
-                color_id INT DEFAULT 0,
-                current_price DECIMAL(10, 2) NOT NULL,
-                original_price DECIMAL(10, 2),
-                stock ENUM('in_stock', 'out_of_stock', 'limited') DEFAULT 'in_stock',
+                size_id INT,
+                color_id INT,
+                current_price DECIMAL(10,2),
+                original_price DECIMAL(10,2),
+                stock ENUM('in_stock', 'out_of_stock', 'limited'),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (product_id) REFERENCES products(id),
+                FOREIGN KEY (product_store_id) REFERENCES merchants(id)
             );
             `,
             `
@@ -75,12 +92,12 @@ async function createDbTables() {
             `,
             `
             CREATE TABLE IF NOT EXISTS products (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(255) NOT NULL,
                 description TEXT,
                 brand VARCHAR(100),
                 category_id INT,
-                image VARCHAR(255),
+                image VARCHAR(500),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             );
@@ -92,39 +109,17 @@ async function createDbTables() {
                 ip_address VARCHAR(45),
                 viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
-            `,
-            `
-            CREATE TABLE IF NOT EXISTS merchants (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                store_id INT NOT NULL,
-                api_key VARCHAR(255),
-                api_url VARCHAR(255),
-                sync_frequency INT DEFAULT 24,
-                last_sync TIMESTAMP NULL,
-                status ENUM('active', 'inactive') DEFAULT 'active',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (store_id) REFERENCES stores(id)
-            );
-            `,
-            `
-            CREATE TABLE IF NOT EXISTS sync_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                merchant_id INT NOT NULL,
-                status ENUM('success', 'error') NOT NULL,
-                products_updated INT DEFAULT 0,
-                started_at TIMESTAMP NOT NULL,
-                completed_at TIMESTAMP NULL,
-                error_message TEXT,
-                FOREIGN KEY (merchant_id) REFERENCES merchants(id)
-            );
             `
         ];
 
         for (const query of sqlQueries) {
             await connection.execute(query);
         }
+        
+        console.log('Tables created successfully');
     } catch (error) {
         console.error('Error creating tables:', error);
+        throw error;
     } finally {
         await connection.end();
     }
@@ -135,7 +130,7 @@ async function importInitialData() {
     const connection = await createConnection();
     
     try {
-        await importStores(connection);
+        await importMerchants(connection);
         await importCategories(connection);
         await importColorsAndSizes(connection);
         await importProducts(connection);
@@ -148,34 +143,43 @@ async function importInitialData() {
     }
 }
 
-async function importStores(connection) {
-    const stores = [
-        { 
-            name: 'H&M Online', 
-            website_url: 'https://www.hm.com',
-            catalog_url: 'https://www.hm.com/catalog',
-            status: 'active'
-        },
-        { 
-            name: 'Zara', 
-            website_url: 'https://www.zara.com',
-            catalog_url: 'https://www.zara.com/catalog',
-            status: 'active'
-        },
-        {
-            name: 'Nike',
-            website_url: 'https://www.nike.com',
-            catalog_url: 'https://www.nike.com/catalog',
-            status: 'active'
-        },
+async function importMerchants(connection) {
+    try {
+        const merchants = [
+            { 
+                name: 'H&M Online', 
+                description: 'Fashion retailer',
+                logo: 'https://example.com/hm-logo.png',
+                catalog_url: 'http://localhost:3001/api/catalog/1',
+                status: 'active'
+            },
+            { 
+                name: 'Zara', 
+                description: 'Fashion brand',
+                logo: 'https://example.com/zara-logo.png',
+                catalog_url: 'http://localhost:3001/api/catalog/2',
+                status: 'active'
+            },
+            {
+                name: 'Nike',
+                description: 'Sports brand',
+                logo: 'https://example.com/nike-logo.png',
+                catalog_url: 'http://localhost:3001/api/catalog/3',
+                status: 'active'
+            }
+        ];
         
-    ];
-    
-    for (const store of stores) {
-        await connection.execute(
-            'INSERT IGNORE INTO stores (name, website_url, catalog_url, status) VALUES (?, ?, ?, ?)',
-            [store.name, store.website_url, store.catalog_url, store.status]
-        );
+        for (const merchant of merchants) {
+            await connection.execute(
+                'INSERT IGNORE INTO merchants (name, description, logo, catalog_url, status) VALUES (?, ?, ?, ?, ?)',
+                [merchant.name, merchant.description, merchant.logo, merchant.catalog_url, merchant.status]
+            );
+        }
+        
+        console.log('Merchants imported successfully');
+    } catch (error) {
+        console.error('Error importing merchants:', error);
+        throw error;
     }
 }
 
@@ -251,22 +255,24 @@ async function importProducts(connection) {
             );
             const productId = productResult.insertId;
 
-            for (const price of product.prices) {                       
-                    await connection.execute(
-                        `INSERT INTO product_prices 
-                        (product_id, product_store_id, size_id, color_id, current_price, original_price, stock) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                        [
-                            productId,
-                            price.product_store_id || null,
-                            price.size_id || null,
-                            price.color_id || null,
-                            price.current_price,
-                            price.original_price || null,
-                            price.stock || 'in_stock'
-                        ]
-                    );
+            for (const price of product.prices) {
+                const [colorResult] = await connection.execute('SELECT id FROM colors ORDER BY RAND() LIMIT 1');
+                const [sizeResult] = await connection.execute('SELECT id FROM sizes ORDER BY RAND() LIMIT 1');
                 
+                await connection.execute(
+                    `INSERT INTO product_prices 
+                    (product_id, product_store_id, color_id, size_id, current_price, original_price, stock) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        productId,
+                        price.merchant_id || null,
+                        colorResult[0].id,
+                        sizeResult[0].id,
+                        price.current_price,
+                        price.original_price || null,
+                        price.stock || 'in_stock'
+                    ]
+                );
             }
         }
         console.log('Products imported successfully!');
@@ -276,10 +282,91 @@ async function importProducts(connection) {
     }
 }
 
+async function importMerchantProducts(merchantId, catalogUrl) {
+    const connection = await createConnection();
+    try {
+        await connection.execute(
+            'DELETE products FROM products ' +
+            'INNER JOIN product_prices ON products.id = product_prices.product_id ' +
+            'WHERE product_prices.product_store_id = ?',
+            [merchantId]
+        );
+
+        const response = await fetch(catalogUrl);
+        const catalogData = await response.json();
+        
+        for (const product of catalogData.products) {
+            const [productResult] = await connection.execute(
+                `INSERT INTO products 
+                (name, description, brand, category_id, image, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
+                [
+                    product.name,
+                    product.description,
+                    product.brand,
+                    product.category_id,
+                    product.image
+                ]
+            );
+            
+            const productId = productResult.insertId;
+
+            for (const price of product.prices) {
+                await connection.execute(
+                    `INSERT INTO product_prices 
+                    (product_id, product_store_id, current_price, original_price, stock) 
+                    VALUES (?, ?, ?, ?, ?)`,
+                    [
+                        productId,
+                        merchantId, 
+                        price.current_price,
+                        price.original_price,
+                        price.stock
+                    ]
+                );
+            }
+        }
+
+        await connection.execute(
+            `INSERT INTO sync_logs 
+            (merchant_id, status, products_updated, started_at, completed_at) 
+            VALUES (?, 'success', ?, NOW(), NOW())`,
+            [merchantId, catalogData.products.length]
+        );
+
+        await connection.execute(
+            'UPDATE merchants SET last_sync = NOW() WHERE id = ?',
+            [merchantId]
+        );
+
+        console.log(`Successfully imported ${catalogData.products.length} products for merchant ${merchantId}`);
+
+    } catch (error) {
+        console.error('Error importing merchant products:', error);
+        
+        await connection.execute(
+            `INSERT INTO sync_logs 
+            (merchant_id, status, error_message, started_at, completed_at) 
+            VALUES (?, 'error', ?, NOW(), NOW())`,
+            [merchantId, error.message]
+        );
+        
+        throw error;
+    } finally {
+        await connection.end();
+    }
+}
+
+module.exports = {
+    importMerchantProducts,
+    createDbTables,
+    importInitialData
+};
+
 async function main() {
     const connection = await createConnection();
     await deleteDbTables(connection);
-    await createDbTables();
+    await createDbTables(connection);
     await importInitialData();
 }
 

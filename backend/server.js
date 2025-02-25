@@ -3,7 +3,8 @@ const cors = require('cors');
 const path = require('path');
 const productRoutes = require('./routes/product');
 const catalogRoutes = require('./routes/catalog');
-
+const merchantRoutes = require('./routes/merchants');
+const filterRoutes = require('./routes/filters');
 
 const app = express();
 
@@ -17,8 +18,10 @@ app.use(cors({
     credentials: true
 }));
 
-app.use('/api', productRoutes);
+app.use('/api', filterRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/catalog', catalogRoutes);
+app.use('/merchants', merchantRoutes);
 app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
 app.get('/', (req, res) => {
@@ -27,10 +30,13 @@ app.get('/', (req, res) => {
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Something broke!' });
+    res.status(500).json({ 
+        error: 'Something broke!',
+        details: err.message 
+    });
 });
 
-const PORT = 3001;
+const PORT = 3002;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

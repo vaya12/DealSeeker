@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Table,
     TableBody,
@@ -7,55 +8,107 @@ import {
     TableHead,
     TableRow,
     Paper,
+    IconButton,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    IconButton,
-    Avatar
+    Avatar,
+    Box,
+    Typography,
+    Alert,
+    Snackbar
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
-import axios from 'axios';
+import { merchantApi } from '../../services/api';
 
 const MerchantsList = () => {
+    const navigate = useNavigate();
     const [merchants, setMerchants] = useState([]);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedMerchant, setSelectedMerchant] = useState(null);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
 
-    useEffect(() => {
-        fetchMerchants();
-    }, []);
-
-    const fetchMerchants = async () => {
+    const fetchMerchants = useCallback(async () => {
         try {
-            const response = await axios.get('/api/merchants');
+            const response = await merchantApi.getAll();
             setMerchants(response.data);
         } catch (error) {
             console.error('Error fetching merchants:', error);
+            showSnackbar('Failed to load merchants', 'error');
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchMerchants();
+    }, [fetchMerchants]);
 
     const handleSyncClick = (merchant) => {
         setSelectedMerchant(merchant);
         setSyncDialogOpen(true);
     };
 
+    const handleDeleteClick = (merchant) => {
+        setSelectedMerchant(merchant);
+        setDeleteDialogOpen(true);
+    };
+
     const handleSyncConfirm = async () => {
         try {
-            await axios.post(`/api/catalog/${selectedMerchant.id}/sync`);
+            await merchantApi.sync(selectedMerchant.id);
             setSyncDialogOpen(false);
-            // Обновяваме списъка след синхронизация
+            showSnackbar('Products synchronized successfully');
             fetchMerchants();
         } catch (error) {
             console.error('Error syncing products:', error);
+            showSnackbar('Failed to sync products', 'error');
         }
+    };
+
+    const handleDeleteConfirm = async () => {
+        try {
+            await merchantApi.delete(selectedMerchant.id);
+            setDeleteDialogOpen(false);
+            showSnackbar('Merchant deleted successfully');
+            fetchMerchants();
+        } catch (error) {
+            console.error('Error deleting merchant:', error);
+            showSnackbar('Failed to delete merchant', 'error');
+        }
+    };
+
+    const showSnackbar = (message, severity = 'success') => {
+        setSnackbar({
+            open: true,
+            message,
+            severity
+        });
     };
 
     return (
         <>
+            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h5" component="h2">
+                    Merchants
+                </Typography>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/admin/merchants/new')}
+                >
+                    Add New Merchant
+                </Button>
+            </Box>
+
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -71,23 +124,36 @@ const MerchantsList = () => {
                         {merchants.map((merchant) => (
                             <TableRow key={merchant.id}>
                                 <TableCell>
-                                    <Avatar src={merchant.logo} alt={merchant.name} />
+                                    <Avatar 
+                                        src={merchant.logo} 
+                                        alt={merchant.name}
+                                        sx={{ width: 40, height: 40 }}
+                                    />
                                 </TableCell>
                                 <TableCell>{merchant.name}</TableCell>
                                 <TableCell>{merchant.description}</TableCell>
                                 <TableCell>{merchant.catalog_url}</TableCell>
                                 <TableCell>
                                     <IconButton 
-                                        href={`/admin/merchants/${merchant.id}/edit`}
+                                        onClick={() => navigate(`/admin/merchants/${merchant.id}/edit`)}
                                         color="primary"
+                                        title="Edit"
                                     >
                                         <EditIcon />
                                     </IconButton>
                                     <IconButton 
                                         onClick={() => handleSyncClick(merchant)}
                                         color="secondary"
+                                        title="Sync Products"
                                     >
                                         <SyncIcon />
+                                    </IconButton>
+                                    <IconButton 
+                                        onClick={() => handleDeleteClick(merchant)}
+                                        color="error"
+                                        title="Delete"
+                                    >
+                                        <DeleteIcon />
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
@@ -109,13 +175,47 @@ const MerchantsList = () => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setSyncDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleSyncConfirm} color="primary">
+                    <Button onClick={handleSyncConfirm} color="primary" variant="contained">
                         Sync Products
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+            >
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete {selectedMerchant?.name}? 
+                        This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert 
+                    onClose={() => setSnackbar(prev => ({ ...prev, open: false }))} 
+                    severity={snackbar.severity}
+                    variant="filled"
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </>
     );
 };
 
-export default MerchantsList; 
+export default MerchantsList;

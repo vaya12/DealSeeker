@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Container,
@@ -8,7 +8,7 @@ import {
     Typography,
     Box
 } from '@mui/material';
-import axios from 'axios';
+import { merchantApi } from '../../services/api';
 
 const MerchantForm = () => {
     const { id } = useParams();
@@ -20,28 +20,28 @@ const MerchantForm = () => {
         catalog_url: ''
     });
 
-    useEffect(() => {
-        if (id) {
-            fetchMerchant();
-        }
-    }, [id]);
-
-    const fetchMerchant = async () => {
+    const fetchMerchant = useCallback(async () => {
         try {
-            const response = await axios.get(`/api/merchants/${id}`);
+            const response = await merchantApi.getById(id);
             setFormData(response.data);
         } catch (error) {
             console.error('Error fetching merchant:', error);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        if (id) {
+            fetchMerchant();
+        }
+    }, [id, fetchMerchant]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             if (id) {
-                await axios.put(`/api/merchants/${id}`, formData);
+                await merchantApi.update(id, formData);
             } else {
-                await axios.post('/api/merchants', formData);
+                await merchantApi.create(formData);
             }
             navigate('/admin/merchants');
         } catch (error) {

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_URL = 'http://localhost:3002/api';
+
 const api = axios.create({
-    baseURL: 'http://localhost:3001/api',  
+    baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -30,5 +32,14 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+export const merchantApi = {
+    getAll: () => api.get('/merchants'),
+    getById: (id) => api.get(`/merchants/${id}`),
+    create: (data) => api.post('/merchants', data),
+    update: (id, data) => api.put(`/merchants/${id}`, data),
+    delete: (id) => api.delete(`/merchants/${id}`),
+    sync: (id) => api.post(`/merchants/${id}/sync`)
+};
 
 export default api; 
