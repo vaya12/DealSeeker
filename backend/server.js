@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -5,6 +6,8 @@ const productRoutes = require('./routes/product');
 const catalogRoutes = require('./routes/catalog');
 const merchantRoutes = require('./routes/merchants');
 const filterRoutes = require('./routes/filters');
+const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -21,7 +24,9 @@ app.use(cors({
 app.use('/api', filterRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/catalog', catalogRoutes);
-app.use('/merchants', merchantRoutes);
+app.use('/api/merchants', merchantRoutes);
+app.use('/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/product_pictures', express.static(path.join(__dirname, 'product_pictures')));
 
 app.get('/', (req, res) => {
@@ -36,7 +41,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

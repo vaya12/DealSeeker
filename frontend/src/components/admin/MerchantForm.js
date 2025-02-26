@@ -21,19 +21,19 @@ const MerchantForm = () => {
     });
 
     const fetchMerchant = useCallback(async () => {
-        try {
-            const response = await merchantApi.getById(id);
-            setFormData(response.data);
-        } catch (error) {
-            console.error('Error fetching merchant:', error);
+        if (id) {
+            try {
+                const response = await merchantApi.getById(id);
+                setFormData(response.data);
+            } catch (error) {
+                console.error('Error fetching merchant:', error);
+            }
         }
     }, [id]);
 
     useEffect(() => {
-        if (id) {
-            fetchMerchant();
-        }
-    }, [id, fetchMerchant]);
+        fetchMerchant();
+    }, [fetchMerchant]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,7 +43,7 @@ const MerchantForm = () => {
             } else {
                 await merchantApi.create(formData);
             }
-            navigate('/admin/merchants');
+            navigate('/admin');
         } catch (error) {
             console.error('Error saving merchant:', error);
         }
@@ -56,9 +56,13 @@ const MerchantForm = () => {
         });
     };
 
+    const handleCancel = () => {
+        navigate('/admin');
+    };
+
     return (
-        <Container maxWidth="md">
-            <Paper sx={{ p: 3, mt: 4 }}>
+        <Container maxWidth="sm">
+            <Paper sx={{ p: 4, mt: 4 }}>
                 <Typography variant="h5" component="h2" gutterBottom>
                     {id ? 'Edit Merchant' : 'Add New Merchant'}
                 </Typography>
@@ -82,7 +86,7 @@ const MerchantForm = () => {
                         onChange={handleChange}
                         margin="normal"
                         multiline
-                        rows={3}
+                        rows={4}
                     />
                     
                     <TextField
@@ -115,7 +119,7 @@ const MerchantForm = () => {
                         </Button>
                         <Button
                             variant="outlined"
-                            onClick={() => navigate('/admin/merchants')}
+                            onClick={handleCancel}
                         >
                             Cancel
                         </Button>
