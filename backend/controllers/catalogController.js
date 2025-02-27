@@ -139,33 +139,32 @@ exports.getMerchantCatalogs = async (req, res) => {
 exports.getMerchantCatalog = async (req, res) => {
     try {
         const { merchantId } = req.params;
+        const merchantsDir = path.join(__dirname, '../data/merchants');
         
-        const merchantMap = {
-            '1': 'hm.json',
-            '2': 'zara.json',
-            '3': 'nike.json',
-            '4': 'adidas.json',
-            '5': 'puma.json'
-        };
-
-        const catalogFile = merchantMap[merchantId];
+        const files = await fs.readdir(merchantsDir);
         
-        if (!catalogFile) {
-            return res.status(404).json({ 
-                error: 'Merchant catalog not found' 
-            });
+        for (const file of files) {
+            if (file.endsWith('.json')) {
+                const catalogPath = path.join(merchantsDir, file);
+                const catalogContent = await fs.readFile(catalogPath, 'utf8');
+                const catalog = JSON.parse(catalogContent);
+                
+                if (catalog.merchant_id.toString() === merchantId) {
+                    return res.json(catalog);
+                }
+            }
         }
-
-        const catalogPath = path.join(__dirname, '../data/merchants', catalogFile);
-        const catalogData = await fs.readFile(catalogPath, 'utf8');
-        const catalog = JSON.parse(catalogData);
-
-        res.json(catalog);
+        
+        res.status(404).json({
+            error: 'Catalog not found',
+            message: `No catalog found for merchant ID ${merchantId}`
+        });
 
     } catch (error) {
-        console.error('Error fetching merchant catalog:', error);
-        res.status(500).json({ 
-            error: 'Internal server error' 
+        console.error('Error reading catalog:', error);
+        res.status(500).json({
+            error: 'Failed to read catalog',
+            message: error.message
         });
     }
 };

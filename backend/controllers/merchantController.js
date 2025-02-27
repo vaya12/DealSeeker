@@ -22,6 +22,28 @@ exports.createMerchant = async (req, res) => {
     try {
         const { name, description, logo, catalog_url } = req.body;
         
+        const [existingMerchantName] = await connection.execute(
+            'SELECT id FROM merchants WHERE name = ?',
+            [name]
+        );
+        
+        if (existingMerchantName.length > 0) {
+            return res.status(400).json({
+                error: 'A merchant with this name already exists'
+            });
+        }
+
+        const [existingCatalogUrl] = await connection.execute(
+            'SELECT id FROM merchants WHERE catalog_url = ?',
+            [catalog_url]
+        );
+        
+        if (existingCatalogUrl.length > 0) {
+            return res.status(400).json({
+                error: 'This catalog URL is already in use'
+            });
+        }
+
         const [result] = await connection.execute(
             'INSERT INTO merchants (name, description, logo, catalog_url) VALUES (?, ?, ?, ?)',
             [name, description, logo, catalog_url]
@@ -43,61 +65,141 @@ exports.createMerchant = async (req, res) => {
 };
 
 exports.syncMerchantProducts = async (req, res) => {
+    let connection;
+    const { id } = req.params;
+
     try {
-        const merchantId = req.params.id;
-        const connection = await createConnection();
-        
-        const [merchants] = await connection.execute(
+        connection = await createConnection();
+
+        const [merchant] = await connection.execute(
             'SELECT * FROM merchants WHERE id = ?',
-            [merchantId]
+            [id]
         );
-        
-        if (merchants.length === 0) {
-            return res.status(404).json({ error: 'Merchant not found' });
+
+        if (merchant.length === 0) {
+            return res.status(404).json({
+                error: 'Merchant not found'
+            });
         }
 
-        const catalogUrl = merchants[0].catalog_url;
-        
-        await importMerchantProducts(merchantId, catalogUrl);
-        
-        res.json({ 
-            message: 'Products synchronized successfully',
-            merchantId,
-            catalogUrl
-        });
+        try {
+            await connection.beginTransaction();
 
+            await connection.execute(
+                'DELETE FROM product_prices WHERE product_id IN (SELECT id FROM products WHERE merchant_id = ?)',
+                [id]
+            );
+            
+            await connection.execute(
+                'DELETE FROM products WHERE merchant_id = ?',
+                [id]
+            );
+
+            const products = await importMerchantProducts(id, merchant[0].catalog_url, connection);
+
+            await connection.execute(
+                'INSERT INTO sync_logs (merchant_id, status, products_updated, started_at, completed_at) VALUES (?, ?, ?, NOW(), NOW())',
+                [id, 'success', products.length]
+            );
+
+            await connection.commit();
+            
+            res.json({ 
+                message: `Successfully synchronized ${products.length} products`,
+                productsCount: products.length
+            });
+
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        }
     } catch (error) {
         console.error('Error syncing products:', error);
-        res.status(500).json({ 
-            error: 'Failed to sync products',
-            details: error.message
-        });
+        
+        let errorMessage = 'Error synchronizing products. ';
+        
+        if (error.code === 'ER_LOCK_WAIT_TIMEOUT') {
+            errorMessage = 'Database is busy. Please try again in a few moments.';
+        } else if (error.code === 'ECONNREFUSED') {
+            errorMessage = 'Cannot connect to the catalog. Please check if the URL is accessible.';
+        } else if (error.message.includes('404')) {
+            errorMessage = 'Catalog not found (404). Please check if the URL is correct.';
+        } else if (error.message.includes('fetch failed')) {
+            errorMessage = 'Failed to fetch catalog data. Please check if the catalog URL is accessible.';
+        }
+
+        if (connection) {
+            try {
+                await connection.execute(
+                    'INSERT INTO sync_logs (merchant_id, status, error_message, started_at, completed_at) VALUES (?, ?, ?, NOW(), NOW())',
+                    [id, 'error', errorMessage]
+                );
+            } catch (logError) {
+                console.error('Error logging sync error:', logError);
+            }
+        }
+
+        res.status(500).json({ error: errorMessage });
+    } finally {
+        if (connection) {
+            try {
+                await connection.end();
+            } catch (err) {
+                console.error('Error closing connection:', err);
+            }
+        }
     }
 };
 
 exports.deleteMerchant = async (req, res) => {
-    const connection = await createConnection();
+    let connection;
     try {
-        const merchantId = req.params.id;
-        
-        await connection.execute(
-            'DELETE products FROM products ' +
-            'INNER JOIN product_prices ON products.id = product_prices.product_id ' +
-            'WHERE product_prices.product_store_id = ?',
-            [merchantId]
-        );
-        
-        await connection.execute(
-            'DELETE FROM merchants WHERE id = ?',
-            [merchantId]
-        );
-        
-        res.json({ message: 'Merchant deleted successfully' });
+        const { id } = req.params;
+        connection = await createConnection();
+
+        await connection.beginTransaction();
+
+        try {
+            await connection.execute(
+                'DELETE FROM product_prices WHERE product_id IN (SELECT id FROM products WHERE merchant_id = ?)',
+                [id]
+            );
+
+            await connection.execute(
+                'DELETE FROM products WHERE merchant_id = ?',
+                [id]
+            );
+
+            await connection.execute(
+                'DELETE FROM sync_logs WHERE merchant_id = ?',
+                [id]
+            );
+
+            await connection.execute(
+                'DELETE FROM merchants WHERE id = ?',
+                [id]
+            );
+
+            await connection.commit();
+            res.json({ message: 'Merchant and all related data successfully deleted' });
+
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        }
     } catch (error) {
         console.error('Error deleting merchant:', error);
-        res.status(500).json({ error: 'Failed to delete merchant' });
+        res.status(500).json({ 
+            error: 'Failed to delete merchant. Please try again.' 
+        });
     } finally {
-        await connection.end();
+        if (connection) {
+            try {
+                await connection.end();
+            } catch (err) {
+                console.error('Error closing connection:', err);
+            }
+        }
     }
 };
 

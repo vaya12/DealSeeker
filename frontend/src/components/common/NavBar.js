@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./styles/NavBar.css";
-import { InputAdornment, TextField, IconButton } from "@mui/material";
+import { InputAdornment, TextField, IconButton, Tooltip } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
@@ -127,6 +127,15 @@ const Navbar = () => {
     }, 100);
   };
 
+  const handleProfileClick = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/admin');
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <nav style={styles.navbar}>
       <ul style={styles.navList}>
@@ -179,9 +188,11 @@ const Navbar = () => {
           />
         </form>
         
-        <IconButton>
-          <AccountCircleIcon sx={styles.profileIcon} />
-        </IconButton>
+        <Tooltip title="Admin Access Only" arrow placement="bottom">
+          <IconButton onClick={handleProfileClick}>
+            <AccountCircleIcon sx={styles.profileIcon} />
+          </IconButton>
+        </Tooltip>
       </div>
     </nav>
   );

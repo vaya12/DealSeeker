@@ -1,21 +1,55 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { 
     AppBar, 
     Toolbar, 
     Typography, 
     Container, 
-    Box 
+    Box,
+    Button
 } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const AdminLayout = () => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <AppBar position="static">
+            <AppBar 
+                position="static" 
+                sx={{ 
+                    bgcolor: '#6CA390',
+                    boxShadow: 'none'
+                }}
+            >
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography 
+                        variant="h6" 
+                        component="div" 
+                        sx={{ 
+                            flexGrow: 1,
+                            fontFamily: "'Saira Stencil One', sans-serif",
+                            fontSize: '28px'
+                        }}
+                    >
                         DealSeeker Admin
                     </Typography>
+                    <Button 
+                        color="inherit"
+                        onClick={handleLogout}
+                        startIcon={<LogoutIcon />}
+                        sx={{
+                            fontFamily: "'Saira Stencil One', sans-serif",
+                            fontSize: '16px'
+                        }}
+                    >
+                        Logout
+                    </Button>
                 </Toolbar>
             </AppBar>
             

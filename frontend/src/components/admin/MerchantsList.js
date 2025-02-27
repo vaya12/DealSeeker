@@ -19,14 +19,15 @@ import {
     Box,
     Typography,
     Alert,
-    Snackbar
+    Snackbar,
+    CircularProgress
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SyncIcon from '@mui/icons-material/Sync';
 import { merchantApi } from '../../services/api';
 
-const MerchantsList = () => {
+const MerchantsList = ({ onStatsChange }) => {
     const navigate = useNavigate();
     const [merchants, setMerchants] = useState([]);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
@@ -37,14 +38,18 @@ const MerchantsList = () => {
         message: '',
         severity: 'success'
     });
+    const [loading, setLoading] = useState(false);
 
     const fetchMerchants = useCallback(async () => {
         try {
+            setLoading(true);
             const response = await merchantApi.getAll();
             setMerchants(response.data);
         } catch (error) {
             console.error('Error fetching merchants:', error);
             showSnackbar('Failed to load merchants', 'error');
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -64,13 +69,25 @@ const MerchantsList = () => {
 
     const handleSyncConfirm = async () => {
         try {
-            await merchantApi.sync(selectedMerchant.id);
-            setSyncDialogOpen(false);
-            showSnackbar('Products synchronized successfully');
-            fetchMerchants();
+            setLoading(true);
+            const response = await merchantApi.sync(selectedMerchant.id);
+            
+            if (response.error) {
+                showSnackbar(response.error, 'error');
+            } else {
+                showSnackbar(`Successfully synchronized ${response.productsCount || 0} products`);
+                await fetchMerchants();
+                onStatsChange();
+            }
         } catch (error) {
             console.error('Error syncing products:', error);
-            showSnackbar('Failed to sync products', 'error');
+            const errorMessage = error.response?.data?.error || 
+                               error.message || 
+                               'Failed to sync products. Please try again.';
+            showSnackbar(errorMessage, 'error');
+        } finally {
+            setLoading(false);
+            setSyncDialogOpen(false);
         }
     };
 
@@ -79,7 +96,8 @@ const MerchantsList = () => {
             await merchantApi.delete(selectedMerchant.id);
             setDeleteDialogOpen(false);
             showSnackbar('Merchant deleted successfully');
-            fetchMerchants();
+            await fetchMerchants();
+            onStatsChange();
         } catch (error) {
             console.error('Error deleting merchant:', error);
             showSnackbar('Failed to delete merchant', 'error');
@@ -97,70 +115,88 @@ const MerchantsList = () => {
     return (
         <>
             <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h5" component="h2">
+                <Typography 
+                    variant="h5" 
+                    component="h2"
+                    sx={{
+                        fontFamily: "'Saira Stencil One', sans-serif",
+                        fontSize: '24px'
+                    }}
+                >
                     Merchants
                 </Typography>
                 <Button
                     variant="contained"
-                    color="primary"
+                    sx={{ 
+                        bgcolor: '#6CA390',
+                        '&:hover': {
+                            bgcolor: '#5b8c7d'
+                        }
+                    }}
                     onClick={() => navigate('/admin/merchants/new')}
                 >
                     Add New Merchant
                 </Button>
             </Box>
 
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Logo</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>Catalog URL</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {merchants.map((merchant) => (
-                            <TableRow key={merchant.id}>
-                                <TableCell>
-                                    <Avatar 
-                                        src={merchant.logo} 
-                                        alt={merchant.name}
-                                        sx={{ width: 40, height: 40 }}
-                                    />
-                                </TableCell>
-                                <TableCell>{merchant.name}</TableCell>
-                                <TableCell>{merchant.description}</TableCell>
-                                <TableCell>{merchant.catalog_url}</TableCell>
-                                <TableCell>
-                                    <IconButton 
-                                        onClick={() => navigate(`/admin/merchants/${merchant.id}/edit`)}
-                                        color="primary"
-                                        title="Edit"
-                                    >
-                                        <EditIcon />
-                                    </IconButton>
-                                    <IconButton 
-                                        onClick={() => handleSyncClick(merchant)}
-                                        color="secondary"
-                                        title="Sync Products"
-                                    >
-                                        <SyncIcon />
-                                    </IconButton>
-                                    <IconButton 
-                                        onClick={() => handleDeleteClick(merchant)}
-                                        color="error"
-                                        title="Delete"
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </TableCell>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+                    <CircularProgress sx={{ color: '#6CA390' }} />
+                </Box>
+            ) : (
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Logo</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Description</TableCell>
+                                <TableCell>Catalog URL</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {merchants.map((merchant) => (
+                                <TableRow key={merchant.id}>
+                                    <TableCell>
+                                        <Avatar 
+                                            src={merchant.logo} 
+                                            alt={merchant.name}
+                                            sx={{ width: 40, height: 40 }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>{merchant.name}</TableCell>
+                                    <TableCell>{merchant.description}</TableCell>
+                                    <TableCell>{merchant.catalog_url}</TableCell>
+                                    <TableCell>
+                                        <IconButton 
+                                            onClick={() => navigate(`/admin/merchants/${merchant.id}/edit`)}
+                                            color="primary"
+                                            title="Edit"
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton 
+                                            onClick={() => handleSyncClick(merchant)}
+                                            color="secondary"
+                                            title="Sync Products"
+                                        >
+                                            <SyncIcon />
+                                        </IconButton>
+                                        <IconButton 
+                                            onClick={() => handleDeleteClick(merchant)}
+                                            color="error"
+                                            title="Delete"
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
 
             <Dialog
                 open={syncDialogOpen}
@@ -174,9 +210,23 @@ const MerchantsList = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setSyncDialogOpen(false)}>Cancel</Button>
-                    <Button onClick={handleSyncConfirm} color="primary" variant="contained">
-                        Sync Products
+                    <Button 
+                        onClick={() => setSyncDialogOpen(false)}
+                        disabled={loading}
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={handleSyncConfirm} 
+                        color="primary" 
+                        variant="contained"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            'Sync Products'
+                        )}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -41,7 +41,14 @@ export const merchantApi = {
     create: (data) => axios.post('/api/merchants', data),
     update: (id, data) => axios.put(`/api/merchants/${id}`, data),
     delete: (id) => axios.delete(`/api/merchants/${id}`),
-    sync: (id) => axios.post(`/api/merchants/${id}/sync`)
+    sync: async (merchantId) => {
+        try {
+            const response = await axios.post(`/api/merchants/${merchantId}/sync`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 };
 
 export const authApi = {

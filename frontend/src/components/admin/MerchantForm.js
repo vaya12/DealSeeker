@@ -6,7 +6,8 @@ import {
     TextField,
     Button,
     Typography,
-    Box
+    Box,
+    Alert
 } from '@mui/material';
 import { merchantApi } from '../../services/api';
 
@@ -19,6 +20,7 @@ const MerchantForm = () => {
         logo: '',
         catalog_url: ''
     });
+    const [errors, setErrors] = useState({});
 
     const fetchMerchant = useCallback(async () => {
         if (id) {
@@ -35,8 +37,42 @@ const MerchantForm = () => {
         fetchMerchant();
     }, [fetchMerchant]);
 
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!formData.name.trim()) {
+            newErrors.name = 'Name is required';
+        }
+        
+        if (formData.logo.trim()) {
+            try {
+                new URL(formData.logo);
+            } catch (e) {
+                newErrors.logo = 'Please enter a valid URL';
+            }
+        }
+        
+        if (!formData.catalog_url.trim()) {
+            newErrors.catalog_url = 'Catalog URL is required';
+        } else {
+            try {
+                new URL(formData.catalog_url);
+            } catch (e) {
+                newErrors.catalog_url = 'Please enter a valid URL';
+            }
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             if (id) {
                 await merchantApi.update(id, formData);
@@ -46,6 +82,24 @@ const MerchantForm = () => {
             navigate('/admin');
         } catch (error) {
             console.error('Error saving merchant:', error);
+            const errorMessage = error.response?.data?.error || 'Failed to save merchant';
+            
+            if (errorMessage.includes('name already exists')) {
+                setErrors(prev => ({
+                    ...prev,
+                    name: 'A merchant with this name already exists'
+                }));
+            } else if (errorMessage.includes('catalog URL is already in use')) {
+                setErrors(prev => ({
+                    ...prev,
+                    catalog_url: 'This catalog URL is already in use'
+                }));
+            } else {
+                setErrors(prev => ({
+                    ...prev,
+                    submit: errorMessage
+                }));
+            }
         }
     };
 
@@ -76,6 +130,8 @@ const MerchantForm = () => {
                         onChange={handleChange}
                         margin="normal"
                         required
+                        error={!!errors.name}
+                        helperText={errors.name}
                     />
                     
                     <TextField
@@ -96,6 +152,9 @@ const MerchantForm = () => {
                         value={formData.logo}
                         onChange={handleChange}
                         margin="normal"
+                        error={!!errors.logo}
+                        helperText={errors.logo}
+                        placeholder="https://example.com/logo.png"
                     />
                     
                     <TextField
@@ -106,20 +165,41 @@ const MerchantForm = () => {
                         onChange={handleChange}
                         margin="normal"
                         required
+                        error={!!errors.catalog_url}
+                        helperText={errors.catalog_url}
+                        placeholder="https://example.com/catalog"
                     />
+                    
+                    {errors.submit && (
+                        <Alert severity="error" sx={{ mt: 2 }}>
+                            {errors.submit}
+                        </Alert>
+                    )}
                     
                     <Box sx={{ mt: 3 }}>
                         <Button
                             type="submit"
                             variant="contained"
-                            color="primary"
-                            sx={{ mr: 2 }}
+                            sx={{ 
+                                mr: 2,
+                                bgcolor: '#6CA390',
+                                '&:hover': {
+                                    bgcolor: '#5b8c7d'
+                                }
+                            }}
                         >
                             Save
                         </Button>
                         <Button
                             variant="outlined"
                             onClick={handleCancel}
+                            sx={{
+                                color: '#6CA390',
+                                borderColor: '#6CA390',
+                                '&:hover': {
+                                    borderColor: '#5b8c7d'
+                                }
+                            }}
                         >
                             Cancel
                         </Button>

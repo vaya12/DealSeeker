@@ -1,0 +1,93 @@
+{
+    "merchant_id": 10,
+    "name": "Test Store",
+    "products": [
+        {
+            "name": "Summer Dress",
+            "description": "Light and airy summer dress with floral pattern.",
+            "brand": "Test Brand",
+            "category_id": 1,
+            "image": "https://example.com/images/summer-dress.jpg",
+            "prices": [
+                {
+                    "size_id": 2,
+                    "color_id": 3,
+                    "current_price": "45.99",
+                    "original_price": "59.99",
+                    "stock": "in_stock"
+                },
+                {
+                    "size_id": 3,
+                    "color_id": 3,
+                    "current_price": "45.99",
+                    "original_price": "59.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Beach Bag",
+            "description": "Spacious beach bag with rope handles.",
+            "brand": "Test Brand",
+            "category_id": 3,
+            "image": "https://example.com/images/beach-bag.jpg",
+            "prices": [
+                {
+                    "size_id": 1,
+                    "color_id": 2,
+                    "current_price": "29.99",
+                    "original_price": "34.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Sunglasses",
+            "description": "Classic aviator sunglasses with UV protection.",
+            "brand": "Test Brand",
+            "category_id": 3,
+            "image": "https://example.com/images/sunglasses.jpg",
+            "prices": [
+                {
+                    "size_id": 1,
+                    "color_id": 1,
+                    "current_price": "19.99",
+                    "original_price": "24.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Sandals",
+            "description": "Comfortable leather sandals with adjustable straps.",
+            "brand": "Test Brand",
+            "category_id": 2,
+            "image": "https://example.com/images/sandals.jpg",
+            "prices": [
+                {
+                    "size_id": 6,
+                    "color_id": 2,
+                    "current_price": "39.99",
+                    "original_price": "49.99",
+                    "stock": "in_stock"
+                }
+            ]
+        },
+        {
+            "name": "Beach Hat",
+            "description": "Wide-brim straw hat for sun protection.",
+            "brand": "Test Brand",
+            "category_id": 3,
+            "image": "https://example.com/images/beach-hat.jpg",
+            "prices": [
+                {
+                    "size_id": 1,
+                    "color_id": 4,
+                    "current_price": "24.99",
+                    "original_price": "29.99",
+                    "stock": "in_stock"
+                }
+            ]
+        }
+    ]
+} 
