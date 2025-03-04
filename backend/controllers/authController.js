@@ -1,11 +1,12 @@
-const jwt = require('jsonwebtoken');
-
 const ADMIN_USER = {
     username: 'admin',
     password: 'admin123'
 };
 
+
 const JWT_SECRET = 'super-secret-key-123';
+
+const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
     try {

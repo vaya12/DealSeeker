@@ -97,6 +97,8 @@ function App() {
               <Route path="merchants/new" element={<MerchantForm />} />
               <Route path="merchants/:id/edit" element={<MerchantForm />} />
             </Route>
+
+            <Route path="/products" element={<Products />} />
           </Routes>
           <Footer />
         </div>

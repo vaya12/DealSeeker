@@ -1,49 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import ProductModal from './ProductModal';
+import { useLocation } from "react-router-dom";
 
-import { productService } from '../../services/productService';
-
-const groupProducts = (products) => {
-    const groupedProducts = {};
-    
-    products.forEach(product => {
-        const key = `${product.name}_${product.brand}`; 
-        
-        if (!groupedProducts[key]) {
-            groupedProducts[key] = {
-                ...product,
-                available_sizes: product.available_sizes || [],
-                available_colors: product.available_colors || [],
-                prices: product.prices || []
-            };
-        } else {
-            if (product.prices) {
-                const existingPriceIds = new Set(groupedProducts[key].prices.map(p => 
-                    `${p.product_store_id}_${p.size_id}_${p.color_id}`
-                ));
-                
-                product.prices.forEach(price => {
-                    const priceId = `${price.product_store_id}_${price.size_id}_${price.color_id}`;
-                    if (!existingPriceIds.has(priceId)) {
-                        groupedProducts[key].prices.push(price);
-                    }
-                });
-            }
-        }
-    });
-
-    return Object.values(groupedProducts).map(product => ({
-        ...product,
-        min_price: product.prices.length > 0 
-            ? Math.min(...product.prices.map(p => parseFloat(p.current_price))).toFixed(2)
-            : "N/A",
-        max_price: product.prices.length > 0 
-            ? Math.max(...product.prices.map(p => parseFloat(p.original_price))).toFixed(2)
-            : "N/A"
-    }));
-};
-
-const Products = ({ filters }) => {
+const Products = () => {
     const [products, setProducts] = useState([]);
     const [hoveredCard, setHoveredCard] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -55,6 +14,7 @@ const Products = ({ filters }) => {
     const [loading, setLoading] = useState(true);
     const [hoveredButton, setHoveredButton] = useState(null);
     const [noResults, setNoResults] = useState(false);
+    const location = useLocation();
 
     const itemsPerPageOptions = [
         { value: 6, label: '6 products' },
@@ -63,69 +23,83 @@ const Products = ({ filters }) => {
         { value: 18, label: '18 products' }
     ];
 
+    const hasRequiredProps = (product) => {
+        return (
+            product.id &&
+            product.name &&
+            product.category_id !== undefined &&
+            Array.isArray(product.prices) &&
+            Array.isArray(product.colors) &&
+            Array.isArray(product.sizes)
+        );
+    };
+
     const filteredProducts = useMemo(() => {
-        console.log('Current filters:', filters);
-        console.log('All products:', products);
-        
         if (!products || !Array.isArray(products)) return [];
         
-        const groupedProducts = groupProducts(products);
-        
-        return groupedProducts.filter(product => {
-            if (!product) return false;
-            
-            const hasRequiredProps = product.name && 
-                                   product.brand && 
-                                   product.category_name;
-            
-            if (!hasRequiredProps) return false;
+        return products.filter(product => {
+            if (!product || !hasRequiredProps(product)) return false;
 
-            const categoryMatch = !filters.categories?.length || 
-                filters.categories.includes(product.category_name);
-
-            const colorMatch = !filters.colors?.length ||
-                filters.colors.some(color => 
-                    product.available_colors.includes(color));
-
-            const sizeMatch = !filters.sizes?.length ||
-                filters.sizes.some(size => 
-                    product.available_sizes.includes(size));
-
-            const brandMatch = !filters.brands?.length ||
-                filters.brands.includes(product.brand);
-
-            const priceMatch = (!filters.minPrice || parseFloat(product.min_price) >= filters.minPrice) &&
-                             (!filters.maxPrice || parseFloat(product.max_price) <= filters.maxPrice);
-
-            return categoryMatch && colorMatch && sizeMatch && brandMatch && priceMatch;
-        });
-    }, [products, filters]);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                const response = await productService.getAllProducts();
-                if (response && response.products) {
-                    console.log('Received products:', response.products);
-                    setProducts(response.products);
-                }
-            } catch (err) {
-                console.error('Error fetching products:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
+            if (selectedCategory !== "all" && 
+                product.category_name.toLowerCase() !== selectedCategory.toLowerCase()) {
+                return false;
             }
-        };
 
-        fetchProducts();
+            return true;
+        });
+    }, [products, selectedCategory]);
+
+    const fetchProducts = useCallback(async (filters = {}) => {
+        try {
+            setLoading(true);
+            
+            const {
+                categories = [],
+                colors = [],
+                sizes = [],
+                brands = [],
+                minPrice = 0,
+                maxPrice = 300
+            } = filters || {};
+
+            const queryParams = new URLSearchParams();
+            
+            if (categories.length) queryParams.append('categories', categories.join(','));
+            if (colors.length) queryParams.append('colors', colors.join(','));
+            if (sizes.length) queryParams.append('sizes', sizes.join(','));
+            if (brands.length) queryParams.append('brands', brands.join(','));
+            if (minPrice) queryParams.append('minPrice', minPrice);
+            if (maxPrice) queryParams.append('maxPrice', maxPrice);
+
+            const response = await fetch(`/api/products?${queryParams}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+
+            const data = await response.json();
+            setProducts(data);
+            setNoResults(data.length === 0);
+            
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setProducts([]);
+            setNoResults(true);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useEffect(() => {
-        const hasNoResults = filteredProducts.length === 0;
-        console.log('No results:', hasNoResults);
-        setNoResults(hasNoResults);
-    }, [filteredProducts]);
+        const filters = location.state || {};
+        fetchProducts(filters);
+    }, [location.state, fetchProducts]);
+
+    const handleFilter = (filters) => {
+        fetchProducts(filters);
+    };
+
+    console.log("No results:", noResults);
 
     const dropdownStyles = {
         select: {
@@ -144,8 +118,7 @@ const Products = ({ filters }) => {
             backgroundPosition: "right 15px center",
             minWidth: "200px",
             "&:hover": {
-                borderColor: "#999",
-                boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
+                backgroundColor: "#f5f5f5"
             },
             "&:focus": {
                 outline: "none",
@@ -168,9 +141,9 @@ const Products = ({ filters }) => {
     const categories = [
         { value: "all", label: "All Categories" },
         { value: "clothes", label: "Clothes" },
-        { value: "bags", label: "Bags" },
         { value: "shoes", label: "Shoes" },
-        { value: "accessories", label: "Accessories" }
+        { value: "accessories", label: "Accessories" },
+        { value: "bags", label: "Bags" }
     ];
 
     const handleSortChange = (event) => {
@@ -189,8 +162,6 @@ const Products = ({ filters }) => {
     };
 
     const productsToShow = filteredProducts
-        .filter(product => selectedCategory === "all" || 
-            product.category_name.toLowerCase() === selectedCategory.toLowerCase())
         .sort((a, b) => {
             if (sortOption === "lowToHigh") {
                 return parseFloat(a.max_price) - parseFloat(b.max_price);
@@ -458,7 +429,7 @@ const Products = ({ filters }) => {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div style={{ color: 'red', padding: '20px' }}>{error}</div>;
     if (noResults) {
         return (
             <div style={styles.noResults}>

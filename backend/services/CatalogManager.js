@@ -1,5 +1,4 @@
 const { createConnection } = require('../database/dbConfig');
-const BaseApiService = require('./api/BaseApiService');
 
 class CatalogManager {
     static async validateCatalog(catalogData) {

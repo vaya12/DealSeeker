@@ -52,7 +52,7 @@ async function createDbTables(connection) {
                 error_message TEXT,
                 started_at TIMESTAMP NOT NULL,
                 completed_at TIMESTAMP NOT NULL,
-                FOREIGN KEY (merchant_id) REFERENCES merchants(id)
+                FOREIGN KEY (merchant_id) REFERENCES merchants(id) 
             );
             `,
             `

@@ -235,26 +235,13 @@ const ProductModal = ({ product, onClose }) => {
     return (
         <>
             <div style={styles.modalOverlay} onClick={onClose}></div>
-            <div style={{
-                ...styles.modal,
-                width: '90%',
-                maxWidth: '1200px',
-                margin: '20px auto',
-                maxHeight: '90vh',
-                overflow: 'auto'
-            }}>
+            <div style={styles.modal}>
                 <button style={styles.closeButton} onClick={onClose}>
                     &times;
                 </button>
                 
                 <div style={styles.modalContent}>
-                    <h2 style={{
-                        ...styles.productTitle, 
-                        marginBottom: '20px',
-                        fontSize: 'clamp(18px, 2vw, 24px)',
-                        borderBottom: '1px solid #eee',
-                        paddingBottom: '15px'
-                    }}>
+                    <h2 style={styles.productTitle}>
                         {product.name}
                     </h2>
 
@@ -286,138 +273,124 @@ const ProductModal = ({ product, onClose }) => {
                             flexDirection: 'column',
                             gap: '20px'
                         }}>
-                            <div>
-                                <p style={{
-                                    fontSize: 'clamp(14px, 1.5vw, 16px)',
-                                    color: '#333',
-                                    lineHeight: '1.5',
-                                    marginBottom: '20px'
-                                }}>
-                                    {product.description}
-                                </p>
-
-                                <div style={styles.sizesColorsContainer}>
-                                    <div style={styles.sizeSection}>
-                                        <h3 style={styles.sizeTitle}>Available sizes:</h3>
-                                        <div style={styles.sizesWrapper}>
-                                            {product.available_sizes.map((size, index) => (
-                                                <span key={index} style={styles.sizeTag}>
-                                                    {size}
-                                                </span>
-                                            ))}
-                                        </div>
+                            <p style={{
+                                fontSize: 'clamp(14px, 1.5vw, 16px)',
+                                color: '#333',
+                                lineHeight: '1.5',
+                                marginBottom: '20px'
+                            }}>
+                                {product.description}
+                            </p>
+                            
+                            <div style={styles.sizesColorsContainer}>
+                                <div style={styles.sizeSection}>
+                                    <h3 style={styles.sizeTitle}>Available sizes:</h3>
+                                    <div style={styles.sizesWrapper}>
+                                        {product.available_sizes.map((size, index) => (
+                                            <span key={index} style={styles.sizeTag}>
+                                                {size}
+                                            </span>
+                                        ))}
                                     </div>
+                                </div>
 
-                                    <div style={styles.colorSection}>
-                                        <h3 style={styles.sizeTitle}>Available colors:</h3>
-                                        <div style={styles.colorsWrapper}>
-                                            {product.available_colors.map((color, index) => (
-                                                <div
-                                                    key={index}
-                                                    style={{
-                                                        ...styles.colorCircle,
-                                                        backgroundColor: color,
-                                                        border: color.toLowerCase() === '#ffffff' ? '1px solid #ddd' : 'none',
-                                                    }}
-                                                    title={color}
-                                                />
-                                            ))}
-                                        </div>
+                                <div style={styles.colorSection}>
+                                    <h3 style={styles.sizeTitle}>Available colors:</h3>
+                                    <div style={styles.colorsWrapper}>
+                                        {product.available_colors.map((color, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    ...styles.colorCircle,
+                                                    backgroundColor: color,
+                                                    border: color.toLowerCase() === '#ffffff' ? '1px solid #ddd' : 'none',
+                                                }}
+                                                title={color}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             </div>
 
-                            <div>
-                                <h3 style={{
-                                    fontSize: 'clamp(16px, 1.8vw, 18px)',
-                                    marginBottom: '15px'
-                                }}>
-                                    Available in these stores:
-                                </h3>
-                                <div style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '8px'
-                                }}>
-                                    {product.prices.map((price, index) => (
-                                        <div key={index} style={{
+                            <div style={styles.storesGrid}>
+                                {product.prices.map((price, index) => (
+                                    <div key={index} style={{
+                                        display: 'flex',
+                                        flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: window.innerWidth <= 480 ? 'stretch' : 'center',
+                                        padding: '12px',
+                                        backgroundColor: '#f8f8f8',
+                                        borderRadius: '8px',
+                                        gap: window.innerWidth <= 480 ? '10px' : '0'
+                                    }}>
+                                        <div style={{
                                             display: 'flex',
-                                            flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
-                                            justifyContent: 'space-between',
-                                            alignItems: window.innerWidth <= 480 ? 'stretch' : 'center',
-                                            padding: '12px',
-                                            backgroundColor: '#f8f8f8',
-                                            borderRadius: '8px',
-                                            gap: window.innerWidth <= 480 ? '10px' : '0'
+                                            alignItems: 'center',
+                                            gap: '10px'
                                         }}>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '10px'
-                                            }}>
-                                                <span style={{fontSize: '14px'}}>{price.store_name}</span>
-                                                {parseFloat(price.current_price) < parseFloat(price.original_price) && (
-                                                    <img src="/sale_logo.png" alt="Sale" style={styles.saleLogo} />
-                                                )}
-                                            </div>
-                                            
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '15px',
-                                                justifyContent: window.innerWidth <= 480 ? 'space-between' : 'flex-end'
-                                            }}>
-                                                <span style={{
-                                                    fontSize: '16px',
-                                                    fontWeight: '500'
-                                                }}>
-                                                    {price.current_price} BGN
-                                                    {price.original_price !== price.current_price && (
-                                                        <span style={{
-                                                            marginLeft: '8px',
-                                                            fontSize: '14px',
-                                                            color: '#999',
-                                                            textDecoration: 'line-through'
-                                                        }}>
-                                                            {price.original_price} BGN
-                                                        </span>
-                                                    )}
-                                                </span>
-                                                <button
-                                                    style={{
-                                                        padding: '8px 16px',
-                                                        backgroundColor: '#000',
-                                                        color: '#fff',
-                                                        border: 'none',
-                                                        borderRadius: '4px',
-                                                        cursor: 'pointer',
-                                                        minWidth: '120px',
-                                                        fontSize: '14px',
-                                                        transition: 'all 0.3s ease',
-                                                        ':hover': {
-                                                            backgroundColor: '#afcbc4',
-                                                            transform: 'translateY(-2px)',
-                                                            boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                                                        }
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.target.style.backgroundColor = '#afcbc4';
-                                                        e.target.style.transform = 'translateY(-2px)';
-                                                        e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.target.style.backgroundColor = '#000';
-                                                        e.target.style.transform = 'translateY(0)';
-                                                        e.target.style.boxShadow = 'none';
-                                                    }}
-                                                    onClick={() => window.open(price.website_url, '_blank', 'noopener,noreferrer')}
-                                                >
-                                                    Go to store
-                                                </button>
-                                            </div>
+                                            <span style={{fontSize: '14px'}}>{price.merchant_name}</span>
+                                            {parseFloat(price.current_price) < parseFloat(price.original_price) && (
+                                                <img src="/sale_logo.png" alt="Sale" style={styles.saleLogo} />
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
+                                        
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '15px',
+                                            justifyContent: window.innerWidth <= 480 ? 'space-between' : 'flex-end'
+                                        }}>
+                                            <span style={{
+                                                fontSize: '16px',
+                                                fontWeight: '500'
+                                            }}>
+                                                {price.current_price} BGN
+                                                {price.original_price !== price.current_price && (
+                                                    <span style={{
+                                                        marginLeft: '8px',
+                                                        fontSize: '14px',
+                                                        color: '#999',
+                                                        textDecoration: 'line-through'
+                                                    }}>
+                                                        {price.original_price} BGN
+                                                    </span>
+                                                )}
+                                            </span>
+                                            <button
+                                                style={{
+                                                    padding: '8px 16px',
+                                                    backgroundColor: '#000',
+                                                    color: '#fff',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    minWidth: '120px',
+                                                    fontSize: '14px',
+                                                    transition: 'all 0.3s ease',
+                                                    ':hover': {
+                                                        backgroundColor: '#afcbc4',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                                                    }
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.backgroundColor = '#afcbc4';
+                                                    e.target.style.transform = 'translateY(-2px)';
+                                                    e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.backgroundColor = '#000';
+                                                    e.target.style.transform = 'translateY(0)';
+                                                    e.target.style.boxShadow = 'none';
+                                                }}
+                                                onClick={() => window.open(price.website_url, '_blank', 'noopener,noreferrer')}
+                                            >
+                                                Go to store
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
