@@ -38,15 +38,48 @@ const LoginForm = () => {
     };
 
     return (
-        <Container maxWidth="sm">
-            <Box sx={{ mt: 8 }}>
-                <Paper sx={{ p: 4 }}>
-                    <Typography variant="h5" component="h1" align="center" gutterBottom>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: '#f5f5f5'
+            }}
+        >
+            <Container maxWidth="sm" sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                <Paper 
+                    elevation={3}
+                    sx={{ 
+                        p: 4, 
+                        width: '100%',
+                        borderRadius: 2,
+                        backgroundColor: 'white',
+                        boxShadow: '0 3px 10px rgb(0 0 0 / 0.2)'
+                    }}
+                >
+                    <Typography 
+                        variant="h4" 
+                        component="h1" 
+                        align="center" 
+                        gutterBottom
+                        sx={{ 
+                            color: '#000000',
+                            mb: 4,
+                            fontWeight: 500,
+                            fontFamily: "'Saira Stencil One', sans-serif",
+                        }}
+                    >
                         Admin Login
                     </Typography>
                     
                     {error && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
+                        <Alert 
+                            severity="error" 
+                            sx={{ 
+                                mb: 2,
+                                borderRadius: 1
+                            }}
+                        >
                             {error}
                         </Alert>
                     )}
@@ -60,6 +93,11 @@ const LoginForm = () => {
                             onChange={handleChange}
                             margin="normal"
                             required
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 1
+                                }
+                            }}
                         />
                         
                         <TextField
@@ -71,21 +109,38 @@ const LoginForm = () => {
                             onChange={handleChange}
                             margin="normal"
                             required
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 1
+                                }
+                            }}
                         />
                         
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
-                            color="primary"
-                            sx={{ mt: 3 }}
+                            sx={{ 
+                                mt: 4,
+                                mb: 2,
+                                py: 1.5,
+                                backgroundColor: '#7BA89A',
+                                '&:hover': {
+                                    backgroundColor: '#6a9587'
+                                },
+                                borderRadius: 1,
+                                textTransform: 'none',
+                                fontSize: '1.1rem',
+                                color: '#ffffff',
+                                fontFamily: "'Saira Stencil One', sans-serif",
+                            }}
                         >
-                            Login
+                            LOGIN
                         </Button>
                     </form>
                 </Paper>
-            </Box>
-        </Container>
+            </Container>
+        </Box>
     );
 };
 

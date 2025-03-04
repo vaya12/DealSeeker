@@ -129,6 +129,7 @@ const MerchantsList = ({ onStatsChange }) => {
                     variant="contained"
                     sx={{ 
                         bgcolor: '#6CA390',
+                        color: '#ffffff',
                         '&:hover': {
                             bgcolor: '#5b8c7d'
                         }

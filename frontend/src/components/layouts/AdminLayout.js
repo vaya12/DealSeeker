@@ -24,7 +24,8 @@ const AdminLayout = () => {
                 position="static" 
                 sx={{ 
                     bgcolor: '#6CA390',
-                    boxShadow: 'none'
+                    boxShadow: 'none',
+                    color: '#ffffff'
                 }}
             >
                 <Toolbar>
