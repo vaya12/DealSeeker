@@ -1,13 +1,14 @@
 {
     "merchant_id": 4,
     "name": "Adidas",
+    "store_url": "https://www.adidas.bg",
     "products": [
         {
             "name": "Adidas Ultraboost Light",
             "description": "Revolutionary running shoes with Light BOOST cushioning for ultimate comfort.",
             "brand": "Adidas",
             "category_id": 2,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/fbaf991a78bc4896a3e9ad7800abcec6/Ultraboost_Light_Shoes_Black.jpg",
+            "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/fdf027af24714deb8de00b8cf4eaee4f_9366/adidas_by_Stella_McCartney_Ultraboost_5_Shoes_Black_IE8771_01_standard.jpg",
             "prices": [
                 {
                     "size_id": 6,
@@ -30,18 +31,18 @@
             "description": "Iconic track jacket with signature 3-Stripes design.",
             "brand": "Adidas",
             "category_id": 1,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/856e874762eb48da8e22acb100d46dda/Tiro_Track_Jacket_Black.jpg",
+            "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/cd75a6e29dde4e109d67afc80049f6c9_9366/Adicolor_Classics_SST_Track_Jacket_Green_IK3514_01_laydown.jpg",
             "prices": [
                 {
                     "size_id": 2,
-                    "color_id": 1,
+                    "color_id": 9,
                     "current_price": "45.99",
                     "original_price": "49.99",
                     "stock": "in_stock"
                 },
                 {
                     "size_id": 3,
-                    "color_id": 1,
+                    "color_id": 9,
                     "current_price": "45.99",
                     "original_price": "49.99",
                     "stock": "in_stock"
@@ -53,7 +54,7 @@
             "description": "Classic training pants with iconic 3-Stripes design.",
             "brand": "Adidas",
             "category_id": 1,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/cd1631e9eb974e67a856abb300d1ce0c/Essentials_3-Stripes_Pants_Black.jpg",
+            "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/8aa04239ebeb4b4781e6cdbf451ef20f_9366/Essentials_3-Stripes_Lifestyle_Woven_Parachute_Pants_Black_JE1306_01_laydown.jpg",
             "prices": [
                 {
                     "size_id": 2,
@@ -69,7 +70,7 @@
             "description": "Timeless tennis-inspired sneakers with clean design.",
             "brand": "Adidas",
             "category_id": 2,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/68ae7ea7849b43eca70aac1e00f5146d/Stan_Smith_Shoes_White.jpg",
+            "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/deecebcc265c43c6b092a7fa00fed2d0_9366/Stan_Smith_Shoes_White_S75104_01_standard.jpg",
             "prices": [
                 {
                     "size_id": 6,
@@ -85,11 +86,11 @@
             "description": "Spacious duffel bag with adjustable shoulder strap.",
             "brand": "Adidas",
             "category_id": 4,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/c7f5378137d847d7a5d5ac5b0128ccab/Linear_Duffel_Bag_Black.jpg",
+            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/a929223962404ee9be8fdba1390bd546_9366/Lounge_Duffel_Bag_Beige_IU9305_01_standard.jpg",
             "prices": [
                 {
                     "size_id": 10,
-                    "color_id": 1,
+                    "color_id": 15,
                     "current_price": "35.99",
                     "original_price": "39.99",
                     "stock": "in_stock"
@@ -101,7 +102,7 @@
             "description": "Classic cotton hoodie with iconic Trefoil logo.",
             "brand": "Adidas",
             "category_id": 1,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/e0101e13ac1940208478a8be0101a6d6/Trefoil_Hoodie_Grey.jpg",
+            "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/0799df55a232456b890eafd000e1ee8f_9366/Adicolor_Classics_Trefoil_Hoodie_Grey_IM4490_01_laydown.jpg",
             "prices": [
                 {
                     "size_id": 2,
@@ -113,31 +114,15 @@
             ]
         },
         {
-            "name": "Adidas Predator Edge Football Boots",
-            "description": "Professional football boots with innovative control elements.",
-            "brand": "Adidas",
-            "category_id": 2,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/42d5be8fd908427c9074adbd00d09e8e/Predator_Edge_Boots_Black.jpg",
-            "prices": [
-                {
-                    "size_id": 6,
-                    "color_id": 1,
-                    "current_price": "219.99",
-                    "original_price": "249.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
             "name": "Adidas Training Cap",
             "description": "Lightweight cap with moisture-wicking sweatband.",
             "brand": "Adidas",
             "category_id": 3,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/4f6d6e8d2b714a1c8c75aaa100ba9ba7/Training_Cap_Black.jpg",
+            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/8430399009a74ab5aee6ff9b57219621_9366/Ultimate_Hat_Green_IU9096_01_standard.jpg",
             "prices": [
                 {
                     "size_id": 10,
-                    "color_id": 1,
+                    "color_id": 17,
                     "current_price": "19.99",
                     "original_price": "24.99",
                     "stock": "in_stock"
@@ -149,11 +134,11 @@
             "description": "Classic cotton t-shirt with 3-Stripes on sleeves.",
             "brand": "Adidas",
             "category_id": 1,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/ff058259bf8f4615a3ddab8d00f45d3e/3-Stripes_Tee_White.jpg",
+            "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/987610c03b0145c7ba0296d2d3838454_9366/3-Stripes_Tee_Orange_JD4572_01_laydown_hover.jpg",
             "prices": [
                 {
                     "size_id": 2,
-                    "color_id": 2,
+                    "color_id": 11,
                     "current_price": "24.99",
                     "original_price": "29.99",
                     "stock": "in_stock"
@@ -165,7 +150,7 @@
             "description": "Versatile backpack with laptop compartment.",
             "brand": "Adidas",
             "category_id": 4,
-            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto:sensitive,fl_lossy,c_fill,g_auto/1e08c6f20534487b8c74ac8e00e51f8f/Classic_Backpack_Black.jpg",
+            "image": "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/f6307d6dce424e9e9c8aaf690000ae87_9366/Originals_National_3.0_Backpack_Black_GC1188_01_standard.jpg",
             "prices": [
                 {
                     "size_id": 10,

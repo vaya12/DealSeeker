@@ -1,6 +1,7 @@
 {
     "merchant_id": 5,
     "name": "Puma",
+    "store_url": "https://www.puma.bg",
     "products": [
         {
             "name": "Puma RS-X Toys",
@@ -63,118 +64,7 @@
                     "stock": "in_stock"
                 }
             ]
-        },
-        {
-            "name": "Puma Suede Classic XXI",
-            "description": "Iconic suede sneakers with classic Puma formstrip.",
-            "brand": "Puma",
-            "category_id": 2,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/374915/01/sv01/fnd/EEA/fmt/png/Suede-Classic-XXI-Trainers",
-            "prices": [
-                {
-                    "size_id": 6,
-                    "color_id": 1,
-                    "current_price": "69.99",
-                    "original_price": "79.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Puma Phase Sport Bag",
-            "description": "Practical sports bag with main compartment and front zip pocket.",
-            "brand": "Puma",
-            "category_id": 4,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/076621/01/fnd/EEA/fmt/png/Phase-Sports-Bag",
-            "prices": [
-                {
-                    "size_id": 10,
-                    "color_id": 1,
-                    "current_price": "24.99",
-                    "original_price": "29.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Puma Training Track Pants",
-            "description": "Athletic pants with dryCELL moisture-wicking technology.",
-            "brand": "Puma",
-            "category_id": 1,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/586734/01/mod01/fnd/EEA/fmt/png/Active-Men's-Training-Pants",
-            "prices": [
-                {
-                    "size_id": 2,
-                    "color_id": 1,
-                    "current_price": "39.99",
-                    "original_price": "44.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Puma Ultra Football Boots",
-            "description": "Lightweight football boots for explosive speed.",
-            "brand": "Puma",
-            "category_id": 2,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/106523/01/sv01/fnd/EEA/fmt/png/ULTRA-Ultimate-FG/AG-Men's-Football-Boots",
-            "prices": [
-                {
-                    "size_id": 6,
-                    "color_id": 4,
-                    "current_price": "179.99",
-                    "original_price": "199.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Puma Core Cap",
-            "description": "Classic 6-panel cap with embroidered Puma cat logo.",
-            "brand": "Puma",
-            "category_id": 4,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/022416/01/fnd/EEA/fmt/png/PUMA-Core-Cap",
-            "prices": [
-                {
-                    "size_id": 10,
-                    "color_id": 1,
-                    "current_price": "14.99",
-                    "original_price": "19.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Puma Performance Running Jacket",
-            "description": "Lightweight running jacket with reflective details.",
-            "brand": "Puma",
-            "category_id": 1,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/520334/01/mod01/fnd/EEA/fmt/png/Run-Favorite-Men's-Running-Jacket",
-            "prices": [
-                {
-                    "size_id": 2,
-                    "color_id": 4,
-                    "current_price": "59.99",
-                    "original_price": "69.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Puma Gym Duffle Bag",
-            "description": "Spacious gym bag with shoe compartment.",
-            "brand": "Puma",
-            "category_id": 4,
-            "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_1350,h_1350/global/077363/01/fnd/EEA/fmt/png/Challenger-Small-Duffel-Bag",
-            "prices": [
-                {
-                    "size_id": 10,
-                    "color_id": 1,
-                    "current_price": "29.99",
-                    "original_price": "34.99",
-                    "stock": "in_stock"
-                }
-            ]
         }
+        
     ]
 }

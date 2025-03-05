@@ -1,4 +1,5 @@
 const { createConnection } = require('../database/dbConfig');
+const { importMerchantProducts } = require('../scripts/importDemoData');
 
 exports.getMerchants = async (req, res) => {
     const connection = await createConnection();
@@ -152,5 +153,61 @@ exports.startMerchantSync = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     } finally {
         await connection.end();
+    }
+};
+
+exports.syncCatalog = async (req, res) => {
+    let connection;
+    try {
+        const { merchant_id, catalog_url } = req.body;
+        
+        if (!merchant_id || !catalog_url) {
+            return res.status(400).json({ 
+                error: 'Missing required parameters' 
+            });
+        }
+
+        connection = await createConnection();
+        
+        const importedProducts = await importMerchantProducts(
+            merchant_id, 
+            catalog_url, 
+            connection
+        );
+
+        await connection.execute(
+            `INSERT INTO sync_logs 
+            (merchant_id, products_count, status) 
+            VALUES (?, ?, ?)`,
+            [merchant_id, importedProducts.length, 'success']
+        );
+
+        res.json({ 
+            success: true, 
+            imported: importedProducts.length,
+            message: `Successfully synced ${importedProducts.length} products`
+        });
+
+    } catch (error) {
+        console.error('Sync error:', error);
+        
+
+        if (connection) {
+            await connection.execute(
+                `INSERT INTO sync_logs 
+                (merchant_id, status, error_message) 
+                VALUES (?, ?, ?)`,
+                [req.body.merchant_id, 'error', error.message]
+            );
+        }
+
+        res.status(500).json({ 
+            error: 'Failed to sync catalog',
+            details: error.message 
+        });
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
     }
 }; 

@@ -1,6 +1,7 @@
 {
     "merchant_id": 1,
     "name": "H&M",
+    "store_url": "https://www2.hm.com",
     "products": [
         {
             "name": "Wool Blend Sweater",
@@ -12,7 +13,7 @@
                 {
                     "size_id": 2,
                     "color_id": 3,
-                    "current_price": "39.99",
+                    "current_price": "29.99",
                     "original_price": "49.99",
                     "stock": "in_stock"
                 },
@@ -80,7 +81,7 @@
             "prices": [
                 {
                     "size_id": 2,
-                    "color_id": 2,
+                    "color_id": 8,
                     "current_price": "49.99",
                     "original_price": "49.99",
                     "stock": "in_stock"
@@ -124,7 +125,7 @@
             "description": "Cotton twill shorts with side pockets and back welt pockets.",
             "brand": "H&M",
             "category_id": 1,
-            "image": "https://image.hm.com/assets/hm/cc/33/cc33cc33c3c3c3c3c3c3c3c3c3c3c3c3.jpg",
+            "image": "https://image.hm.com/assets/hm/f2/f4/f2f4f7fd7e1fc7f6769f86dd5f747b2814d301bc.jpg?imwidth=1260",
             "prices": [
                 {
                     "size_id": 2,
@@ -140,7 +141,7 @@
             "description": "Low-top canvas sneakers with rubber soles.",
             "brand": "H&M",
             "category_id": 2,
-            "image": "https://image.hm.com/assets/hm/dd/44/dd44dd44d4d4d4d4d4d4d4d4d4d4d4d4.jpg",
+            "image": "https://lp2.hm.com/hmgoepprod?set=quality%5B79%5D%2Csource%5B%2Fb5%2F5b%2Fb55befe5d14745e38419c28f070382d95b01d472.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BDESCRIPTIVESTILLLIFE%5D%2Cres%5Bm%5D%2Chmver%5B2%5D&call=url[file:/product/main]",
             "prices": [
                 {
                     "size_id": 6,
@@ -156,29 +157,13 @@
             "description": "Classic leather belt with metal buckle.",
             "brand": "H&M",
             "category_id": 3,
-            "image": "https://image.hm.com/assets/hm/ee/55/ee55ee55e5e5e5e5e5e5e5e5e5e5e5e5.jpg",
+            "image": "https://lp2.hm.com/hmgoepprod?set=quality%5B79%5D%2Csource%5B%2F6f%2F3c%2F6f3cda70c97d6e727eaf7bccf6416076b2f14487.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BDESCRIPTIVESTILLLIFE%5D%2Cres%5Bm%5D%2Chmver%5B2%5D&call=url[file:/product/main]",
             "prices": [
                 {
                     "size_id": 10,
                     "color_id": 1,
                     "current_price": "17.99",
                     "original_price": "19.99",
-                    "stock": "in_stock"
-                }
-            ]
-        },
-        {
-            "name": "Cotton T-Shirt Pack",
-            "description": "Pack of 3 regular-fit cotton t-shirts.",
-            "brand": "H&M",
-            "category_id": 1,
-            "image": "https://image.hm.com/assets/hm/ff/66/ff66ff66f6f6f6f6f6f6f6f6f6f6f6f6.jpg",
-            "prices": [
-                {
-                    "size_id": 2,
-                    "color_id": 2,
-                    "current_price": "19.99",
-                    "original_price": "24.99",
                     "stock": "in_stock"
                 }
             ]

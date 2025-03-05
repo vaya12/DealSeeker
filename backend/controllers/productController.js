@@ -27,6 +27,7 @@ exports.getAllProducts = async (req, res) => {
                 c.name as color_name,
                 c.hex_code,
                 m.name as store_name,
+                m.store_url as merchant_store_url,
                 m.catalog_url as store_url
             FROM product_prices pp
             LEFT JOIN sizes s ON pp.size_id = s.id
@@ -35,7 +36,6 @@ exports.getAllProducts = async (req, res) => {
             WHERE pp.stock = 'in_stock'
         `);
 
-        // Форматираме продуктите
         const formattedProducts = products.map(product => {
             const productPrices = prices.filter(p => p.product_id === product.id)
                 .map(price => ({
@@ -387,57 +387,89 @@ exports.getPriceHistory = async (req, res) => {
 };
 
 const getProducts = async (req, res) => {
-  try {
-    const query = `
-      SELECT DISTINCT 
-        p.id,
-        p.name,
-        p.description,
-        p.brand,
-        p.category_id,
-        p.image,
-        p.created_at,
-        p.updated_at,
-        pm.current_price,
-        pm.original_price,
-        pm.stock,
-        m.name as merchant_name,
-        c.name as category_name
-      FROM products p
-      LEFT JOIN product_merchants pm ON p.id = pm.product_id
-      LEFT JOIN merchants m ON pm.merchant_id = m.id
-      LEFT JOIN categories c ON p.category_id = c.id
-      WHERE m.name IS NOT NULL
-      ORDER BY p.id, pm.current_price ASC
-    `;
+    let connection;
+    try {
+        connection = await createConnection();
 
-    const products = await db.query(query);
+        const [products] = await connection.execute(`
+            SELECT DISTINCT
+                p.id,
+                p.name,
+                p.description,
+                p.brand,
+                p.category_id,
+                p.image,
+                c.name as category_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+        `);
 
-    const groupedProducts = products.rows.reduce((acc, product) => {
-      if (!acc[product.id]) {
-        acc[product.id] = {
-          ...product,
-          merchants: []
-        };
-      }
-      
-      acc[product.id].merchants.push({
-        merchant_name: product.merchant_name,
-        current_price: product.current_price,
-        original_price: product.original_price,
-        stock: product.stock
-      });
+        const [prices] = await connection.execute(`
+            SELECT 
+                pp.product_id,
+                pp.id as price_id,
+                pp.current_price,
+                pp.original_price,
+                pp.stock,
+                s.name as size_name,
+                c.name as color_name,
+                c.hex_code,
+                m.name as merchant_name,
+                m.store_url as merchant_store_url
+            FROM product_prices pp
+            LEFT JOIN sizes s ON pp.size_id = s.id
+            LEFT JOIN colors c ON pp.color_id = c.id
+            LEFT JOIN merchants m ON pp.product_store_id = m.id
+            WHERE pp.stock = 'in_stock'
+        `);
 
-      acc[product.id].merchants.sort((a, b) => 
-        parseFloat(a.current_price) - parseFloat(b.current_price)
-      );
+        const formattedProducts = products.map(product => {
+            const productPrices = prices.filter(p => p.product_id === product.id);
+            
+            const uniqueColors = [...new Set(productPrices
+                .filter(p => p.hex_code)
+                .map(p => p.hex_code))];
 
-      return acc;
-    }, {});
+            const uniqueSizes = [...new Set(productPrices
+                .filter(p => p.size_name)
+                .map(p => p.size_name))];
 
-    res.json(Object.values(groupedProducts));
-  } catch (error) {
-    console.error('Error getting products:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-}; 
+            return {
+                id: product.id,
+                name: product.name,
+                description: product.description,
+                brand: product.brand,
+                category_id: product.category_id,
+                category_name: product.category_name,
+                image: product.image,
+                prices: productPrices.map(price => ({
+                    id: price.price_id,
+                    current_price: parseFloat(price.current_price),
+                    original_price: parseFloat(price.original_price),
+                    merchant_name: price.merchant_name,
+                    merchant_store_url: price.merchant_store_url,
+                    size: price.size_name,
+                    color: {
+                        name: price.color_name,
+                        hex_code: price.hex_code
+                    }
+                })),
+                available_colors: uniqueColors,
+                available_sizes: uniqueSizes,
+                min_price: Math.min(...productPrices.map(p => parseFloat(p.current_price)))
+            };
+        });
+
+        res.json(formattedProducts);
+
+    } catch (error) {
+        console.error('Error getting products:', error);
+        res.status(500).json({ error: 'Failed to get products' });
+    } finally {
+        if (connection) {
+            await connection.end();
+        }
+    }
+};
+
+exports.getProducts = getProducts; 

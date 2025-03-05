@@ -1,6 +1,7 @@
 const { createConnection } = require('../database/dbConfig');
 const fs = require('fs').promises;
 const path = require('path');
+const fetch = require('node-fetch');
 
 async function deleteDbTables(connection) {
     try {
@@ -37,6 +38,7 @@ async function createDbTables(connection) {
                 logo VARCHAR(255),
                 description TEXT,
                 catalog_url VARCHAR(255) NOT NULL,
+                store_url VARCHAR(255),
                 last_sync TIMESTAMP NULL,
                 status ENUM('active', 'inactive') DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -99,6 +101,7 @@ async function createDbTables(connection) {
                 category_id INT,
                 image VARCHAR(255),
                 merchant_id INT,
+                store_url VARCHAR(255),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (merchant_id) REFERENCES merchants(id),
@@ -152,6 +155,7 @@ async function importMerchants(connection) {
                 description: 'Fashion retailer',
                 logo: 'https://example.com/hm-logo.png',
                 catalog_url: 'http://localhost:3002/api/catalog/1',
+                store_url: 'https://www2.hm.com',
                 status: 'active'
             },
             { 
@@ -159,6 +163,7 @@ async function importMerchants(connection) {
                 description: 'Fashion brand',
                 logo: 'https://example.com/zara-logo.png',
                 catalog_url: 'http://localhost:3002/api/catalog/2',
+                store_url: 'https://www.zara.com',
                 status: 'active'
             },
             {
@@ -166,6 +171,7 @@ async function importMerchants(connection) {
                 description: 'Sports brand',
                 logo: 'https://example.com/nike-logo.png',
                 catalog_url: 'http://localhost:3002/api/catalog/3',
+                store_url: 'https://www.nike.com',
                 status: 'active'
             },
             {
@@ -173,6 +179,7 @@ async function importMerchants(connection) {
                 description: 'Sports brand',
                 logo: 'https://example.com/adidas-logo.png',
                 catalog_url: 'http://localhost:3002/api/catalog/4',
+                store_url: 'https://www.adidas.com',
                 status: 'active'
             },
             {
@@ -180,14 +187,15 @@ async function importMerchants(connection) {
                 description: 'Sports brand',
                 logo: 'https://example.com/puma-logo.png',
                 catalog_url: 'http://localhost:3002/api/catalog/5',
+                store_url: 'https://www.puma.com',
                 status: 'active'
             }
         ];
         
         for (const merchant of merchants) {
             await connection.execute(
-                'INSERT IGNORE INTO merchants (name, description, logo, catalog_url, status) VALUES (?, ?, ?, ?, ?)',
-                [merchant.name, merchant.description, merchant.logo, merchant.catalog_url, merchant.status]
+                'INSERT IGNORE INTO merchants (name, description, logo, catalog_url, store_url, status) VALUES (?, ?, ?, ?, ?, ?)',
+                [merchant.name, merchant.description, merchant.logo, merchant.catalog_url, merchant.store_url, merchant.status]
             );
         }
         
@@ -199,45 +207,93 @@ async function importMerchants(connection) {
 }
 
 async function importCategories(connection) {
-    const categories = [
-        { name: 'clothes', parent_id: 0 },
-        { name: 'shoes', parent_id: 0 },
-        { name: 'accessories', parent_id: 0 },
-        { name: 'bags', parent_id: 0 }
-    ];
-    
-    for (const category of categories) {
-        await connection.execute(
-            'INSERT IGNORE INTO categories (name, parent_id) VALUES (?, ?)',
-            [category.name, category.parent_id]
-        );
+    try {
+        await connection.execute('SET FOREIGN_KEY_CHECKS = 0');
+        
+        await connection.execute('TRUNCATE TABLE categories');
+        
+        const categories = [
+            { id: 1, name: 'clothes' },
+            { id: 2, name: 'shoes' },
+            { id: 3, name: 'accessories' },
+            { id: 4, name: 'bags' }
+        ];
+
+        for (const category of categories) {
+            await connection.execute(
+                'INSERT INTO categories (id, name) VALUES (?, ?)',
+                [category.id, category.name]
+            );
+        }
+
+        await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
+
+        console.log('Categories imported successfully');
+    } catch (error) {
+        console.error('Error importing categories:', error);
+        throw error;
     }
 }
 
 async function importColorsAndSizes(connection) {
-    const colors = [
-        { name: 'Black', hex_code: '#000000' },
-        { name: 'White', hex_code: '#FFFFFF' },
-        { name: 'Gray', hex_code: '#808080' },
-        { name: 'Navy', hex_code: '#000080' },
-        { name: 'Gold', hex_code: '#FFD700' },
-        { name: 'Silver', hex_code: '#C0C0C0' }
-    ];
-    
-    const sizes = ['XS', 'S', 'M', 'L', 'XL', '40', '41', '42', '43', 'One Size'];
-    
-    for (const color of colors) {
-        await connection.execute(
-            'INSERT IGNORE INTO colors (name, hex_code) VALUES (?, ?)',
-            [color.name, color.hex_code]
-        );
-    }
-    
-    for (const size of sizes) {
-        await connection.execute(
-            'INSERT IGNORE INTO sizes (name) VALUES (?)',
-            [size]
-        );
+    try {
+        const colors = [
+            { id: 1, name: 'Black', hex_code: '#000000' },
+            { id: 2, name: 'White', hex_code: '#FFFFFF' },
+            { id: 3, name: 'Gray', hex_code: '#808080' },
+            { id: 4, name: 'Navy', hex_code: '#000080' },
+            { id: 5, name: 'Gold', hex_code: '#FFD700' },
+            { id: 6, name: 'Silver', hex_code: '#C0C0C0' },
+            { id: 7, name: 'Red', hex_code: '#D2042D' },
+            { id: 8, name: 'Blue', hex_code: '#89CFF0' },
+            { id: 9, name: 'Green', hex_code: '#008000' },
+            { id: 10, name: 'Yellow', hex_code: '#FFFF00' },
+            { id: 11, name: 'Orange', hex_code: '#FFA500' },
+            { id: 12, name: 'Purple', hex_code: '#800080' },
+            { id: 13, name: 'Pink', hex_code: '#FFC0CB' },
+            { id: 14, name: 'Brown', hex_code: '#A52A2A' },
+            { id: 15, name: 'Beige', hex_code: '#F5F5DC' },
+            { id: 16, name: 'Turquoise', hex_code: '#40E0D0' },
+            { id: 17, name: 'Olive', hex_code: '#808000' },
+            { id: 18, name: 'Teal', hex_code: '#008080' }
+        ];
+        
+        const sizes = [
+            { id: 1, name: 'XS' },
+            { id: 2, name: 'S' },
+            { id: 3, name: 'M' },
+            { id: 4, name: 'L' },
+            { id: 5, name: 'XL' },
+            { id: 6, name: '40' },
+            { id: 7, name: '41' },
+            { id: 8, name: '42' },
+            { id: 9, name: '43' },
+            { id: 10, name: 'One Size' }
+        ];
+
+        await connection.execute('SET FOREIGN_KEY_CHECKS = 0');
+        await connection.execute('TRUNCATE TABLE colors');
+        await connection.execute('TRUNCATE TABLE sizes');
+        await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
+        
+        for (const color of colors) {
+            await connection.execute(
+                'INSERT INTO colors (id, name, hex_code) VALUES (?, ?, ?)',
+                [color.id, color.name, color.hex_code]
+            );
+        }
+        
+        for (const size of sizes) {
+            await connection.execute(
+                'INSERT INTO sizes (id, name) VALUES (?, ?)',
+                [size.id, size.name]
+            );
+        }
+
+        console.log('Colors and sizes imported successfully');
+    } catch (error) {
+        console.error('Error importing colors and sizes:', error);
+        throw error;
     }
 }
 
@@ -264,138 +320,156 @@ async function importProducts(connection) {
                 const catalog = JSON.parse(catalogData);
                 
                 for (const product of catalog.products) {
-                    if (product.category_id < 1 || product.category_id > 4) {
-                        console.warn(`Invalid category_id ${product.category_id} for product ${product.name}, skipping...`);
-                        continue;
-                    }
-
-                    const [result] = await connection.execute(
-                        `INSERT INTO products 
-                        (name, description, brand, category_id, image, merchant_id) 
-                        VALUES (?, ?, ?, ?, ?, ?)`,
-                        [
-                            product.name || '',
-                            product.description || '',
-                            product.brand || '',
-                            product.category_id,
-                            product.image || '',
-                            catalog.merchant_id
-                        ]
+                    
+                    let [existingProduct] = await connection.execute(
+                        'SELECT id FROM products WHERE name = ? AND brand = ? AND merchant_id = ?',
+                        [product.name, product.brand, catalog.merchant_id]
                     );
 
-                    if (product.prices && product.prices.length > 0) {
-                        for (const price of product.prices) {
-                            await connection.execute(
-                                `INSERT INTO product_prices 
-                                (product_id, size_id, color_id, current_price, original_price, stock) 
-                                VALUES (?, ?, ?, ?, ?, ?)`,
-                                [
-                                    result.insertId,
-                                    price.size_id || 1,
-                                    price.color_id || 1,
-                                    price.current_price || 0,
-                                    price.original_price || 0,
-                                    price.stock || 'in_stock'
-                                ]
-                            );
-                        }
+                    let productId;
+                    if (existingProduct.length === 0) {
+                        console.log('Inserting with values:', {
+                            name: product.name,
+                            description: product.description,
+                            brand: product.brand,
+                            category_id: product.category_id,
+                            image: product.image,
+                            merchant_id: catalog.merchant_id,
+                            store_url: product.store_url || null 
+                        });
+
+                        const [result] = await connection.execute(
+                            `INSERT INTO products 
+                            (name, description, brand, category_id, image, merchant_id, store_url) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                            [
+                                product.name,
+                                product.description || null,
+                                product.brand,
+                                product.category_id,
+                                product.image,
+                                catalog.merchant_id,
+                                product.store_url || null
+                            ]
+                        );
+                        productId = result.insertId;
+                    } else {
+                        productId = existingProduct[0].id;
+                    }
+
+                    for (const price of product.prices) {
+                        await connection.execute(
+                            `INSERT INTO product_prices 
+                            (product_id, size_id, color_id, current_price, original_price, stock) 
+                            VALUES (?, ?, ?, ?, ?, ?)`,
+                            [
+                                productId,
+                                price.size_id || null,
+                                price.color_id || null,
+                                price.current_price || null,
+                                price.original_price || null,
+                                price.stock || 'in_stock'
+                            ]
+                        );
                     }
                 }
-                console.log(`Imported products for ${merchantFile}`);
+                console.log(`Products imported for ${merchantFile}`);
             } catch (error) {
                 console.error(`Error processing ${merchantFile}.json:`, error);
+                throw error;
             }
         }
-        console.log('All products imported successfully!');
+        console.log('All products imported successfully');
     } catch (error) {
         console.error('Error importing products:', error);
         throw error;
     }
 }
 
-async function importMerchantProducts(merchantId, catalogUrl, existingConnection = null) {
-    const connection = existingConnection || await createConnection();
-    const shouldCloseConnection = !existingConnection;
-    
+async function importMerchantProducts(merchant_id, catalog_url, connection) {
     try {
-        const response = await fetch(catalogUrl);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch catalog: ${response.status}`);
-        }
-
-        const catalogData = await response.json();
+        console.log(`Importing products for merchant ${merchant_id} from ${catalog_url}`);
         
-        for (const product of catalogData.products) {
-            const [productResult] = await connection.execute(
-                `INSERT INTO products 
-                (name, description, brand, category_id, image, merchant_id, created_at, updated_at) 
-                VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-                [
-                    product.name,
-                    product.description,
-                    product.brand,
-                    product.category_id,
-                    product.image,
-                    merchantId
-                ]
+        const response = await fetch(catalog_url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const catalog = await response.json();
+
+        for (const product of catalog.products) {
+            console.log('Processing product:', product.name);
+
+            const [existingProducts] = await connection.execute(
+                'SELECT id FROM products WHERE name = ? AND brand = ? AND description = ?',
+                [product.name, product.brand, product.description]
             );
-            
-            if (product.prices && product.prices.length > 0) {
-                for (const price of product.prices) {
-                    await connection.execute(
-                        `INSERT INTO product_prices 
-                        (product_id, product_store_id, size_id, color_id, current_price, original_price, stock) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                        [
-                            productResult.insertId,
-                            merchantId,
-                            price.size_id || 1,
-                            price.color_id || 1,
-                            price.current_price || 0,
-                            price.original_price || 0,
-                            price.stock || 'in_stock'
-                        ]
-                    );
-                }
+
+            let productId;
+
+            if (existingProducts.length > 0) {
+                productId = existingProducts[0].id;
+                console.log(`Product "${product.name}" already exists with ID ${productId}`);
+            } else {
+                const [result] = await connection.execute(
+                    `INSERT INTO products 
+                    (name, description, brand, category_id, image, merchant_id) 
+                    VALUES (?, ?, ?, ?, ?, ?)`,
+                    [
+                        product.name,
+                        product.description,
+                        product.brand,
+                        product.category_id,
+                        product.image,
+                        merchant_id 
+                    ]
+                );
+                productId = result.insertId;
+                console.log(`Created new product "${product.name}" with ID ${productId}`);
+            }
+
+            for (const price of product.prices) {
+                await connection.execute(
+                    `INSERT INTO product_prices 
+                    (product_id, product_store_id, size_id, color_id, current_price, original_price, stock) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        productId,
+                        merchant_id,
+                        price.size_id,
+                        price.color_id,
+                        price.current_price,
+                        price.original_price,
+                        price.stock || 'in_stock'
+                    ]
+                );
             }
         }
 
-        return catalogData.products;
+        console.log(`Successfully imported products for merchant ${merchant_id}`);
+        return catalog.products;
 
     } catch (error) {
+        console.error('Error importing products:', error);
         throw error;
-    } finally {
-        if (shouldCloseConnection) {
-            await connection.end();
-        }
     }
 }
 
-module.exports = {
-    importMerchantProducts,
-    createDbTables,
-    importInitialData,
-    importProducts
-};
-
-async function main() {
+async function resetDatabase() {
     const connection = await createConnection();
-    
     try {
-        const [merchants] = await connection.execute('SELECT COUNT(*) as count FROM merchants');
-        
-        if (merchants[0].count === 0) {
-            console.log('No merchants found, initializing database...');
-            await createDbTables(connection);
-            await importInitialData();
-        } else {
-            console.log('Database already initialized, skipping demo data import');
-        }
+        await deleteDbTables(connection);
+        await createDbTables(connection);
+        await importInitialData();
+        console.log('Database reset completed successfully!');
     } catch (error) {
-        console.error('Error checking database:', error);
+        console.error('Error resetting database:', error);
     } finally {
         await connection.end();
     }
 }
 
-main().catch(console.error);
+resetDatabase().catch(console.error);
+
+module.exports = {
+    importMerchantProducts
+};

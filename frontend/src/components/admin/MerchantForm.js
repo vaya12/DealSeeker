@@ -18,7 +18,8 @@ const MerchantForm = () => {
         name: '',
         description: '',
         logo: '',
-        catalog_url: ''
+        catalog_url: '',
+        store_url: ''
     });
     const [errors, setErrors] = useState({});
 
@@ -59,6 +60,16 @@ const MerchantForm = () => {
                 new URL(formData.catalog_url);
             } catch (e) {
                 newErrors.catalog_url = 'Please enter a valid URL';
+            }
+        }
+        
+        if (!formData.store_url.trim()) {
+            newErrors.store_url = 'Store URL is required';
+        } else {
+            try {
+                new URL(formData.store_url);
+            } catch (e) {
+                newErrors.store_url = 'Please enter a valid URL';
             }
         }
         
@@ -168,6 +179,19 @@ const MerchantForm = () => {
                         error={!!errors.catalog_url}
                         helperText={errors.catalog_url}
                         placeholder="https://example.com/catalog"
+                    />
+                    
+                    <TextField
+                        fullWidth
+                        label="Store URL"
+                        name="store_url"
+                        value={formData.store_url}
+                        onChange={handleChange}
+                        margin="normal"
+                        required
+                        error={!!errors.store_url}
+                        helperText={errors.store_url}
+                        placeholder="https://www.example.com"
                     />
                     
                     {errors.submit && (

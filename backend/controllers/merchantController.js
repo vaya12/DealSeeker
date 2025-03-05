@@ -1,6 +1,6 @@
 const { createConnection } = require('../database/dbConfig');
-const { importMerchantProducts } = require('../scripts/importDemoData');
 const fetch = require('node-fetch');
+const CatalogManager = require('../services/CatalogManager');
 
 exports.getAllMerchants = async (req, res) => {
     const connection = await createConnection();
@@ -65,89 +65,26 @@ exports.createMerchant = async (req, res) => {
 };
 
 exports.syncMerchantProducts = async (req, res) => {
-    let connection;
-    const { id } = req.params;
-
     try {
-        connection = await createConnection();
+        const { id } = req.params;
+        console.log('Starting sync for merchant:', id);
 
-        const [merchant] = await connection.execute(
-            'SELECT * FROM merchants WHERE id = ?',
-            [id]
-        );
-
-        if (merchant.length === 0) {
-            return res.status(404).json({
-                error: 'Merchant not found'
-            });
+        const response = await fetch(`http://localhost:3002/api/catalog/${id}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch catalog: ${response.statusText}`);
         }
 
-        try {
-            await connection.beginTransaction();
+        const catalogData = await response.json();
+        const result = await CatalogManager.processCatalog(catalogData, id);
+        
+        res.json(result);
 
-            await connection.execute(
-                'DELETE FROM product_prices WHERE product_id IN (SELECT id FROM products WHERE merchant_id = ?)',
-                [id]
-            );
-            
-            await connection.execute(
-                'DELETE FROM products WHERE merchant_id = ?',
-                [id]
-            );
-
-            const products = await importMerchantProducts(id, merchant[0].catalog_url, connection);
-
-            await connection.execute(
-                'INSERT INTO sync_logs (merchant_id, status, products_updated, started_at, completed_at) VALUES (?, ?, ?, NOW(), NOW())',
-                [id, 'success', products.length]
-            );
-
-            await connection.commit();
-            
-            res.json({ 
-                message: `Successfully synchronized ${products.length} products`,
-                productsCount: products.length
-            });
-
-        } catch (error) {
-            await connection.rollback();
-            throw error;
-        }
     } catch (error) {
-        console.error('Error syncing products:', error);
-        
-        let errorMessage = 'Error synchronizing products. ';
-        
-        if (error.code === 'ER_LOCK_WAIT_TIMEOUT') {
-            errorMessage = 'Database is busy. Please try again in a few moments.';
-        } else if (error.code === 'ECONNREFUSED') {
-            errorMessage = 'Cannot connect to the catalog. Please check if the URL is accessible.';
-        } else if (error.message.includes('404')) {
-            errorMessage = 'Catalog not found (404). Please check if the URL is correct.';
-        } else if (error.message.includes('fetch failed')) {
-            errorMessage = 'Failed to fetch catalog data. Please check if the catalog URL is accessible.';
-        }
-
-        if (connection) {
-            try {
-                await connection.execute(
-                    'INSERT INTO sync_logs (merchant_id, status, error_message, started_at, completed_at) VALUES (?, ?, ?, NOW(), NOW())',
-                    [id, 'error', errorMessage]
-                );
-            } catch (logError) {
-                console.error('Error logging sync error:', logError);
-            }
-        }
-
-        res.status(500).json({ error: errorMessage });
-    } finally {
-        if (connection) {
-            try {
-                await connection.end();
-            } catch (err) {
-                console.error('Error closing connection:', err);
-            }
-        }
+        console.error('Sync error:', error);
+        res.status(500).json({ 
+            error: 'Failed to sync products',
+            details: error.message 
+        });
     }
 };
 

@@ -1,39 +1,51 @@
 const { createConnection } = require('../database/dbConfig');
+const { importMerchantProducts } = require('../scripts/importDemoData');
 const cron = require('node-cron');
 
 exports.syncMerchantProducts = async (merchantId) => {
     const connection = await createConnection();
     try {
-        const [merchant] = await connection.execute(`
-            SELECT m.*, s.name as store_name, s.website_url 
-            FROM merchants m
-            JOIN stores s ON m.store_id = s.id
-            WHERE m.id = ?
-        `, [merchantId]);
+        const [merchants] = await connection.execute(
+            'SELECT * FROM merchants WHERE id = ?',
+            [merchantId]
+        );
 
-        if (!merchant[0]) {
+        if (!merchants[0]) {
             throw new Error('Merchant not found');
         }
 
+        const merchant = merchants[0];
+        console.log('Starting sync for merchant:', merchant.name);
+
         const [logResult] = await connection.execute(
             'INSERT INTO sync_logs (merchant_id, status, started_at) VALUES (?, ?, NOW())',
-            [merchantId, 'success']
+            [merchantId, 'in_progress']
         );
         const logId = logResult.insertId;
 
         try {
+            const result = await importMerchantProducts(
+                merchantId, 
+                merchant.catalog_url, 
+                connection
+            );
+
+            console.log('Sync result:', result);
+
             await connection.execute(`
                 UPDATE sync_logs 
                 SET status = 'success',
                     products_updated = ?,
                     completed_at = NOW()
                 WHERE id = ?
-            `, [0, logId]);
+            `, [result.imported, logId]);
 
             await connection.execute(
                 'UPDATE merchants SET last_sync = NOW() WHERE id = ?',
                 [merchantId]
             );
+
+            return result;
 
         } catch (error) {
             await connection.execute(`

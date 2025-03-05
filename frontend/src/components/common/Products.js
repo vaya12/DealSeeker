@@ -28,8 +28,8 @@ const Products = () => {
             product.name &&
             product.category_id !== undefined &&
             Array.isArray(product.prices) &&
-            Array.isArray(product.colors) &&
-            Array.isArray(product.sizes)
+            Array.isArray(product.available_colors) &&
+            Array.isArray(product.available_sizes)
         );
     };
 
@@ -547,7 +547,10 @@ const Products = () => {
                                     ))}
                                 </div>
                                 <span style={styles.value}>
-                                    {product.prices?.length || 0} {product.prices?.length === 1 ? 'store' : 'stores'}
+                                    {new Set(product.prices.map(p => p.merchant_name)).size} 
+                                    {new Set(product.prices.map(p => p.merchant_name)).size === 1 
+                                        ? ' store' 
+                                        : ' stores'}
                                 </span>
                             </div>
                         </div>
@@ -559,16 +562,16 @@ const Products = () => {
                             onMouseEnter={() => setHoveredButton(product.id)}
                             onMouseLeave={() => setHoveredButton(null)}
                             onClick={() => {
-                                if (product.prices.length === 1) {
-                                    window.open(product.prices[0].website_url, '_blank', 'noopener,noreferrer');
+                                if (new Set(product.prices.map(p => p.merchant_name)).size === 1) {
+                                    window.open(product.prices[0].merchant_store_url, '_blank', 'noopener,noreferrer');
                                 } else {
                                     openModal(product);
                                 }
                             }}
                         >
-                            {product.prices.length === 1 
-                                ? `Go to ${product.prices[0].store_name}`
-                                : 'Product Details'
+                            {new Set(product.prices.map(p => p.merchant_name)).size === 1
+                                ? `Go to ${product.prices[0].merchant_name}`
+                                : 'Compare Prices'
                             }
                         </button>
                     </div>

@@ -75,7 +75,7 @@ const MerchantsList = ({ onStatsChange }) => {
             if (response.error) {
                 showSnackbar(response.error, 'error');
             } else {
-                showSnackbar(`Successfully synchronized ${response.productsCount || 0} products`);
+                showSnackbar(`Successfully synchronized ${response.imported || 0} products`);
                 await fetchMerchants();
                 onStatsChange();
             }
@@ -153,6 +153,7 @@ const MerchantsList = ({ onStatsChange }) => {
                                 <TableCell>Name</TableCell>
                                 <TableCell>Description</TableCell>
                                 <TableCell>Catalog URL</TableCell>
+                                <TableCell>Store URL</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -169,6 +170,16 @@ const MerchantsList = ({ onStatsChange }) => {
                                     <TableCell>{merchant.name}</TableCell>
                                     <TableCell>{merchant.description}</TableCell>
                                     <TableCell>{merchant.catalog_url}</TableCell>
+                                    <TableCell>
+                                        <a 
+                                            href={merchant.store_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#6CA390' }}
+                                        >
+                                            {merchant.store_url}
+                                        </a>
+                                    </TableCell>
                                     <TableCell>
                                         <IconButton 
                                             onClick={() => navigate(`/admin/merchants/${merchant.id}/edit`)}

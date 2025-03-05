@@ -2,27 +2,28 @@ const { createConnection } = require('../database/dbConfig');
 
 class CatalogManager {
     static async validateCatalog(catalogData) {
-        const requiredFields = ['products', 'store_info'];
         const errors = [];
 
-        for (const field of requiredFields) {
-            if (!catalogData[field]) {
-                errors.push(`Missing required field: ${field}`);
+        if (!Array.isArray(catalogData.products)) {
+            errors.push('Products array is required');
+            return { isValid: false, errors };
+        }
+
+        catalogData.products.forEach((product, index) => {
+            if (!product.name) errors.push(`Product ${index + 1}: Name is required`);
+            if (!product.description) errors.push(`Product ${index + 1}: Description is required`);
+            if (!product.brand) errors.push(`Product ${index + 1}: Brand is required`);
+            if (!product.image) errors.push(`Product ${index + 1}: Image is required`);
+            if (!Array.isArray(product.prices)) errors.push(`Product ${index + 1}: Prices array is required`);
+            
+            if (product.prices) {
+                product.prices.forEach((price, priceIndex) => {
+                    if (!price.current_price) {
+                        errors.push(`Product ${index + 1}, Price ${priceIndex + 1}: Current price is required`);
+                    }
+                });
             }
-        }
-
-        if (catalogData.store_info) {
-            if (!catalogData.store_info.name) errors.push('Store name is required');
-            if (!catalogData.store_info.website_url) errors.push('Website URL is required');
-        }
-
-        if (catalogData.products && Array.isArray(catalogData.products)) {
-            catalogData.products.forEach((product, index) => {
-                if (!product.name) errors.push(`Product ${index + 1}: Name is required`);
-                if (!product.price) errors.push(`Product ${index + 1}: Price is required`);
-                if (!product.url) errors.push(`Product ${index + 1}: Product URL is required`);
-            });
-        }
+        });
 
         return {
             isValid: errors.length === 0,
@@ -34,103 +35,133 @@ class CatalogManager {
         const connection = await createConnection();
         try {
             await connection.beginTransaction();
+            console.log('Processing catalog for merchant:', merchantId);
 
-            const [storeResult] = await connection.execute(`
-                UPDATE stores 
-                SET 
-                    website_url = ?,
-                    catalog_url = ?,
-                    last_sync = NOW(),
-                    status = 'active'
-                WHERE id = (
-                    SELECT store_id 
-                    FROM merchants 
-                    WHERE id = ?
-                )
-            `, [
-                catalogData.store_info.website_url,
-                catalogData.store_info.catalog_url,
-                merchantId
-            ]);
+            const validation = await this.validateCatalog(catalogData);
+            if (!validation.isValid) {
+                throw new Error(`Invalid catalog: ${validation.errors.join(', ')}`);
+            }
+
+            const [existingProducts] = await connection.execute(
+                'SELECT id, name FROM products WHERE merchant_id = ?',
+                [merchantId]
+            );
+
+            const newProductNames = new Set(catalogData.products.map(p => p.name));
+            
+            const productsToDelete = existingProducts.filter(p => !newProductNames.has(p.name));
+            
+            for (const product of productsToDelete) {
+                await connection.execute(
+                    'DELETE FROM product_prices WHERE product_id = ?',
+                    [product.id]
+                );
+                
+                await connection.execute(
+                    'DELETE FROM products WHERE id = ?',
+                    [product.id]
+                );
+                
+                console.log(`Deleted product: ${product.name}`);
+            }
+
+            let importedCount = 0;
 
             for (const product of catalogData.products) {
-                const [existing] = await connection.execute(
-                    'SELECT id FROM products WHERE merchant_id = ? AND external_id = ?',
-                    [merchantId, product.id]
+                console.log('Processing product:', product.name);
+
+                const [existingProduct] = await connection.execute(
+                    'SELECT id FROM products WHERE name = ? AND brand = ? AND merchant_id = ?',
+                    [product.name, product.brand, merchantId]
                 );
 
-                if (existing.length > 0) {
+                let productId;
+
+                if (existingProduct.length > 0) {
+                    productId = existingProduct[0].id;
                     await connection.execute(`
                         UPDATE products 
-                        SET 
-                            name = ?,
-                            description = ?,
-                            brand = ?,
-                            category_id = ?,
-                            image_url = ?,
-                            url = ?,
-                            last_updated = NOW()
+                        SET description = ?, 
+                            image = ?,
+                            category_id = ?
                         WHERE id = ?
                     `, [
-                        product.name,
                         product.description,
-                        product.brand,
-                        await this.getOrCreateCategory(connection, product.category),
-                        product.image_url,
-                        product.url,
-                        existing[0].id
+                        product.image,
+                        product.category_id,
+                        productId
                     ]);
-
-                    await connection.execute(`
-                        INSERT INTO product_prices 
-                        (product_id, current_price, original_price, stock_status, created_at)
-                        VALUES (?, ?, ?, ?, NOW())
-                    `, [
-                        existing[0].id,
-                        product.price,
-                        product.original_price || product.price,
-                        product.stock_status || 'in_stock'
-                    ]);
+                    
+                    await connection.execute(
+                        'DELETE FROM product_prices WHERE product_id = ? AND product_store_id = ?',
+                        [productId, merchantId]
+                    );
                 } else {
                     const [result] = await connection.execute(`
                         INSERT INTO products 
-                        (merchant_id, external_id, name, description, brand, category_id, image_url, url, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                        (name, description, brand, category_id, image, merchant_id)
+                        VALUES (?, ?, ?, ?, ?, ?)
                     `, [
-                        merchantId,
-                        product.id,
                         product.name,
                         product.description,
                         product.brand,
-                        await this.getOrCreateCategory(connection, product.category),
-                        product.image_url,
-                        product.url
+                        product.category_id,
+                        product.image,
+                        merchantId
                     ]);
+                    productId = result.insertId;
+                }
 
+                for (const price of product.prices) {
                     await connection.execute(`
                         INSERT INTO product_prices 
-                        (product_id, current_price, original_price, stock_status, created_at)
-                        VALUES (?, ?, ?, ?, NOW())
+                        (product_id, product_store_id, size_id, color_id, current_price, original_price, stock)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
                     `, [
-                        result.insertId,
-                        product.price,
-                        product.original_price || product.price,
-                        product.stock_status || 'in_stock'
+                        productId,
+                        merchantId,
+                        price.size_id,
+                        price.color_id,
+                        price.current_price,
+                        price.original_price || price.current_price,
+                        price.stock || 'in_stock'
                     ]);
                 }
+
+                importedCount++;
             }
 
             await connection.execute(`
                 INSERT INTO sync_logs 
                 (merchant_id, status, products_updated, started_at, completed_at)
                 VALUES (?, 'success', ?, NOW(), NOW())
-            `, [merchantId, catalogData.products.length]);
+            `, [merchantId, importedCount]);
+
+            await connection.execute(
+                'UPDATE merchants SET last_sync = NOW() WHERE id = ?',
+                [merchantId]
+            );
 
             await connection.commit();
-            return { success: true, productsProcessed: catalogData.products.length };
+            console.log(`Successfully processed ${importedCount} products, deleted ${productsToDelete.length} products`);
+            
+            return { 
+                success: true, 
+                imported: importedCount,
+                deleted: productsToDelete.length,
+                message: `Successfully synchronized ${importedCount} products (${productsToDelete.length} deleted)`
+            };
 
         } catch (error) {
             await connection.rollback();
+            console.error('Error processing catalog:', error);
+            
+            await connection.execute(`
+                INSERT INTO sync_logs 
+                (merchant_id, status, error_message, started_at, completed_at)
+                VALUES (?, 'failed', ?, NOW(), NOW())
+            `, [merchantId, error.message]);
+            
             throw error;
         } finally {
             await connection.end();
