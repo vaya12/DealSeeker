@@ -10,7 +10,6 @@ const Products = () => {
     const [sortOption, setSortOption] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [itemsPerPage, setItemsPerPage] = useState(12);
-    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [hoveredButton, setHoveredButton] = useState(null);
     const [noResults, setNoResults] = useState(false);
@@ -95,8 +94,8 @@ const Products = () => {
         fetchProducts(filters);
     }, [location.state, fetchProducts]);
 
-    const handleFilter = (filters) => {
-        fetchProducts(filters);
+    const handleFilter = () => {
+        fetchProducts();
     };
 
     console.log("No results:", noResults);
@@ -429,7 +428,6 @@ const Products = () => {
     };
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div style={{ color: 'red', padding: '20px' }}>{error}</div>;
     if (noResults) {
         return (
             <div style={styles.noResults}>

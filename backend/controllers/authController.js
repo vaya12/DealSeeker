@@ -2,11 +2,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-// Взимаме чувствителните данни от environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const ADMIN_CREDENTIALS = {
     username: process.env.ADMIN_USERNAME,
-    // Паролата трябва да е хеширана в базата данни
     passwordHash: process.env.ADMIN_PASSWORD_HASH
 };
 
@@ -81,13 +79,11 @@ exports.validateLogin = async (req, res) => {
             return res.status(400).json({ message: 'Username and password are required' });
         }
 
-        // Проверяваме дали credentials са конфигурирани
         if (!ADMIN_CREDENTIALS.username || !ADMIN_CREDENTIALS.passwordHash) {
             console.error('Admin credentials not properly configured');
             return res.status(500).json({ message: 'Server configuration error' });
         }
 
-        // Проверяваме потребителското име и паролата
         if (username === ADMIN_CREDENTIALS.username && 
             await bcrypt.compare(password, ADMIN_CREDENTIALS.passwordHash)) {
             

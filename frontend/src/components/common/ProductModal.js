@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
 
 const ProductModal = ({ product, onClose }) => {
     const styles = {
@@ -314,82 +315,78 @@ const ProductModal = ({ product, onClose }) => {
 
                             <div style={styles.storesGrid}>
                                 {product.prices.map((price, index) => (
-                                    <div key={index} style={{
-                                        display: 'flex',
-                                        flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
-                                        justifyContent: 'space-between',
-                                        alignItems: window.innerWidth <= 480 ? 'stretch' : 'center',
-                                        padding: '12px',
-                                        backgroundColor: '#f8f8f8',
-                                        borderRadius: '8px',
-                                        gap: window.innerWidth <= 480 ? '10px' : '0'
-                                    }}>
-                                        <div style={{
+                                    <Box
+                                        key={index}
+                                        sx={{
                                             display: 'flex',
+                                            justifyContent: 'space-between',
                                             alignItems: 'center',
-                                            gap: '10px'
-                                        }}>
-                                            <span style={{fontSize: '14px'}}>{price.merchant_name}</span>
+                                            bgcolor: '#f5f5f5',
+                                            p: 2,
+                                            borderRadius: 1,
+                                            mb: 1
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography>
+                                                {product.merchant_name}
+                                            </Typography>
                                             {parseFloat(price.current_price) < parseFloat(price.original_price) && (
-                                                <img src="/sale_logo.png" alt="Sale" style={styles.saleLogo} />
+                                                <Box
+                                                    sx={{
+                                                        bgcolor: '#7BA89A',
+                                                        color: 'white',
+                                                        px: 1,
+                                                        py: 0.5,
+                                                        borderRadius: 1,
+                                                        fontSize: '14px'
+                                                    }}
+                                                >
+                                                    SALE
+                                                </Box>
                                             )}
-                                        </div>
-                                        
-                                        <div style={{
-                                            display: 'flex',
+                                        </Box>
+
+                                        <Box sx={{ 
+                                            display: 'flex', 
                                             alignItems: 'center',
-                                            gap: '15px',
-                                            justifyContent: window.innerWidth <= 480 ? 'space-between' : 'flex-end'
+                                            gap: 2
                                         }}>
-                                            <span style={{
-                                                fontSize: '16px',
-                                                fontWeight: '500'
-                                            }}>
-                                                {price.current_price} BGN
+                                            <Box>
+                                                <Typography component="span">
+                                                    {price.current_price} BGN
+                                                </Typography>
                                                 {price.original_price !== price.current_price && (
-                                                    <span style={{
-                                                        marginLeft: '8px',
-                                                        fontSize: '14px',
-                                                        color: '#999',
-                                                        textDecoration: 'line-through'
-                                                    }}>
+                                                    <Typography
+                                                        component="span"
+                                                        sx={{
+                                                            ml: 1,
+                                                            color: 'grey.500',
+                                                            textDecoration: 'line-through'
+                                                        }}
+                                                    >
                                                         {price.original_price} BGN
-                                                    </span>
+                                                    </Typography>
                                                 )}
-                                            </span>
-                                            <button
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    backgroundColor: '#000',
-                                                    color: '#fff',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer',
-                                                    minWidth: '120px',
-                                                    fontSize: '14px',
-                                                    transition: 'all 0.3s ease',
-                                                    ':hover': {
-                                                        backgroundColor: '#afcbc4',
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                                            </Box>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    bgcolor: 'black',
+                                                    color: 'white',
+                                                    textTransform: 'none',
+                                                    px: 3,
+                                                    transition: 'background-color 0.3s ease',
+                                                    '&:hover': {
+                                                        bgcolor: '#7BA89A'
                                                     }
                                                 }}
-                                                onMouseEnter={(e) => {
-                                                    e.target.style.backgroundColor = '#afcbc4';
-                                                    e.target.style.transform = 'translateY(-2px)';
-                                                    e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    e.target.style.backgroundColor = '#000';
-                                                    e.target.style.transform = 'translateY(0)';
-                                                    e.target.style.boxShadow = 'none';
-                                                }}
-                                                onClick={() => window.open(price.website_url, '_blank', 'noopener,noreferrer')}
+                                                onClick={() => window.open(price.website_url, '_blank')}
                                             >
                                                 Go to store
-                                            </button>
-                                        </div>
-                                    </div>
+                                            </Button>
+                                        </Box>
+                                    </Box>
                                 ))}
                             </div>
                         </div>
