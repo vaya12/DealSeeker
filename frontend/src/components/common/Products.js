@@ -13,6 +13,7 @@ const Products = () => {
     const [loading, setLoading] = useState(true);
     const [hoveredButton, setHoveredButton] = useState(null);
     const [noResults, setNoResults] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
     const location = useLocation();
 
     const itemsPerPageOptions = [
@@ -155,12 +156,30 @@ const Products = () => {
         setCurrentPage(1);
     };
 
+    const handleSearch = (event) => {
+        setSearchQuery(event.target.value);
+        setCurrentPage(1);
+    };
+
     const productsToShow = filteredProducts
+        .filter(product => {
+            const searchLower = searchQuery.toLowerCase();
+            return (
+                searchQuery === "" ||
+                product.name.toLowerCase().includes(searchLower) ||
+                product.brand?.toLowerCase().includes(searchLower) ||
+                product.description?.toLowerCase().includes(searchLower)
+            );
+        })
         .sort((a, b) => {
             if (sortOption === "lowToHigh") {
-                return parseFloat(a.max_price) - parseFloat(b.max_price);
+                const minPriceA = Math.min(...a.prices.map(p => p.current_price));
+                const minPriceB = Math.min(...b.prices.map(p => p.current_price));
+                return minPriceA - minPriceB;
             } else if (sortOption === "highToLow") {
-                return parseFloat(b.max_price) - parseFloat(a.max_price);
+                const minPriceA = Math.min(...a.prices.map(p => p.current_price));
+                const minPriceB = Math.min(...b.prices.map(p => p.current_price));
+                return minPriceB - minPriceA;
             }
             return 0;
         });
@@ -440,6 +459,22 @@ const Products = () => {
             <header style={styles.header}>
                 <h1 style={styles.title}>Products</h1>
                 <div style={styles.controlsContainer}>
+                    <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={searchQuery}
+                        onChange={handleSearch}
+                        style={{
+                            ...styles.select,
+                            minWidth: "200px",
+                            marginRight: "15px",
+                            padding: "12px 20px",
+                            backgroundColor: "#fff",
+                            color: "#000",
+                            border: "2px solid #e0e0e0",
+                            borderRadius: "25px",
+                        }}
+                    />
                     <div style={dropdownStyles.wrapper}>
                         <select
                             style={dropdownStyles.select}

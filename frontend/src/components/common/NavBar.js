@@ -78,18 +78,15 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    
-    const encodedQuery = encodeURIComponent(searchQuery.trim());
-    navigate(`/products?search=${encodedQuery}`);
-    setSearchQuery("");
-    setMobileOpen(false);
+    if (e) {
+      e.preventDefault();
+    }
+    setSearchQuery(e.target.value);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleSearch(e);
+      e.preventDefault();
     }
   };
 
@@ -129,7 +126,7 @@ const Navbar = () => {
 
   const renderSearchBox = () => (
     <Box component="form" 
-      onSubmit={handleSearch}
+      onSubmit={(e) => e.preventDefault()}
       sx={{ 
         flex: 1,
         maxWidth: '400px',
@@ -138,7 +135,7 @@ const Navbar = () => {
       <SearchField
         fullWidth
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={handleSearch}
         onKeyPress={handleKeyPress}
         placeholder="Search..."
         variant="outlined"
@@ -148,11 +145,8 @@ const Navbar = () => {
             <InputAdornment position="start">
               <SearchIcon 
                 sx={{ 
-                  color: '#6CA390', 
-                  cursor: 'pointer',
-                  '&:hover': { opacity: 0.8 }
+                  color: '#6CA390'
                 }} 
-                onClick={handleSearch}
               />
             </InputAdornment>
           ),
