@@ -94,11 +94,6 @@ const Products = () => {
         fetchProducts(filters);
     }, [location.state, fetchProducts]);
 
-    const handleFilter = () => {
-        fetchProducts();
-    };
-
-    console.log("No results:", noResults);
 
     const dropdownStyles = {
         select: {
@@ -534,7 +529,6 @@ const Products = () => {
                             <div style={styles.colorsAndAvailabilityRow}>
                                 <div style={styles.colorRow}>
                                     <span style={styles.label}>Colors:</span>
-                                    {console.log('Product colors:', product.available_colors)}
                                     {product.available_colors?.map((color, index) => (
                                         <div
                                             key={index}
@@ -561,18 +555,9 @@ const Products = () => {
                             }}
                             onMouseEnter={() => setHoveredButton(product.id)}
                             onMouseLeave={() => setHoveredButton(null)}
-                            onClick={() => {
-                                if (new Set(product.prices.map(p => p.merchant_name)).size === 1) {
-                                    window.open(product.prices[0].merchant_store_url, '_blank', 'noopener,noreferrer');
-                                } else {
-                                    openModal(product);
-                                }
-                            }}
+                            onClick={() => openModal(product)}
                         >
-                            {new Set(product.prices.map(p => p.merchant_name)).size === 1
-                                ? `Go to ${product.prices[0].merchant_name}`
-                                : 'Compare Prices'
-                            }
+                            Product Details
                         </button>
                     </div>
                 ))}

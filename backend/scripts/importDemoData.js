@@ -328,15 +328,6 @@ async function importProducts(connection) {
 
                     let productId;
                     if (existingProduct.length === 0) {
-                        console.log('Inserting with values:', {
-                            name: product.name,
-                            description: product.description,
-                            brand: product.brand,
-                            category_id: product.category_id,
-                            image: product.image,
-                            merchant_id: catalog.merchant_id,
-                            store_url: product.store_url || null 
-                        });
 
                         const [result] = await connection.execute(
                             `INSERT INTO products 
@@ -373,7 +364,7 @@ async function importProducts(connection) {
                         );
                     }
                 }
-                console.log(`Products imported for ${merchantFile}`);
+                
             } catch (error) {
                 console.error(`Error processing ${merchantFile}.json:`, error);
                 throw error;
@@ -388,7 +379,6 @@ async function importProducts(connection) {
 
 async function importMerchantProducts(merchant_id, catalog_url, connection) {
     try {
-        console.log(`Importing products for merchant ${merchant_id} from ${catalog_url}`);
         
         const response = await fetch(catalog_url);
         if (!response.ok) {

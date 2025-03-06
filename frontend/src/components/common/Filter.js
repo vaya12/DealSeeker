@@ -263,45 +263,6 @@ const Filter = ({ onFilter }) => {
         fetchInitialData();
     }, [fetchInitialData]);
 
-    const renderFilterOption = (item, type, index) => {
-        if (!item) return null;
-
-        let isSelected;
-        switch(type) {
-            case 'category':
-                isSelected = selectedCategories.includes(item.id?.toString());
-                break;
-            case 'color':
-                isSelected = selectedColors.includes(item.id?.toString());
-                break;
-            case 'size':
-                isSelected = selectedSizes.includes(item.id?.toString());
-                break;
-            case 'brand':
-                isSelected = selectedBrands.includes(item.id?.toString());
-                break;
-            default:
-                isSelected = false;
-        }
-        
-        const count = item.product_count || 0;
-        
-        const uniqueKey = `${type}-${item.id || index}-${item.name || 'unknown'}`;
-        
-        return (
-            <div
-                key={uniqueKey}
-                style={{
-                    ...styles.item,
-                    ...(isSelected && styles.itemActive)
-                }}
-                onClick={() => toggleSelection(item.id?.toString(), type)}
-            >
-                {item.name || 'Unknown'} ({count})
-            </div>
-        );
-    };
-
     return (
         <div className="filter-section" style={styles.container}>
             <div style={styles.section}>
